@@ -132,3 +132,5 @@ dist
 
 # Custom
 built/
+knownWarnings.generated.txt
+dump.safe
