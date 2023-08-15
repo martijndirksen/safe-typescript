@@ -33,6 +33,9 @@
     "node": ">=0.8.0"
   },
   "devDependencies": {
+    "eslint": "^8.47.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
     "jake": "latest",
     "prettier": "^3.0.2"
   },

@@ -1,23 +1,29 @@
 // This file contains the build logic for the public repo
 
-var fs = require('fs');
-var path = require('path');
+import {
+  existsSync,
+  appendFileSync,
+  readFileSync,
+  renameSync,
+  unlinkSync,
+} from 'fs';
+import { join, resolve, dirname } from 'path';
 
 // Variables
-var compilerDirectory = 'src/compiler/';
-var servicesDirectory = 'src/services/';
-var harnessDirectory = 'src/harness/';
-var runnersDirectory = 'tests/runners/';
-var libraryDirectory = 'typings/';
+const compilerDirectory = 'src/compiler/';
+const servicesDirectory = 'src/services/';
+const harnessDirectory = 'src/harness/';
+const runnersDirectory = 'tests/runners/';
+const libraryDirectory = 'typings/';
 
-var builtDirectory = 'built/';
-var builtLocalDirectory = 'built/local/';
-var builtTestDirectory = 'built/localtest/';
-var LKGDirectory = 'bin/';
+const builtDirectory = 'built/';
+const builtLocalDirectory = 'built/local/';
+const builtTestDirectory = 'built/localtest/';
+const LKGDirectory = 'bin/';
 
-var copyright = 'CopyrightNotice.txt';
-var thirdParty = 'ThirdPartyNoticeText.txt';
-var compilerSources = [
+const copyright = 'CopyrightNotice.txt';
+const thirdParty = 'ThirdPartyNoticeText.txt';
+const compilerSources = [
   'ast.ts',
   'astHelpers.ts',
   'astWalker.ts',
@@ -136,14 +142,14 @@ var compilerSources = [
   'typecheck/sound/tc.ts',
   'typescript.ts',
 ].map(function (f) {
-  return path.join(compilerDirectory, f);
+  return join(compilerDirectory, f);
 });
 
-var tscSources = ['io.ts', 'optionsParser.ts', 'tsc.ts'].map(function (f) {
-  return path.join(compilerDirectory, f);
+const tscSources = ['io.ts', 'optionsParser.ts', 'tsc.ts'].map(function (f) {
+  return join(compilerDirectory, f);
 });
 
-var servicesSources = [
+const servicesSources = [
   'braceMatcher.ts',
   'breakpoints.ts',
   'classifier.ts',
@@ -189,83 +195,77 @@ var servicesSources = [
   'formatting/tokenSpan.ts',
   'typescriptServices.ts',
 ].map(function (f) {
-  return path.join(servicesDirectory, f);
+  return join(servicesDirectory, f);
 });
 
-var harnessSources = [
-  path.join(compilerDirectory, 'io.ts'),
-  path.join(compilerDirectory, 'optionsParser.ts'),
+const harnessSources = [
+  join(compilerDirectory, 'io.ts'),
+  join(compilerDirectory, 'optionsParser.ts'),
 
-  path.join(harnessDirectory, 'exec.ts'),
-  path.join(harnessDirectory, 'diff.ts'),
-  path.join(harnessDirectory, 'harness.ts'),
-  path.join(harnessDirectory, 'baselining.ts'),
-  path.join(harnessDirectory, 'fourslash.ts'),
-  path.join(harnessDirectory, 'runner.ts'),
+  join(harnessDirectory, 'exec.ts'),
+  join(harnessDirectory, 'diff.ts'),
+  join(harnessDirectory, 'harness.ts'),
+  join(harnessDirectory, 'baselining.ts'),
+  join(harnessDirectory, 'fourslash.ts'),
+  join(harnessDirectory, 'runner.ts'),
 
-  path.join(runnersDirectory, 'runnerBase.ts'),
-  path.join(runnersDirectory, 'compiler/compilerRunner.ts'),
-  path.join(runnersDirectory, 'fourslash/fourslashRunner.ts'),
-  path.join(runnersDirectory, 'projects/projectsRunner.ts'),
-  path.join(runnersDirectory, 'unittest/unittestRunner.ts'),
-  path.join(runnersDirectory, 'rwc/rwcRunner.ts'),
+  join(runnersDirectory, 'runnerBase.ts'),
+  join(runnersDirectory, 'compiler/compilerRunner.ts'),
+  join(runnersDirectory, 'fourslash/fourslashRunner.ts'),
+  join(runnersDirectory, 'projects/projectsRunner.ts'),
+  join(runnersDirectory, 'unittest/unittestRunner.ts'),
+  join(runnersDirectory, 'rwc/rwcRunner.ts'),
 
-  path.join(runnersDirectory, '../cases/unittests/samples/samples.ts'),
-  path.join(
-    runnersDirectory,
-    '../cases/unittests/compiler/callSignatureTests.ts'
-  ),
-  path.join(runnersDirectory, '../cases/unittests/compiler/classOverloads.ts'),
-  path.join(
+  join(runnersDirectory, '../cases/unittests/samples/samples.ts'),
+  join(runnersDirectory, '../cases/unittests/compiler/callSignatureTests.ts'),
+  join(runnersDirectory, '../cases/unittests/compiler/classOverloads.ts'),
+  join(
     runnersDirectory,
     '../cases/unittests/compiler/constructSignatureTests.ts'
   ),
-  path.join(
-    runnersDirectory,
-    '../cases/unittests/compiler/declarationTests.ts'
-  ),
-  path.join(
+  join(runnersDirectory, '../cases/unittests/compiler/declarationTests.ts'),
+  join(
     runnersDirectory,
     '../cases/unittests/compiler/functionSignaturesTests.ts'
   ),
-  path.join(runnersDirectory, '../cases/unittests/compiler/identifiers.ts'),
-  path.join(runnersDirectory, '../cases/unittests/compiler/moduleAlias.ts'),
-  path.join(runnersDirectory, '../cases/unittests/compiler/pathing.ts'),
-  path.join(
+  join(runnersDirectory, '../cases/unittests/compiler/identifiers.ts'),
+  join(runnersDirectory, '../cases/unittests/compiler/moduleAlias.ts'),
+  join(runnersDirectory, '../cases/unittests/compiler/pathing.ts'),
+  join(
     runnersDirectory,
     '../cases/unittests/compiler/propertySignatureTests.ts'
   ),
 ];
 
-var libraryFiles = ['lib.d.ts', 'jquery.d.ts', 'winjs.d.ts', 'winrt.d.ts'];
+const libraryFiles = ['lib.d.ts', 'jquery.d.ts', 'winjs.d.ts', 'winrt.d.ts'];
 
-var librarySources = libraryFiles.map(function (f) {
-  return path.join(libraryDirectory, f);
+const librarySources = libraryFiles.map(function (f) {
+  return join(libraryDirectory, f);
 });
 
-var libraryTargets = libraryFiles.map(function (f) {
-  return path.join(builtLocalDirectory, f);
+const libraryTargets = libraryFiles.map(function (f) {
+  return join(builtLocalDirectory, f);
 });
 
 // Prepends the contents of prefixFile to destinationFile
 function prependFile(prefixFile, destinationFile) {
-  if (!fs.existsSync(prefixFile)) {
+  if (!existsSync(prefixFile)) {
     fail(prefixFile + ' does not exist!');
   }
-  if (!fs.existsSync(destinationFile)) {
+  if (!existsSync(destinationFile)) {
     fail(destinationFile + ' failed to be created!');
   }
-  var temp = 'temptemp';
+  const temp = 'temptemp';
   jake.cpR(prefixFile, temp);
-  fs.appendFileSync(temp, fs.readFileSync(destinationFile));
-  fs.renameSync(temp, destinationFile);
+  appendFileSync(temp, readFileSync(destinationFile));
+  renameSync(temp, destinationFile);
 }
 
-var useDebugMode = false;
+const useDebugMode = false;
 function appendFile(f, ftail) {
-  var cmd = 'cat ' + ftail + ' >> ' + f;
+  const cmd = 'cat ' + ftail + ' >> ' + f;
   console.log(cmd + '\n');
-  var ex = jake.createExec(cmd);
+  const ex = jake.createExec(cmd);
   ex.addListener('stdout', function (output) {
     process.stdout.write(output);
   });
@@ -300,8 +300,8 @@ function compileFile(
     outFile,
     prereqs,
     function () {
-      var dir = useBuiltCompiler ? builtLocalDirectory : LKGDirectory;
-      var cmd =
+      const dir = useBuiltCompiler ? builtLocalDirectory : LKGDirectory;
+      let cmd =
         (process.env.host || process.env.TYPESCRIPT_HOST || 'node') +
         ' ' +
         dir +
@@ -310,14 +310,11 @@ function compileFile(
         ' -out ' +
         outFile;
       if (useDebugMode) {
-        cmd =
-          cmd +
-          ' -sourcemap -mapRoot file:///' +
-          path.resolve(path.dirname(outFile));
+        cmd = cmd + ' -sourcemap -mapRoot file:///' + resolve(dirname(outFile));
       }
 
       console.log(cmd + '\n');
-      var ex = jake.createExec([cmd]);
+      const ex = jake.createExec([cmd]);
       // Add listeners for output and error
       ex.addListener('stdout', function (output) {
         process.stdout.write(output);
@@ -326,20 +323,20 @@ function compileFile(
         process.stderr.write(error);
       });
       ex.addListener('cmdEnd', function () {
-        if (!useDebugMode && prefixes && fs.existsSync(outFile)) {
-          for (var i in prefixes) {
+        if (!useDebugMode && prefixes && existsSync(outFile)) {
+          for (const i in prefixes) {
             prependFile(prefixes[i], outFile);
           }
         }
-        if (!useDebugMode && suffixes && fs.existsSync(outFile)) {
-          for (var i in suffixes) {
+        if (!useDebugMode && suffixes && existsSync(outFile)) {
+          for (const i in suffixes) {
             appendFile(outFile, suffixes[i]);
           }
         }
         complete();
       });
       ex.addListener('error', function () {
-        fs.unlinkSync(outFile);
+        unlinkSync(outFile);
         console.log('Compilation of ' + outFile + ' unsuccessful');
       });
       ex.run();
@@ -353,8 +350,8 @@ function copyFile(srcFile, tgtFile, suffixes) {
     tgtFile,
     suffixes.push(srcFile),
     function () {
-      var cmd = 'cp ' + srcFile + ' ' + tgtFile;
-      var ex = jake.createExec([cmd]);
+      const cmd = 'cp ' + srcFile + ' ' + tgtFile;
+      const ex = jake.createExec([cmd]);
       // Add listeners for output and error
       ex.addListener('stdout', function (output) {
         process.stdout.write(output);
@@ -363,15 +360,15 @@ function copyFile(srcFile, tgtFile, suffixes) {
         process.stderr.write(error);
       });
       ex.addListener('cmdEnd', function () {
-        if (suffixes && fs.existsSync(tgtFile)) {
-          for (var i in suffixes) {
+        if (suffixes && existsSync(tgtFile)) {
+          for (const i in suffixes) {
             appendFile(tgtFile, suffixes[i]);
           }
         }
         complete();
       });
       ex.addListener('error', function () {
-        fs.unlinkSync(tgtFile);
+        unlinkSync(tgtFile);
         console.log('Compilation of ' + tgtFile + ' unsuccessful');
       });
       ex.run();
@@ -383,7 +380,7 @@ function copyFile(srcFile, tgtFile, suffixes) {
 // Prerequisite task for built directory and library typings
 directory(builtLocalDirectory);
 
-for (var i in libraryTargets) {
+for (const i in libraryTargets) {
   (function (i) {
     file(
       libraryTargets[i],
@@ -395,7 +392,7 @@ for (var i in libraryTargets) {
   })(i);
 }
 
-var typescriptFile = path.join(builtLocalDirectory, 'typescript.js');
+const typescriptFile = join(builtLocalDirectory, 'typescript.js');
 compileFile(
   typescriptFile,
   compilerSources,
@@ -403,7 +400,7 @@ compileFile(
   [copyright]
 );
 
-var tscFile = path.join(builtLocalDirectory, 'tsc.js');
+const tscFile = join(builtLocalDirectory, 'tsc.js');
 compileFile(
   tscFile,
   compilerSources.concat(tscSources),
@@ -411,7 +408,7 @@ compileFile(
   [copyright]
 );
 
-var serviceFile = path.join(builtLocalDirectory, 'typescriptServices.js');
+const serviceFile = join(builtLocalDirectory, 'typescriptServices.js');
 compileFile(
   serviceFile,
   compilerSources.concat(servicesSources),
@@ -450,9 +447,9 @@ task('clean', function () {
 // Makes a new LKG. This target does not build anything, but errors if not all the outputs are present in the built/local directory
 desc('Makes a new LKG out of the built js files');
 task('LKG', libraryTargets, function () {
-  var expectedFiles = [typescriptFile, tscFile, serviceFile];
-  var missingFiles = expectedFiles.filter(function (f) {
-    return !fs.existsSync(f);
+  const expectedFiles = [typescriptFile, tscFile, serviceFile];
+  const missingFiles = expectedFiles.filter(function (f) {
+    return !existsSync(f);
   });
   if (missingFiles.length > 0) {
     fail(
@@ -464,24 +461,20 @@ task('LKG', libraryTargets, function () {
   }
   // Copy all the targets into the LKG directory
   jake.mkdirP(LKGDirectory);
-  for (var i in librarySources) {
+  for (const i in librarySources) {
     jake.cpR(libraryTargets[i], LKGDirectory);
   }
   for (i in expectedFiles) {
     jake.cpR(expectedFiles[i], LKGDirectory);
   }
-  //var resourceDirectories = fs.readdirSync(builtLocalResourcesDirectory).map(function(p) { return path.join(builtLocalResourcesDirectory, p); });
-  //resourceDirectories.map(function(d) {
-  //	jake.cpR(d, LKGResourcesDirectory);
-  //});
 });
 
 // Test directory
 directory(builtTestDirectory);
 
 // Task to build the tests infrastructure using the built compiler
-var run = path.join(builtTestDirectory, 'run.js');
-var json2 = path.join(harnessDirectory, 'external/json2.js');
+const run = join(builtTestDirectory, 'run.js');
+const json2 = join(harnessDirectory, 'external/json2.js');
 compileFile(
   run,
   harnessSources,
@@ -492,14 +485,14 @@ compileFile(
 );
 
 // Webharness
-var frontEndPath = 'tests/cases/webharness/frontEnd.ts';
-var perfCompilerPath = 'tests/cases/webharness/perfCompiler.js';
+const frontEndPath = 'tests/cases/webharness/frontEnd.ts';
+const perfCompilerPath = 'tests/cases/webharness/perfCompiler.js';
 compileFile(perfCompilerPath, [frontEndPath], [tscFile], [], [], true);
 
 // Fidelity Tests
-var fidelityTestsOutFile = 'tests/Fidelity/program.js';
-var fidelityTestsInFile1 = 'tests/Fidelity/Program.ts';
-var fidelityTestsInFile2 =
+const fidelityTestsOutFile = 'tests/Fidelity/program.js';
+const fidelityTestsInFile1 = 'tests/Fidelity/Program.ts';
+const fidelityTestsInFile2 =
   'tests/Fidelity/incremental/IncrementalParserTests.ts';
 compileFile(
   fidelityTestsOutFile,
@@ -515,11 +508,11 @@ compileFile(
 desc('Builds the web harness front end');
 task('test-harness', [perfCompilerPath]);
 
-var localBaseline = 'tests/baselines/local/';
-var refBaseline = 'tests/baselines/reference/';
+const localBaseline = 'tests/baselines/local/';
+const refBaseline = 'tests/baselines/reference/';
 
-var localRwcBaseline = 'tests/baselines/rwc/local/';
-var refRwcBaseline = 'tests/baselines/rwc/reference/';
+const localRwcBaseline = 'tests/baselines/rwc/local/';
+const refRwcBaseline = 'tests/baselines/rwc/reference/';
 
 desc('Builds the test infrastructure using the built compiler');
 task(
@@ -530,7 +523,7 @@ task(
   function () {
     // Copy the language service over to the test directory
     jake.cpR(serviceFile, builtTestDirectory);
-    jake.cpR(path.join(libraryDirectory, 'lib.d.ts'), builtTestDirectory);
+    jake.cpR(join(libraryDirectory, 'lib.d.ts'), builtTestDirectory);
   }
 );
 
@@ -542,12 +535,12 @@ task(
   ['local', 'tests', builtTestDirectory],
   function () {
     // Clean the local baselines directory
-    if (fs.existsSync(localBaseline)) {
+    if (existsSync(localBaseline)) {
       jake.rmRf(localBaseline);
     }
 
     // Clean the local Rwc baselines directory
-    if (fs.existsSync(localRwcBaseline)) {
+    if (existsSync(localRwcBaseline)) {
       jake.rmRf(localRwcBaseline);
     }
 
@@ -557,9 +550,9 @@ task(
     tests = tests
       ? tests.split(',').join(' ')
       : [].slice.call(arguments).join(' ') || '';
-    var cmd = host + ' ' + run + ' ' + tests;
+    const cmd = host + ' ' + run + ' ' + tests;
     console.log(cmd);
-    var ex = jake.createExec([cmd]);
+    const ex = jake.createExec([cmd]);
     // Add listeners for output and error
     ex.addListener('stdout', function (output) {
       process.stdout.write(output);
@@ -585,13 +578,13 @@ desc(
 task('baseline-accept', function (hardOrSoft) {
   if (!hardOrSoft || hardOrSoft == 'hard') {
     jake.rmRf(refBaseline);
-    fs.renameSync(localBaseline, refBaseline);
+    renameSync(localBaseline, refBaseline);
   } else if (hardOrSoft == 'soft') {
-    var files = jake.readdirR(localBaseline);
-    for (var i in files) {
+    const files = jake.readdirR(localBaseline);
+    for (const i in files) {
       jake.cpR(files[i], refBaseline);
     }
-    jake.rmRf(path.join(refBaseline, 'local'));
+    jake.rmRf(join(refBaseline, 'local'));
   }
 });
 
@@ -600,12 +593,12 @@ desc(
 );
 task('baseline-accept-rwc', function () {
   jake.rmRf(refRwcBaseline);
-  fs.renameSync(localRwcBaseline, refRwcBaseline);
+  renameSync(localRwcBaseline, refRwcBaseline);
 });
 
 // Syntax Generator
-var syntaxGeneratorOutFile = compilerDirectory + 'syntax/SyntaxGenerator.js';
-var syntaxGeneratorInFile = compilerDirectory + 'syntax/SyntaxGenerator.ts';
+const syntaxGeneratorOutFile = compilerDirectory + 'syntax/SyntaxGenerator.js';
+const syntaxGeneratorInFile = compilerDirectory + 'syntax/SyntaxGenerator.ts';
 file(compilerDirectory + 'syntax/syntaxKind.ts');
 file(compilerDirectory + 'syntax/syntaxFacts.ts');
 compileFile(
@@ -627,9 +620,9 @@ task(
   [syntaxGeneratorOutFile],
   function () {
     host = process.env.host || process.env.TYPESCRIPT_HOST || 'node';
-    var cmd = host + ' ' + syntaxGeneratorOutFile;
+    const cmd = host + ' ' + syntaxGeneratorOutFile;
     console.log(cmd);
-    var ex = jake.createExec([cmd]);
+    const ex = jake.createExec([cmd]);
     // Add listeners for output and error
     ex.addListener('stdout', function (output) {
       process.stdout.write(output);
@@ -651,9 +644,9 @@ task(
   [fidelityTestsOutFile],
   function () {
     host = process.env.host || process.env.TYPESCRIPT_HOST || 'node';
-    var cmd = host + ' ' + fidelityTestsOutFile;
+    const cmd = host + ' ' + fidelityTestsOutFile;
     console.log(cmd);
-    var ex = jake.createExec([cmd]);
+    const ex = jake.createExec([cmd]);
     // Add listeners for output and error
     ex.addListener('stdout', function (output) {
       process.stdout.write(output);
