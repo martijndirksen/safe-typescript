@@ -7,7 +7,9 @@ const {
   unlinkSync,
 } = require('fs');
 const { join, resolve, dirname } = require('path');
-const { fail, file, jake, complete, directory, desc, task } = require('jake');
+const jake = require('jake');
+const { fail, file, complete, directory, desc, task } = require('jake');
+const { exec } = require('node:child_process');
 
 // Variables
 const compilerDirectory = 'src/compiler/';
@@ -247,6 +249,32 @@ const libraryTargets = libraryFiles.map(function (f) {
   return join(builtLocalDirectory, f);
 });
 
+function createChildProcess(cmd, completeFn, errorFn) {
+  const childProcess = exec(cmd);
+
+  let isFailureHandled = false;
+  const handleFail = () => {
+    if (isFailureHandled) return;
+    isFailureHandled = true;
+    errorFn();
+    fail();
+  };
+
+  childProcess.on('exit', (code) => {
+    if (code !== 0) {
+      handleFail();
+    } else {
+      completeFn();
+      complete();
+    }
+  });
+
+  childProcess.on('error', (err) => {
+    console.log(err);
+    handleFail();
+  });
+}
+
 // Prepends the contents of prefixFile to destinationFile
 function prependFile(prefixFile, destinationFile) {
   if (!existsSync(prefixFile)) {
@@ -278,7 +306,6 @@ function appendFile(f, ftail) {
     console.log('Concatentation of ' + f + ' and ' + ftail + ' unsuccessful');
   });
   ex.run();
-  // }, {async:true});
 }
 
 /* Compiles a file from a list of sources
