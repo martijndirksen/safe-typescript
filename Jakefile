@@ -250,13 +250,15 @@ const libraryTargets = libraryFiles.map(function (f) {
 });
 
 function createChildProcess(cmd, completeFn, errorFn) {
+  console.log(cmd);
   const childProcess = exec(cmd);
 
   let isFailureHandled = false;
-  const handleFail = () => {
+  const handleFail = (err) => {
     if (isFailureHandled) return;
     isFailureHandled = true;
-    errorFn();
+    console.log(err);
+    errorFn(err);
     fail();
   };
 
@@ -270,8 +272,7 @@ function createChildProcess(cmd, completeFn, errorFn) {
   });
 
   childProcess.on('error', (err) => {
-    console.log(err);
-    handleFail();
+    handleFail(err);
   });
 }
 
@@ -293,19 +294,13 @@ let useDebugMode = false;
 
 function appendFile(f, ftail) {
   const cmd = 'cat ' + ftail + ' >> ' + f;
-  console.log(cmd + '\n');
-  const ex = jake.createExec(cmd);
-  ex.addListener('stdout', function (output) {
-    process.stdout.write(output);
-  });
-  ex.addListener('stderr', function (error) {
-    process.stderr.write(error);
-  });
-  ex.addListener('cmdEnd', function () {});
-  ex.addListener('error', function () {
-    console.log('Concatentation of ' + f + ' and ' + ftail + ' unsuccessful');
-  });
-  ex.run();
+  createChildProcess(
+    cmd,
+    () => {},
+    () => {
+      console.log('Concatentation of ' + f + ' and ' + ftail + ' unsuccessful');
+    }
+  );
 }
 
 /* Compiles a file from a list of sources
@@ -341,33 +336,25 @@ function compileFile(
         cmd = cmd + ' -sourcemap -mapRoot file:///' + resolve(dirname(outFile));
       }
 
-      console.log(cmd + '\n');
-      const ex = jake.createExec([cmd]);
-      // Add listeners for output and error
-      ex.addListener('stdout', function (output) {
-        process.stdout.write(output);
-      });
-      ex.addListener('stderr', function (error) {
-        process.stderr.write(error);
-      });
-      ex.addListener('cmdEnd', function () {
-        if (!useDebugMode && prefixes && existsSync(outFile)) {
-          for (const i in prefixes) {
-            prependFile(prefixes[i], outFile);
+      createChildProcess(
+        cmd,
+        () => {
+          if (!useDebugMode && prefixes && existsSync(outFile)) {
+            for (const i in prefixes) {
+              prependFile(prefixes[i], outFile);
+            }
           }
-        }
-        if (!useDebugMode && suffixes && existsSync(outFile)) {
-          for (const i in suffixes) {
-            appendFile(outFile, suffixes[i]);
+          if (!useDebugMode && suffixes && existsSync(outFile)) {
+            for (const i in suffixes) {
+              appendFile(outFile, suffixes[i]);
+            }
           }
+        },
+        () => {
+          unlinkSync(outFile);
+          console.log('Compilation of ' + outFile + ' unsuccessful');
         }
-        complete();
-      });
-      ex.addListener('error', function () {
-        unlinkSync(outFile);
-        console.log('Compilation of ' + outFile + ' unsuccessful');
-      });
-      ex.run();
+      );
     },
     { async: true }
   );
@@ -547,19 +534,7 @@ task(
       ? tests.split(',').join(' ')
       : [].slice.call(arguments).join(' ') || '';
     const cmd = host + ' ' + run + ' ' + tests;
-    console.log(cmd);
-    const ex = jake.createExec([cmd]);
-    // Add listeners for output and error
-    ex.addListener('stdout', function (output) {
-      process.stdout.write(output);
-    });
-    ex.addListener('stderr', function (error) {
-      process.stderr.write(error);
-    });
-    ex.addListener('cmdEnd', function () {
-      complete();
-    });
-    ex.run();
+    createChildProcess(cmd);
   },
   { async: true }
 );
@@ -617,19 +592,7 @@ task(
   function () {
     const host = process.env.host || process.env.TYPESCRIPT_HOST || 'node';
     const cmd = host + ' ' + syntaxGeneratorOutFile;
-    console.log(cmd);
-    const ex = jake.createExec([cmd]);
-    // Add listeners for output and error
-    ex.addListener('stdout', function (output) {
-      process.stdout.write(output);
-    });
-    ex.addListener('stderr', function (error) {
-      process.stderr.write(error);
-    });
-    ex.addListener('cmdEnd', function () {
-      complete();
-    });
-    ex.run();
+    createChildProcess(cmd);
   },
   { async: true }
 );
@@ -641,19 +604,7 @@ task(
   function () {
     const host = process.env.host || process.env.TYPESCRIPT_HOST || 'node';
     const cmd = host + ' ' + fidelityTestsOutFile;
-    console.log(cmd);
-    const ex = jake.createExec([cmd]);
-    // Add listeners for output and error
-    ex.addListener('stdout', function (output) {
-      process.stdout.write(output);
-    });
-    ex.addListener('stderr', function (error) {
-      process.stderr.write(error);
-    });
-    ex.addListener('cmdEnd', function () {
-      complete();
-    });
-    ex.run();
+    createChildProcess(cmd);
   },
   { async: true }
 );
