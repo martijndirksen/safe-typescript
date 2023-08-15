@@ -33,7 +33,8 @@
     "node": ">=0.8.0"
   },
   "devDependencies": {
-    "jake": "latest"
+    "jake": "latest",
+    "prettier": "^3.0.2"
   },
   "dependencies": {
     "weak-map": "~1.0.5"
