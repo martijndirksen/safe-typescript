@@ -1,13 +1,13 @@
 // This file contains the build logic for the public repo
-
-import {
+const {
   existsSync,
   appendFileSync,
   readFileSync,
   renameSync,
   unlinkSync,
-} from 'fs';
-import { join, resolve, dirname } from 'path';
+} = require('fs');
+const { join, resolve, dirname } = require('path');
+const { fail, file, jake, complete, directory, desc, task } = require('jake');
 
 // Variables
 const compilerDirectory = 'src/compiler/';
@@ -261,7 +261,8 @@ function prependFile(prefixFile, destinationFile) {
   renameSync(temp, destinationFile);
 }
 
-const useDebugMode = false;
+let useDebugMode = false;
+
 function appendFile(f, ftail) {
   const cmd = 'cat ' + ftail + ' >> ' + f;
   console.log(cmd + '\n');
@@ -338,38 +339,6 @@ function compileFile(
       ex.addListener('error', function () {
         unlinkSync(outFile);
         console.log('Compilation of ' + outFile + ' unsuccessful');
-      });
-      ex.run();
-    },
-    { async: true }
-  );
-}
-
-function copyFile(srcFile, tgtFile, suffixes) {
-  file(
-    tgtFile,
-    suffixes.push(srcFile),
-    function () {
-      const cmd = 'cp ' + srcFile + ' ' + tgtFile;
-      const ex = jake.createExec([cmd]);
-      // Add listeners for output and error
-      ex.addListener('stdout', function (output) {
-        process.stdout.write(output);
-      });
-      ex.addListener('stderr', function (error) {
-        process.stderr.write(error);
-      });
-      ex.addListener('cmdEnd', function () {
-        if (suffixes && existsSync(tgtFile)) {
-          for (const i in suffixes) {
-            appendFile(tgtFile, suffixes[i]);
-          }
-        }
-        complete();
-      });
-      ex.addListener('error', function () {
-        unlinkSync(tgtFile);
-        console.log('Compilation of ' + tgtFile + ' unsuccessful');
       });
       ex.run();
     },
@@ -464,7 +433,7 @@ task('LKG', libraryTargets, function () {
   for (const i in librarySources) {
     jake.cpR(libraryTargets[i], LKGDirectory);
   }
-  for (i in expectedFiles) {
+  for (const i in expectedFiles) {
     jake.cpR(expectedFiles[i], LKGDirectory);
   }
 });
@@ -545,8 +514,8 @@ task(
     }
 
     jake.mkdirP(localBaseline);
-    host = process.env.host || process.env.TYPESCRIPT_HOST || 'node';
-    tests = process.env.test || process.env.tests;
+    const host = process.env.host || process.env.TYPESCRIPT_HOST || 'node';
+    let tests = process.env.test || process.env.tests;
     tests = tests
       ? tests.split(',').join(' ')
       : [].slice.call(arguments).join(' ') || '';
@@ -619,7 +588,7 @@ task(
   'run-syntax-generator',
   [syntaxGeneratorOutFile],
   function () {
-    host = process.env.host || process.env.TYPESCRIPT_HOST || 'node';
+    const host = process.env.host || process.env.TYPESCRIPT_HOST || 'node';
     const cmd = host + ' ' + syntaxGeneratorOutFile;
     console.log(cmd);
     const ex = jake.createExec([cmd]);
@@ -643,7 +612,7 @@ task(
   'run-fidelity-tests',
   [fidelityTestsOutFile],
   function () {
-    host = process.env.host || process.env.TYPESCRIPT_HOST || 'node';
+    const host = process.env.host || process.env.TYPESCRIPT_HOST || 'node';
     const cmd = host + ' ' + fidelityTestsOutFile;
     console.log(cmd);
     const ex = jake.createExec([cmd]);
