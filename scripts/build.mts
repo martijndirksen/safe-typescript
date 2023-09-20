@@ -29,3 +29,7 @@ async function copyTypings() {
   await createDistDirectory();
   await copyTypings();
 })();
+
+const servicesGlob = 'src/services/**/*.ts';
+
+const compileCmd = `tsc src/services/**/*.ts --target es5 --outfile dist/typescriptServices.js`;

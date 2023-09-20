@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "lib": ["ES5"],
+    "module": "CommonJS",
+    "target": "ES5",
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "NodeNext"
+  },
+  "watchOptions": {
+    "excludeDirectories": ["**/node_modules", "dist/*"]
+  }
+}

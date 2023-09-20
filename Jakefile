@@ -50,8 +50,8 @@ const compilerSources = [
   'syntaxTreeToAstVisitor.ts',
   'types.ts',
   'core/arrayUtilities.ts',
-  'core/bitVector.ts',
   'core/bitMatrix.ts',
+  'core/bitVector.ts',
   'core/constants.ts',
   'core/debug.ts',
   'core/diagnosticCore.ts',
@@ -159,10 +159,10 @@ const servicesSources = [
   'completionHelpers.ts',
   'completionSession.ts',
   'coreServices.ts',
-  'getScriptLexicalStructureWalker.ts',
   'diagnosticServices.ts',
   'es5compat.ts',
   'findReferenceHelpers.ts',
+  'getScriptLexicalStructureWalker.ts',
   'indenter.ts',
   'keywordCompletions.ts',
   'languageService.ts',
@@ -170,6 +170,7 @@ const servicesSources = [
   'pullLanguageService.ts',
   'shims.ts',
   'signatureInfoHelpers.ts',
+  'typescriptServices.ts',
   'formatting/formatter.ts',
   'formatting/formatting.ts',
   'formatting/formattingContext.ts',
@@ -195,7 +196,6 @@ const servicesSources = [
   'formatting/textSnapshotLine.ts',
   'formatting/tokenRange.ts',
   'formatting/tokenSpan.ts',
-  'typescriptServices.ts',
 ].map(function (f) {
   return join(servicesDirectory, f);
 });

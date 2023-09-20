@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "base.tsconfig.json",
+  "include": ["src/services/**/*.ts"],
+  "compilerOptions": {
+    "outFile": "dist/typescript.js"
+  }
+}
