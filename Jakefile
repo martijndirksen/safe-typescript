@@ -264,7 +264,7 @@ function createChildProcess(cmd, completeFn, errorFn) {
 
   childProcess.on('exit', (code) => {
     if (code !== 0) {
-      handleFail();
+      handleFail(`Child process exited with code ${code}`);
     } else {
       completeFn();
       complete();
