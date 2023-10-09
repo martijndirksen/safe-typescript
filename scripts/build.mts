@@ -55,20 +55,60 @@ const ignoredCompilerSources = [
   'src/compiler/typecheck/types.ts',
 ];
 
+const ignoredCompilerTscSources = [
+  'src/compiler/nodeTypes.ts',
+  'src/compiler/walkContext.ts',
+  'src/compiler/core/cancellationToken.ts',
+  'src/compiler/core/cancellationTokenSource.ts',
+  'src/compiler/core/iterator.ts',
+  'src/compiler/symbols/**/*.ts',
+  'src/compiler/syntax/emitter.ts',
+  'src/compiler/syntax/prettyPrinter.ts',
+  'src/compiler/syntax/syntaxGenerator.ts',
+  'src/compiler/typecheck/rt.ts',
+  'src/compiler/typecheck/rtapi.ts',
+  'src/compiler/typecheck/rtnew.ts',
+  'src/compiler/typecheck/rtnewapi.ts',
+  'src/compiler/typecheck/rtweak.ts',
+  'src/compiler/typecheck/types.ts',
+];
+
+const baseCompilerOptions: ts.CompilerOptions = {
+  target: ts.ScriptTarget.ES5,
+  module: ts.ModuleKind.CommonJS,
+  noImplicitAny: true,
+  preserveConstEnums: true,
+  removeComments: true,
+  sourceMap: isWithSourcemaps,
+};
+
 (async () => {
   await cleanDistDirectory();
   await createDistDirectory();
   await copyTypings();
   await buildProgram({
+    globPattern: [compilerGlob],
+    ignore: ignoredCompilerSources,
+    compilerOptions: {
+      ...baseCompilerOptions,
+      outFile: join(distPath, 'typescript.js'),
+    },
+  });
+  addLicenseInfoToFile(join(distPath, 'typescript.js'));
+  await buildProgram({
+    globPattern: [compilerGlob, tscGlob],
+    ignore: ignoredCompilerTscSources,
+    compilerOptions: {
+      ...baseCompilerOptions,
+      outFile: join(distPath, 'tsc.js'),
+    },
+  });
+  addLicenseInfoToFile(join(distPath, 'tsc.js'));
+  await buildProgram({
     globPattern: [compilerGlob, servicesGlob],
     ignore: ignoredCompilerSources,
     compilerOptions: {
-      target: ts.ScriptTarget.ES5,
-      module: ts.ModuleKind.CommonJS,
-      noImplicitAny: true,
-      preserveConstEnums: true,
-      removeComments: true,
-      sourceMap: isWithSourcemaps,
+      ...baseCompilerOptions,
       outFile: join(distPath, 'typescriptServices.js'),
     },
   });
