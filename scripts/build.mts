@@ -1,11 +1,13 @@
-import { mkdir, rmdir, copyFile } from 'node:fs/promises';
-import { join, resolve, dirname } from 'node:path';
+import { mkdir, rmdir, copyFile, readFile, writeFile } from 'node:fs/promises';
+import { EOL } from 'node:os';
+import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { glob, globSync, globStream, globStreamSync, Glob } from 'glob';
+import { Glob } from 'glob';
 import { rimraf } from 'rimraf';
 import ts from 'typescript';
 
 const rootPath = dirname(join(fileURLToPath(import.meta.url), '..'));
+const isWithSourcemaps = false;
 
 const distPath = join(rootPath, 'dist');
 const srcPath = join(rootPath, 'src');
@@ -24,18 +26,9 @@ async function copyTypings() {
     await copyFile(file.fullpath(), join(distPath, file.name));
   }
 }
-
-(async () => {
-  await cleanDistDirectory();
-  await createDistDirectory();
-  await copyTypings();
-  await buildProgram(['sample.ts'], {
-    target: ts.ScriptTarget.ES5,
-    outFile: 'dist/sample.js',
-  });
-})();
-
+const compilerGlob = `src/compiler/**/*.ts`;
 const servicesGlob = 'src/services/**/*.ts';
+const tscGlob = 'src/compiler/{io,optionsParser,tsc}.ts';
 
 //const compileCmd = `tsc src/services/**/*.ts --target es5 --outfile dist/typescriptServices.js`;
 
@@ -62,11 +55,39 @@ const ignoredCompilerSources = [
   'src/compiler/typecheck/types.ts',
 ];
 
-const compilerGlob = `src/compiler/**/*.ts`;
-const tscGlob = 'src/compiler/{io,optionsParser,tsc}.ts';
+(async () => {
+  await cleanDistDirectory();
+  await createDistDirectory();
+  await copyTypings();
+  await buildProgram({
+    globPattern: [compilerGlob, servicesGlob],
+    ignore: ignoredCompilerSources,
+    compilerOptions: {
+      target: ts.ScriptTarget.ES5,
+      module: ts.ModuleKind.CommonJS,
+      noImplicitAny: true,
+      preserveConstEnums: true,
+      removeComments: true,
+      sourceMap: isWithSourcemaps,
+      outFile: join(distPath, 'typescriptServices.js'),
+    },
+  });
+  addLicenseInfoToFile(join(distPath, 'typescriptServices.js'));
+})();
 
-async function buildProgram(files: string[], options: ts.CompilerOptions) {
-  let program = ts.createProgram(files, options);
+async function buildProgram({
+  globPattern,
+  ignore,
+  compilerOptions,
+}: {
+  globPattern: string | string[];
+  ignore?: string[];
+  compilerOptions: ts.CompilerOptions;
+}) {
+  const glob = new Glob(globPattern, { withFileTypes: false, ignore });
+  const files = await glob.walk();
+
+  let program = ts.createProgram(files, compilerOptions);
   let emitResult = program.emit();
 
   let allDiagnostics = ts
@@ -81,19 +102,36 @@ async function buildProgram(files: string[], options: ts.CompilerOptions) {
       );
       let message = ts.flattenDiagnosticMessageText(
         diagnostic.messageText,
-        '\n'
+        EOL
       );
       console.log(
         `${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`
       );
     } else {
-      console.log(
-        ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')
-      );
+      console.log(ts.flattenDiagnosticMessageText(diagnostic.messageText, EOL));
     }
   });
 
-  let exitCode = emitResult.emitSkipped ? 1 : 0;
-  console.log(`Process exiting with code '${exitCode}'.`);
-  process.exit(exitCode);
+  if (emitResult.emitSkipped) {
+    throw new Error('Build failed');
+  }
+}
+
+async function addLicenseInfoToFile(path: string) {
+  const copyrightNotice = await readFile(
+    join(rootPath, 'CopyrightNotice.txt'),
+    {
+      encoding: 'utf8',
+    }
+  );
+  const thirdParty = await readFile(
+    join(rootPath, 'ThirdPartyNoticeText.txt'),
+    {
+      encoding: 'utf8',
+    }
+  );
+
+  const file = await readFile(path, { encoding: 'utf8' });
+
+  await writeFile(path, copyrightNotice + EOL + thirdParty + EOL + file);
 }
