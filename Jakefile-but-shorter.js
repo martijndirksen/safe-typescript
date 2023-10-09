@@ -378,7 +378,6 @@ task('local-debug', ['setDebugMode', 'local']);
 // Set the default task to "local"
 task('default', ['local']);
 
-
 // Syntax Generator
 const syntaxGeneratorOutFile = compilerDirectory + 'syntax/SyntaxGenerator.js';
 const syntaxGeneratorInFile = compilerDirectory + 'syntax/SyntaxGenerator.ts';
@@ -397,6 +396,7 @@ compileFile(
   /*useBuiltCompiler:*/ false
 );
 
+// Not sure if we need this
 desc('Builds and runs the syntax generator');
 task(
   'run-syntax-generator',

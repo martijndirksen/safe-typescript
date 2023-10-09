@@ -1,4 +1,11 @@
 node_modules/*
+src/*
+typings/*
+bin/*
+built/*
+dist/*
+doc/*
+samples/*
 package-lock.json
 package.json
 README.md
