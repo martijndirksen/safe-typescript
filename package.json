@@ -45,7 +45,8 @@
     "jake": "^10.8.7",
     "prettier": "^3.0.2",
     "rimraf": "^5.0.1",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "weak-map": "~1.0.5"
