@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { Glob } from 'glob';
 import { rimraf } from 'rimraf';
 import ts from 'typescript';
+import { concatFiles } from './util/concat';
 
 const rootPath = dirname(join(fileURLToPath(import.meta.url), '..'));
 const isWithSourcemaps = false;
@@ -29,8 +30,6 @@ const compilerGlob = `src/compiler/**/*.ts`;
 const servicesGlob = 'src/services/**/*.ts';
 const tscGlob = 'src/compiler/{io,optionsParser,tsc}.ts';
 const rtGlob = 'src/runtime/rt.ts';
-
-//const compileCmd = `tsc src/services/**/*.ts --target es5 --outfile dist/typescriptServices.js`;
 
 // There are quite some files which need to be ignored, so we won't try to put this all in a single glob
 // but rather just let the glob match them and then skip them in the build.
