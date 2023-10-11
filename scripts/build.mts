@@ -125,6 +125,7 @@ const baseCompilerOptions: ts.CompilerOptions = {
     globPattern: [rtGlob],
     compilerOptions: {
       ...baseCompilerOptions,
+      declaration: true,
       outDir: join(distPath, 'lib'),
     },
   });
