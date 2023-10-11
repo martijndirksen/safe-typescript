@@ -1,6 +1,11 @@
 // Author: Martijn Dirksen, adapted from existing code written by N.Swamy, A.Rastogi (2014)
 // This file can be consumed by emitted code of the Safe TypeScript compiler under --safe operation. It uses more modern export/module syntax than the rest of the compiler.
 
+// Changes:
+// - Added CheckedArray interface to RT file, was previously ambient type declaration
+// - Fixed multiple type errors related to the misuse of undefined
+// - Added a few more checks to detect undefined in RT procedures
+
 interface CheckedArray<T> {
   toString(): string;
   toLocaleString(): string;

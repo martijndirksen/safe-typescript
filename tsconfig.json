@@ -1,6 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["scripts/**/*.ts"],
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "lib": ["es2021"],
     "module": "nodenext",
