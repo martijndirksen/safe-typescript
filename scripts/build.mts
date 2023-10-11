@@ -92,51 +92,50 @@ const baseCompilerOptions: ts.CompilerOptions = {
 };
 
 (async () => {
-  // await cleanDistDirectory();
-  // await createDistDirectory();
-  // await copyTypings();
-  // await buildProgram({
-  //   globPattern: [compilerGlob],
-  //   ignore: ignoredCompilerSources,
-  //   compilerOptions: {
-  //     ...baseCompilerOptions,
-  //     outFile: join(distPath, 'typescript.js'),
-  //   },
-  // });
-  // addLicenseInfoToFile(join(distPath, 'typescript.js'));
-  // await buildProgram({
-  //   globPattern: [compilerGlob, tscGlob],
-  //   ignore: ignoredCompilerTscSources,
-  //   compilerOptions: {
-  //     ...baseCompilerOptions,
-  //     outFile: join(distPath, 'tsc.js'),
-  //   },
-  // });
-  // addLicenseInfoToFile(join(distPath, 'tsc.js'));
-  // await buildProgram({
-  //   globPattern: [compilerGlob, servicesGlob],
-  //   ignore: ignoredCompilerSources,
-  //   compilerOptions: {
-  //     ...baseCompilerOptions,
-  //     outFile: join(distPath, 'typescriptServices.js'),
-  //   },
-  // });
-  // addLicenseInfoToFile(join(distPath, 'typescriptServices.js'));
-  // await buildProgram({
-  //   globPattern: [compilerGlob],
-  //   ignore: ignoredSafeTsSources,
-  //   compilerOptions: {
-  //     ...baseCompilerOptions,
-  //     outFile: join(distPath, 'tsc.safe.js'),
-  //   },
-  // });
-  // addLicenseInfoToFile(join(distPath, 'tsc.safe.js'));
+  await cleanDistDirectory();
+  await createDistDirectory();
+  await copyTypings();
+  await buildProgram({
+    globPattern: [compilerGlob],
+    ignore: ignoredCompilerSources,
+    compilerOptions: {
+      ...baseCompilerOptions,
+      outFile: join(distPath, 'typescript.js'),
+    },
+  });
+  addLicenseInfoToFile(join(distPath, 'typescript.js'));
+  await buildProgram({
+    globPattern: [compilerGlob, tscGlob],
+    ignore: ignoredCompilerTscSources,
+    compilerOptions: {
+      ...baseCompilerOptions,
+      outFile: join(distPath, 'tsc.js'),
+    },
+  });
+  addLicenseInfoToFile(join(distPath, 'tsc.js'));
+  await buildProgram({
+    globPattern: [compilerGlob, servicesGlob],
+    ignore: ignoredCompilerSources,
+    compilerOptions: {
+      ...baseCompilerOptions,
+      outFile: join(distPath, 'typescriptServices.js'),
+    },
+  });
+  addLicenseInfoToFile(join(distPath, 'typescriptServices.js'));
+  await buildProgram({
+    globPattern: [compilerGlob],
+    ignore: ignoredSafeTsSources,
+    compilerOptions: {
+      ...baseCompilerOptions,
+      outFile: join(distPath, 'tsc.safe.js'),
+    },
+  });
+  addLicenseInfoToFile(join(distPath, 'tsc.safe.js'));
   await buildProgram({
     globPattern: [rtGlob],
     compilerOptions: {
       ...baseCompilerOptions,
       outDir: join(distPath, 'lib'),
-      //outFile: join(distPath, 'lib', 'rt.js'),
     },
   });
 })();
@@ -153,20 +152,20 @@ async function buildProgram({
   const glob = new Glob(globPattern, { withFileTypes: false, ignore });
   const files = await glob.walk();
 
-  let program = ts.createProgram(files, compilerOptions);
-  let emitResult = program.emit();
+  const program = ts.createProgram(files, compilerOptions);
+  const emitResult = program.emit();
 
-  let allDiagnostics = ts
+  const allDiagnostics = ts
     .getPreEmitDiagnostics(program)
     .concat(emitResult.diagnostics);
 
   allDiagnostics.forEach((diagnostic) => {
     if (diagnostic.file) {
-      let { line, character } = ts.getLineAndCharacterOfPosition(
+      const { line, character } = ts.getLineAndCharacterOfPosition(
         diagnostic.file,
         diagnostic.start!
       );
-      let message = ts.flattenDiagnosticMessageText(
+      const message = ts.flattenDiagnosticMessageText(
         diagnostic.messageText,
         EOL
       );
