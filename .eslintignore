@@ -9,3 +9,5 @@ samples/*
 package-lock.json
 package.json
 README.md
+sample.js
+local/*
