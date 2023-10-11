@@ -26,7 +26,8 @@
   },
   "scripts": {
     "jake": "jake",
-    "build": "ts-node --esm scripts/build.mts"
+    "build": "ts-node --esm scripts/build.mts",
+    "tsc": "tsc"
   },
   "preferGlobal": true,
   "main": "./bin/typescript.js",

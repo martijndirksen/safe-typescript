@@ -950,6 +950,7 @@ module RT {
                 }
                 return v; // setTag(T, v, _, c)
             case TT.ANY:
+                // @ts-expect-error MD typecheck error
                 if (from.tt === TT.JUST_TYPE) {
                     throw new Error("checkAndTag to any undotted from check failure: " + prettyprint_t(from)); // setTag(T, v, from, any);
                 }
@@ -1930,12 +1931,16 @@ module RT {
 
         switch (op) {
             case "PreIncrementExpression":
+                // @ts-expect-error MD typecheck error
                 return ++o[fname];
             case "PreDecrementExpression":
+                // @ts-expect-error MD typecheck error
                 return --o[fname];
             case "PostIncrementExpression":
+                // @ts-expect-error MD typecheck error
                 return o[fname]++;
             case "PostDecrementExpression":
+                // @ts-expect-error MD typecheck error
                 return o[fname]--;
             default:
                 throw new Error("Impossible");
@@ -2019,24 +2024,34 @@ module RT {
 
         switch (op) {
             case "SubtractAssignmentExpression":
+                // @ts-expect-error MD typecheck error
                 return (o[fname] -= v);
             case "MultiplyAssignmentExpression":
+                // @ts-expect-error MD typecheck error
                 return (o[fname] *= v);
             case "DivideAssignmentExpression":
+                // @ts-expect-error MD typecheck error
                 return (o[fname] /= v);
             case "ModuloAssignmentExpression":
+                // @ts-expect-error MD typecheck error
                 return (o[fname] %= v);
             case "AndAssignmentExpression":
+                // @ts-expect-error MD typecheck error
                 return (o[fname] &= v);
             case "ExclusiveOrAssignmentExpression":
+                // @ts-expect-error MD typecheck error
                 return (o[fname] ^= v);
             case "OrAssignmentExpression":
+                // @ts-expect-error MD typecheck error
                 return (o[fname] |= v);
             case "LeftShiftAssignmentExpression":
+                // @ts-expect-error MD typecheck error
                 return (o[fname] <<= v);
             case "SignedRightShiftAssignmentExpression":
+                // @ts-expect-error MD typecheck error
                 return (o[fname] >>= v);
             case "UnsignedRightShiftAssignmentExpression":
+                // @ts-expect-error MD typecheck error
                 return (o[fname] >>>= v);
             default:
                 throw new Error("assignmentExpression: unidentified op: " + op);

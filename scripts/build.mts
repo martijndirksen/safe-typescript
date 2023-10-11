@@ -73,6 +73,15 @@ const ignoredCompilerTscSources = [
   'src/compiler/typecheck/types.ts',
 ];
 
+const ignoredSafeTsSources = [
+  'src/compiler/nodeTypes.ts',
+  'src/compiler/walkContext.ts',
+  'src/compiler/core/cancellationToken.ts',
+  'src/compiler/core/cancellationTokenSource.ts',
+  'src/compiler/core/iterator.ts',
+  'src/compiler/symbols/**/*.ts',
+];
+
 const baseCompilerOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ES5,
   module: ts.ModuleKind.CommonJS,
@@ -113,6 +122,15 @@ const baseCompilerOptions: ts.CompilerOptions = {
     },
   });
   addLicenseInfoToFile(join(distPath, 'typescriptServices.js'));
+  await buildProgram({
+    globPattern: [compilerGlob],
+    ignore: ignoredSafeTsSources,
+    compilerOptions: {
+      ...baseCompilerOptions,
+      outFile: join(distPath, 'tsc.safe.js'),
+    },
+  });
+  addLicenseInfoToFile(join(distPath, 'tsc.safe.js'));
 })();
 
 async function buildProgram({

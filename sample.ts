@@ -1,5 +1,5 @@
-function add(a: number, b: number): number {
+function add(a: number, b): number {
   return a + b;
 }
 
-add(5, 10);
+add(5, 8);
