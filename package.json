@@ -25,9 +25,9 @@
     "url": "https://git01.codeplex.com/typescript"
   },
   "scripts": {
-    "jake": "jake",
     "build": "ts-node --esm scripts/build.mts",
-    "test": "ts-node --esm scripts/build-samples.mts"
+    "test": "ts-node --esm scripts/build-samples.mts",
+    "tsc": "tsc"
   },
   "preferGlobal": true,
   "main": "./dist/typescript.js",

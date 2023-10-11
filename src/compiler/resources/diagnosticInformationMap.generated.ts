@@ -1686,255 +1686,255 @@ module TypeScript {
             "code": 7016,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Expected return type {0}; but computed return type {1}": {
+        "Safe TS: Expected return type {0}; but computed return type {1}": {
             "code": 7023,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Expected object of type {0}; but got object of type {1}": {
+        "Safe TS: Expected object of type {0}; but got object of type {1}": {
             "code": 7024,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Projecting field '{0}' from a value of type {1} is not safe": {
+        "Safe TS: Projecting field '{0}' from a value of type {1} is not safe": {
             "code": 7025,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Projecting a field from a value of non-record type is not safe; got type '{0}'": {
+        "Safe TS: Projecting a field from a value of non-record type is not safe; got type '{0}'": {
             "code": 7026,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Dynamic field access from a non-any-typed object or with a non-any-typed key is not allowed; type of object is {0}; type of key is {1}": {
+        "Safe TS: Dynamic field access from a non-any-typed object or with a non-any-typed key is not allowed; type of object is {0}; type of key is {1}": {
             "code": 7027,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: All arguments in a dynamically-typed call must have type 'any'; some argument here includes a type 'un'": {
+        "Safe TS: All arguments in a dynamically-typed call must have type 'any'; some argument here includes a type 'un'": {
             "code": 7028,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Function expected {0} arguments but is provided {1}": {
+        "Safe TS: Function expected {0} arguments but is provided {1}": {
             "code": 7029,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Function expected an argument of type {0} but given an argument of type {1}": {
+        "Safe TS: Function expected an argument of type {0} but given an argument of type {1}": {
             "code": 7030,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Cannot apply a non-function of type {0}": {
+        "Safe TS: Cannot apply a non-function of type {0}": {
             "code": 7031,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: typeof is not safe on an un-typed value": {
+        "Safe TS: typeof is not safe on an un-typed value": {
             "code": 7031,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: '{0}' is not in the current scope": {
+        "Safe TS: '{0}' is not in the current scope": {
             "code": 7032,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Variable '{0}' of type '{1}' cannot be assigned a value of type '{2}'": {
+        "Safe TS: Variable '{0}' of type '{1}' cannot be assigned a value of type '{2}'": {
             "code": 7034,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Unsafe assignment; field '{0}' does not exists in a value of type {1}": {
+        "Safe TS: Unsafe assignment; field '{0}' does not exists in a value of type {1}": {
             "code": 7035,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Assigning to a field '{0}' of a non-record value of type '{1}'": {
+        "Safe TS: Assigning to a field '{0}' of a non-record value of type '{1}'": {
             "code": 7036,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: All three objects in a dynamic assignment form (o[f]=v) must have type any;got {0}, {1} and {2}": {
+        "Safe TS: All three objects in a dynamic assignment form (o[f]=v) must have type any;got {0}, {1} and {2}": {
             "code": 7037,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Multiple declarations of the same variable name within the same scope are not allowed; '{0}' is declared more than once, shadowing a declaration at {1}": {
+        "Safe TS: Multiple declarations of the same variable name within the same scope are not allowed; '{0}' is declared more than once, shadowing a declaration at {1}": {
             "code": 7038,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Expected array element of type {0}; got {1}": {
+        "Safe TS: Expected array element of type {0}; got {1}": {
             "code": 7039,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Unary operator expects an un-free argument; got {0}": {
+        "Safe TS: Unary operator expects an un-free argument; got {0}": {
             "code": 7040,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Binary operator expects both arguments to have type any; got {0} and {1}": {
+        "Safe TS: Binary operator expects both arguments to have type any; got {0} and {1}": {
             "code": 7041,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Conditional guard expects type any; got {0}": {
+        "Safe TS: Conditional guard expects type any; got {0}": {
             "code": 7042,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: This branch was expected to have type {0}; got {1}": {
+        "Safe TS: This branch was expected to have type {0}; got {1}": {
             "code": 7043,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: For-in loops are only permitted on any-typed objects; got {0}": {
+        "Safe TS: For-in loops are only permitted on any-typed objects; got {0}": {
             "code": 7044,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Invalid iteration variable in for-in loop; {0}": {
+        "Safe TS: Invalid iteration variable in for-in loop; {0}": {
             "code": 7045,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Exception value must have type any; got {0}": {
+        "Safe TS: Exception value must have type any; got {0}": {
             "code": 7046,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Switching on non-primitive values is not supported; got a value of type {0}": {
+        "Safe TS: Switching on non-primitive values is not supported; got a value of type {0}": {
             "code": 7047,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Type of the switch case does not match the type of the guard; expected {0} got {1}": {
+        "Safe TS: Type of the switch case does not match the type of the guard; expected {0} got {1}": {
             "code": 7048,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Increment/decrement operators are only available on the number type; got {0}": {
+        "Safe TS: Increment/decrement operators are only available on the number type; got {0}": {
             "code": 7049,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Invalid LHS for increment/decrement operator": {
+        "Safe TS: Invalid LHS for increment/decrement operator": {
             "code": 7050,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Missing a 'return' statement on some code paths": {
+        "Safe TS: Missing a 'return' statement on some code paths": {
             "code": 7051,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Variables of type {0} must be initialized": {
+        "Safe TS: Variables of type {0} must be initialized": {
             "code": 7052,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Invalid extends clause; {0}": {
+        "Safe TS: Invalid extends clause; {0}": {
             "code": 7053,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: 'new' expression expects a class-typed value as the target; got {0}": {
+        "Safe TS: 'new' expression expects a class-typed value as the target; got {0}": {
             "code": 7054,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: 'arguments' is a reserved name in JavaScript; use another name": {
+        "Safe TS: 'arguments' is a reserved name in JavaScript; use another name": {
             "code": 7055,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: 'this' is not in scope": {
+        "Safe TS: 'this' is not in scope": {
             "code": 7056,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: 'super' is not in scope": {
+        "Safe TS: 'super' is not in scope": {
             "code": 7057,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: member '{0}' may not be initialized": {
+        "Safe TS: member '{0}' may not be initialized": {
             "code": 7058,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Field '{0}' of type '{1}' cannot be assigned a value of type '{2}'": {
+        "Safe TS: Field '{0}' of type '{1}' cannot be assigned a value of type '{2}'": {
             "code": 7059,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Field '{0}' is immutable": {
+        "Safe TS: Field '{0}' is immutable": {
             "code": 7060,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Implicit conversion from 'any' to '{0}' was applied": {
+        "Safe TS: Implicit conversion from 'any' to '{0}' was applied": {
             "code": 7061,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Type of LHS ({0}) is not compatible with type of RHS ({1})": {
+        "Safe TS: Type of LHS ({0}) is not compatible with type of RHS ({1})": {
             "code": 7062,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Assignment with an operator expects both operands to have undotted type; got {0} and {1}": {
+        "Safe TS: Assignment with an operator expects both operands to have undotted type; got {0} and {1}": {
             "code": 7063,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: {0} is a reserved name": {
+        "Safe TS: {0} is a reserved name": {
             "code": 7064,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Assignment with addition requires number or string; got {0}": {
+        "Safe TS: Assignment with addition requires number or string; got {0}": {
             "code": 7065,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Inferred type '{0}' is incompatible with the soundly computed type '{1}'": {
+        "Safe TS: Inferred type '{0}' is incompatible with the soundly computed type '{1}'": {
             "code": 7065,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Interface '{0}' may be declared more than once": {
+        "Safe TS: Interface '{0}' may be declared more than once": {
             "code": 7066,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Generic types are as yet unsupported; {0} is generic": {
+        "Safe TS: Generic types are as yet unsupported; {0} is generic": {
             "code": 7067,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Does not yet support this feature: {0}": {
+        "Safe TS: Does not yet support this feature: {0}": {
             "code": 7068,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Required argument '{0}:{1}' is missing": {
+        "Safe TS: Required argument '{0}:{1}' is missing": {
             "code": 7069,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Module name {0} was previously used for a non-module": {
+        "Safe TS: Module name {0} was previously used for a non-module": {
             "code": 7070,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Module {0} was previously declared to include a {1} field (at location {2})": {
+        "Safe TS: Module {0} was previously declared to include a {1} field (at location {2})": {
             "code": 7071,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Interface {0} was previously declared to include a {1} field": {
+        "Safe TS: Interface {0} was previously declared to include a {1} field": {
             "code": 7072,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Delete operator expects an 'any'-typed argument; got {0}": {
+        "Safe TS: Delete operator expects an 'any'-typed argument; got {0}": {
             "code": 7073,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Delete operator expects a member- or element-access expression": {
+        "Safe TS: Delete operator expects a member- or element-access expression": {
             "code": 7074,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Unexpected property assignment in an object literal: {0}": {
+        "Safe TS: Unexpected property assignment in an object literal: {0}": {
             "code": 7075,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Index map expected a key of type '{0}'; got '{1}'": {
+        "Safe TS: Index map expected a key of type '{0}'; got '{1}'": {
             "code": 7076,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Interface declaration '{0}' has type '{1}' which is inconsistent with '{2}'": {
+        "Safe TS: Interface declaration '{0}' has type '{1}' which is inconsistent with '{2}'": {
             "code": 7077,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Unexpected type arguments to a mono-type: {0} (Selected overload #{1} but given type arguments {2})": {
+        "Safe TS: Unexpected type arguments to a mono-type: {0} (Selected overload #{1} but given type arguments {2})": {
             "code": 7078,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Unexpected class element: {0}": {
+        "Safe TS: Unexpected class element: {0}": {
             "code": 7079,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Index map expected an element of type '{0}'; got '{1}'": {
+        "Safe TS: Index map expected an element of type '{0}'; got '{1}'": {
             "code": 7080,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Initializer may rely on uninitialized top-level variables (function invocation may not be safe for top-level initializers)": {
+        "Safe TS: Initializer may rely on uninitialized top-level variables (function invocation may not be safe for top-level initializers)": {
             "code": 7081,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Unsafe circular dependence on variable '{0}' defined at '{1}'": {
+        "Safe TS: Unsafe circular dependence on variable '{0}' defined at '{1}'": {
             "code": 7082,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Could not infer type arguments; defaulting to 'any'": {
+        "Safe TS: Could not infer type arguments; defaulting to 'any'": {
             "code": 7083,
             "category": DiagnosticCategory.Warning
         },
-        "Safs TS: Assignment to a '{0}' is not allowed; must be either an identifier, member access or element access expression": {
+        "Safe TS: Assignment to a '{0}' is not allowed; must be either an identifier, member access or element access expression": {
             "code": 7084,
             "category": DiagnosticCategory.Error
         },
@@ -1942,11 +1942,11 @@ module TypeScript {
             "code": 7085,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Array index not a number; got {0}": {
+        "Safe TS: Array index not a number; got {0}": {
             "code": 7086,
             "category": DiagnosticCategory.Error
         },
-        "Safs TS: Implicit conversion from '{0}' to '{1}' was applied": {
+        "Safe TS: Implicit conversion from '{0}' to '{1}' was applied": {
             "code": 7087,
             "category": DiagnosticCategory.Warning
         },

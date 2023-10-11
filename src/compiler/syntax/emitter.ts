@@ -525,18 +525,19 @@ module TypeScript.Emitter1 {
                                   .withTrailingTrivia(node.trailingTrivia())
         }
 
+        // MD: renamed static to isStatic to avoid conflict with static keyword
         private generatePropertyAssignment(classDeclaration: ClassDeclarationSyntax,
-                                           static: boolean,
+                                           isStatic: boolean,
                                            memberDeclaration: MemberVariableDeclarationSyntax): ExpressionStatementSyntax {
             var isStatic = this.containsToken(memberDeclaration.modifiers, SyntaxKind.StaticKeyword);
             var declarator = memberDeclaration.variableDeclarator;
-            if (static !== isStatic || declarator.equalsValueClause === null) {
+            if (isStatic !== isStatic || declarator.equalsValueClause === null) {
                 return null;
             }
 
             // this.foo = expr;
             var receiver = MemberAccessExpressionSyntax.create1(
-                static ? <IExpressionSyntax>this.withNoTrivia(classDeclaration.identifier)
+                isStatic ? <IExpressionSyntax>this.withNoTrivia(classDeclaration.identifier)
                        : Syntax.token(SyntaxKind.ThisKeyword),
                 this.withNoTrivia(declarator.propertyName)).withTrailingTrivia(Syntax.spaceTriviaList);
 
@@ -548,8 +549,9 @@ module TypeScript.Emitter1 {
                         .withLeadingTrivia(memberDeclaration.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
+        // MD: renamed static to isStatic to avoid conflict with static keyword
         private generatePropertyAssignments(classDeclaration: ClassDeclarationSyntax,
-                                            static: boolean): ExpressionStatementSyntax[] {
+                                            isStatic: boolean): ExpressionStatementSyntax[] {
             var result: ExpressionStatementSyntax[] = [];
 
             // TODO: handle alignment here.
@@ -558,7 +560,7 @@ module TypeScript.Emitter1 {
 
                 if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
                     var statement = this.generatePropertyAssignment(
-                        classDeclaration, static, <MemberVariableDeclarationSyntax>classElement);
+                        classDeclaration, isStatic, <MemberVariableDeclarationSyntax>classElement);
                     if (statement !== null) {
                         result.push(statement);
                     }
@@ -582,7 +584,7 @@ module TypeScript.Emitter1 {
                                 Syntax.separatedList([
                                     Syntax.token(SyntaxKind.ThisKeyword),
                                     Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
-                                    Syntax.identifierName("arguments")])))
+                                    Syntax.identifierName("args")])))
                     ).withLeadingTrivia(this.indentationTrivia(statementIndentationColumn))
                      .withTrailingTrivia(this.newLine));
             }
@@ -770,7 +772,8 @@ module TypeScript.Emitter1 {
                 }
             }
 
-            var arguments = [
+            // MD: Renamed from arguments to argumentList to avoid conflict with arguments keyword
+            var argumentList = [
                 <any>MemberAccessExpressionSyntax.create1(
                     this.withNoTrivia(classDeclaration.identifier), Syntax.identifierName("prototype")),
                 Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
@@ -803,7 +806,7 @@ module TypeScript.Emitter1 {
                 Syntax.token(SyntaxKind.ColonToken).withTrailingTrivia(this.space),
                 Syntax.trueExpression()).withLeadingTrivia(propertyTrivia).withTrailingTrivia(this.newLine));
 
-            arguments.push(this.factory.objectLiteralExpression(
+            argumentList.push(this.factory.objectLiteralExpression(
                 Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
                 Syntax.separatedList(propertyAssignments),
                 Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(accessorTrivia)));
@@ -811,7 +814,7 @@ module TypeScript.Emitter1 {
             return ExpressionStatementSyntax.create1(
                 this.factory.invocationExpression(
                     MemberAccessExpressionSyntax.create1(Syntax.identifierName("Object"), Syntax.identifierName("defineProperty")),
-                    ArgumentListSyntax.create1().withArguments(Syntax.separatedList(arguments))))
+                    ArgumentListSyntax.create1().withArguments(Syntax.separatedList(argumentList))))
                 .withLeadingTrivia(memberAccessor.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
@@ -1082,31 +1085,33 @@ module TypeScript.Emitter1 {
 
             var expression = MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("call"));
 
-            var arguments = result.argumentList.arguments.toArray();
-            if (arguments.length > 0) {
-                arguments.unshift(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
+            // MD: Renamed from arguments to argumentList to avoid conflict with arguments keyword
+            var argumentList = result.argumentList.arguments.toArray();
+            if (argumentList.length > 0) {
+                argumentList.unshift(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
             }
 
-            arguments.unshift(Syntax.token(SyntaxKind.ThisKeyword));
+            argumentList.unshift(Syntax.token(SyntaxKind.ThisKeyword));
 
             return result.withExpression(expression)
-                         .withArgumentList(result.argumentList.withArguments(Syntax.separatedList(arguments)))
+                         .withArgumentList(result.argumentList.withArguments(Syntax.separatedList(argumentList)))
                          .withLeadingTrivia(result.leadingTrivia());
         }
 
         private convertSuperMemberAccessInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
             var result: InvocationExpressionSyntax = super.visitInvocationExpression(node);
 
-            var arguments = result.argumentList.arguments.toArray();
-            if (arguments.length > 0) {
-                arguments.unshift(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
+            // MD: Renamed from arguments to argumentList to avoid conflict with arguments keyword
+            var argumentList = result.argumentList.arguments.toArray();
+            if (argumentList.length > 0) {
+                argumentList.unshift(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
             }
 
-            arguments.unshift(Syntax.token(SyntaxKind.ThisKeyword));
+            argumentList.unshift(Syntax.token(SyntaxKind.ThisKeyword));
 
             var expression = MemberAccessExpressionSyntax.create1(result.expression, Syntax.identifierName("call"));
             return result.withExpression(expression)
-                         .withArgumentList(result.argumentList.withArguments(Syntax.separatedList(arguments)));
+                         .withArgumentList(result.argumentList.withArguments(Syntax.separatedList(argumentList)));
         }
 
         public visitInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {

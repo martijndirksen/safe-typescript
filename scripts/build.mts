@@ -1,11 +1,11 @@
-import { mkdir, copyFile, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, copyFile } from 'node:fs/promises';
 import { EOL } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Glob } from 'glob';
 import { rimraf } from 'rimraf';
 import ts from 'typescript';
-import { concatFiles } from './util/concat';
+import { concatFiles } from './util/concat.mjs';
 
 const rootPath = dirname(join(fileURLToPath(import.meta.url), '..'));
 const isWithSourcemaps = false;
@@ -122,6 +122,13 @@ const baseCompilerOptions: ts.CompilerOptions = {
   });
   addLicenseInfoToFile(join(distPath, 'typescriptServices.js'));
   await buildProgram({
+    globPattern: [rtGlob],
+    compilerOptions: {
+      ...baseCompilerOptions,
+      outDir: join(distPath, 'lib'),
+    },
+  });
+  await buildProgram({
     globPattern: [compilerGlob],
     ignore: ignoredSafeTsSources,
     compilerOptions: {
@@ -129,14 +136,13 @@ const baseCompilerOptions: ts.CompilerOptions = {
       outFile: join(distPath, 'tsc.safe.js'),
     },
   });
-  addLicenseInfoToFile(join(distPath, 'tsc.safe.js'));
-  await buildProgram({
-    globPattern: [rtGlob],
-    compilerOptions: {
-      ...baseCompilerOptions,
-      outDir: join(distPath, 'lib'),
-    },
-  });
+  concatFiles(
+    join(distPath, 'tsc.safe.js'),
+    join(rootPath, 'CopyrightNotice.txt'),
+    join(rootPath, 'ThirdPartyNoticeText.txt'),
+    join(distPath, 'lib', 'rt.js'),
+    join(distPath, 'tsc.safe.js')
+  );
 })();
 
 async function buildProgram({
@@ -182,20 +188,10 @@ async function buildProgram({
 }
 
 async function addLicenseInfoToFile(path: string) {
-  const copyrightNotice = await readFile(
+  return concatFiles(
+    path,
     join(rootPath, 'CopyrightNotice.txt'),
-    {
-      encoding: 'utf8',
-    }
-  );
-  const thirdParty = await readFile(
     join(rootPath, 'ThirdPartyNoticeText.txt'),
-    {
-      encoding: 'utf8',
-    }
+    path
   );
-
-  const file = await readFile(path, { encoding: 'utf8' });
-
-  await writeFile(path, copyrightNotice + EOL + thirdParty + EOL + file);
 }
