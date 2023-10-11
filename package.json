@@ -26,7 +26,8 @@
   },
   "scripts": {
     "build": "ts-node --esm scripts/build.mts",
-    "test": "ts-node --esm scripts/build-samples.mts",
+    "test:build": "ts-node --esm scripts/build-samples.mts && vitest",
+    "test:watch": "vitest",
     "tsc": "tsc"
   },
   "preferGlobal": true,

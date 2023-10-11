@@ -10,3 +10,12 @@ export async function concatFiles(outPath: string, ...paths: string[]) {
 
   await writeFile(outPath, files);
 }
+
+export async function prependFileWithContent(
+  filePath: string,
+  content: string
+) {
+  const file = await readFile(filePath, { encoding: 'utf8' });
+  const newFile = content + EOL + file;
+  await writeFile(filePath, newFile);
+}

@@ -1,24 +1,37 @@
+import { promisify } from 'node:util';
+import childProcess from 'node:child_process';
 import { Glob } from 'glob';
-import { exec } from 'node:child_process';
+import { prependFileWithContent } from './util/file.mjs';
+import { rimraf } from 'rimraf';
 
-const samplesGlob = `samples/**/!(*.spec).ts`;
+const samplesGlob = `samples/**/*.ts`;
+const execPromise = promisify(childProcess.exec);
 
 (async () => {
   await buildSamples(samplesGlob);
 })();
 
+async function execCommand(command: string) {
+  const { stdout, stderr } = await execPromise(command);
+  console.log('stdout:', stdout);
+  console.error('stderr:', stderr);
+}
+
 async function buildSamples(globPattern: string | string[]) {
-  const glob = new Glob(globPattern, { withFileTypes: false });
+  const glob = new Glob(globPattern, {
+    withFileTypes: false,
+    ignore: ['**/*.spec.ts'],
+  });
   const files = await glob.walk();
 
   for (const file of files) {
-    exec(`node ./dist/tsc.safe.js --safe ${file}`, (err, stdout, stderr) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      console.log(stdout);
-      console.log(stderr);
-    });
+    await rimraf('samples/**/*.js', { glob: true });
+    await execCommand(
+      `node ./dist/tsc.safe.js --safe ${file} --module commonjs`
+    );
+    await prependFileWithContent(
+      file.replace('.ts', '.js'),
+      `import { RT } from '../dist/lib/rt.js';`
+    );
   }
 }

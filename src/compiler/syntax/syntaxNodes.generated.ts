@@ -1,4 +1,3 @@
-// Modified by N.Swamy (2014)
 ///<reference path='references.ts' />
 
 module TypeScript {
@@ -2996,13 +2995,13 @@ module TypeScript {
 
     public update(typeArgumentList: TypeArgumentListSyntax,
                   openParenToken: ISyntaxToken,
-                  _arguments: ISeparatedSyntaxList,
+                  args: ISeparatedSyntaxList,
                   closeParenToken: ISyntaxToken): ArgumentListSyntax {
-        if (this.typeArgumentList === typeArgumentList && this.openParenToken === openParenToken && this.args === _arguments && this.closeParenToken === closeParenToken) {
+        if (this.typeArgumentList === typeArgumentList && this.openParenToken === openParenToken && this.args === args && this.closeParenToken === closeParenToken) {
             return this;
         }
 
-        return new ArgumentListSyntax(typeArgumentList, openParenToken, _arguments, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new ArgumentListSyntax(typeArgumentList, openParenToken, args, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(openParenToken: ISyntaxToken,
@@ -3030,12 +3029,12 @@ module TypeScript {
         return this.update(this.typeArgumentList, openParenToken, this.args, this.closeParenToken);
     }
 
-    public withArguments(_arguments: ISeparatedSyntaxList): ArgumentListSyntax {
-        return this.update(this.typeArgumentList, this.openParenToken, _arguments, this.closeParenToken);
+    public withArgs(args: ISeparatedSyntaxList): ArgumentListSyntax {
+        return this.update(this.typeArgumentList, this.openParenToken, args, this.closeParenToken);
     }
 
-    public withArgument(_argument: IExpressionSyntax): ArgumentListSyntax {
-        return this.withArguments(Syntax.separatedList([_argument]));
+    public withArg(arg: IExpressionSyntax): ArgumentListSyntax {
+        return this.withArgs(Syntax.separatedList([arg]));
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ArgumentListSyntax {

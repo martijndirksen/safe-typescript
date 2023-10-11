@@ -430,7 +430,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'typeArgumentList', type: 'TypeArgumentListSyntax', isOptional: true },
             <any>{ name: 'openParenToken', isToken: true },
-            <any>{ name: 'arguments', isSeparatedList: true, elementType: 'IExpressionSyntax' },
+            <any>{ name: 'args', isSeparatedList: true, elementType: 'IExpressionSyntax' },
             <any>{ name: 'closeParenToken', isToken: true }
         ]
     },

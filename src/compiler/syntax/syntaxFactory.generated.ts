@@ -37,7 +37,7 @@ module TypeScript.Syntax {
         postfixUnaryExpression(kind: SyntaxKind, operand: IMemberExpressionSyntax, operatorToken: ISyntaxToken): PostfixUnaryExpressionSyntax;
         elementAccessExpression(expression: IExpressionSyntax, openBracketToken: ISyntaxToken, argumentExpression: IExpressionSyntax, closeBracketToken: ISyntaxToken): ElementAccessExpressionSyntax;
         invocationExpression(expression: IMemberExpressionSyntax, argumentList: ArgumentListSyntax): InvocationExpressionSyntax;
-        argumentList(typeArgumentList: TypeArgumentListSyntax, openParenToken: ISyntaxToken, arguments: ISeparatedSyntaxList, closeParenToken: ISyntaxToken): ArgumentListSyntax;
+        argumentList(typeArgumentList: TypeArgumentListSyntax, openParenToken: ISyntaxToken, args: ISeparatedSyntaxList, closeParenToken: ISyntaxToken): ArgumentListSyntax;
         binaryExpression(kind: SyntaxKind, left: IExpressionSyntax, operatorToken: ISyntaxToken, right: IExpressionSyntax): BinaryExpressionSyntax;
         conditionalExpression(condition: IExpressionSyntax, questionToken: ISyntaxToken, whenTrue: IExpressionSyntax, colonToken: ISyntaxToken, whenFalse: IExpressionSyntax): ConditionalExpressionSyntax;
         constructSignature(newKeyword: ISyntaxToken, callSignature: CallSignatureSyntax): ConstructSignatureSyntax;
@@ -195,8 +195,8 @@ module TypeScript.Syntax {
         invocationExpression(expression: IMemberExpressionSyntax, argumentList: ArgumentListSyntax): InvocationExpressionSyntax {
             return new InvocationExpressionSyntax(expression, argumentList, /*parsedInStrictMode:*/ false);
         }
-        argumentList(typeArgumentList: TypeArgumentListSyntax, openParenToken: ISyntaxToken, _arguments: ISeparatedSyntaxList, closeParenToken: ISyntaxToken): ArgumentListSyntax {
-            return new ArgumentListSyntax(typeArgumentList, openParenToken, _arguments, closeParenToken, /*parsedInStrictMode:*/ false);
+        argumentList(typeArgumentList: TypeArgumentListSyntax, openParenToken: ISyntaxToken, args: ISeparatedSyntaxList, closeParenToken: ISyntaxToken): ArgumentListSyntax {
+            return new ArgumentListSyntax(typeArgumentList, openParenToken, args, closeParenToken, /*parsedInStrictMode:*/ false);
         }
         binaryExpression(kind: SyntaxKind, left: IExpressionSyntax, operatorToken: ISyntaxToken, right: IExpressionSyntax): BinaryExpressionSyntax {
             return new BinaryExpressionSyntax(kind, left, operatorToken, right, /*parsedInStrictMode:*/ false);
@@ -453,8 +453,8 @@ module TypeScript.Syntax {
         invocationExpression(expression: IMemberExpressionSyntax, argumentList: ArgumentListSyntax): InvocationExpressionSyntax {
             return new InvocationExpressionSyntax(expression, argumentList, /*parsedInStrictMode:*/ true);
         }
-        argumentList(typeArgumentList: TypeArgumentListSyntax, openParenToken: ISyntaxToken, _arguments: ISeparatedSyntaxList, closeParenToken: ISyntaxToken): ArgumentListSyntax {
-            return new ArgumentListSyntax(typeArgumentList, openParenToken, _arguments, closeParenToken, /*parsedInStrictMode:*/ true);
+        argumentList(typeArgumentList: TypeArgumentListSyntax, openParenToken: ISyntaxToken, args: ISeparatedSyntaxList, closeParenToken: ISyntaxToken): ArgumentListSyntax {
+            return new ArgumentListSyntax(typeArgumentList, openParenToken, args, closeParenToken, /*parsedInStrictMode:*/ true);
         }
         binaryExpression(kind: SyntaxKind, left: IExpressionSyntax, operatorToken: ISyntaxToken, right: IExpressionSyntax): BinaryExpressionSyntax {
             return new BinaryExpressionSyntax(kind, left, operatorToken, right, /*parsedInStrictMode:*/ true);

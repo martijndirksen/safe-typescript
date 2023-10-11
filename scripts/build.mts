@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { Glob } from 'glob';
 import { rimraf } from 'rimraf';
 import ts from 'typescript';
-import { concatFiles } from './util/concat.mjs';
+import { concatFiles } from './util/file.mjs';
 
 const rootPath = dirname(join(fileURLToPath(import.meta.url), '..'));
 const isWithSourcemaps = false;
