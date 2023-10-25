@@ -1,7 +1,13 @@
-///<reference path='ISymbol.ts' />
-///<reference path='ISignatureSymbol.ts' />
+import {
+  IMemberSymbol,
+  IConstructorSymbol,
+  IVariableSymbol,
+} from './IMemberSymbol';
+import { ISignatureSymbol } from './ISignatureSymbol';
+import { IGenericSymbol, IModuleOrTypeSymbol } from './ISymbol';
+import { TypeKind } from './TypeKind';
 
-interface ITypeSymbol extends IModuleOrTypeSymbol {
+export interface ITypeSymbol extends IModuleOrTypeSymbol {
   /**
    * An enumerated value that identifies what kind of type this is.
    */
@@ -38,23 +44,17 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
   // isAssignableFrom(type: ITypeSymbol): boolean;
 }
 
-interface IAnyTypeSymbol extends ITypeSymbol {}
+export interface IAnyTypeSymbol extends ITypeSymbol {}
 
-interface IPrimitiveTypeSymbol extends ITypeSymbol {}
+export interface IPrimitiveTypeSymbol extends ITypeSymbol {}
+export interface INumberTypeSymbol extends IPrimitiveTypeSymbol {}
+export interface IBooleanTypeSymbol extends IPrimitiveTypeSymbol {}
+export interface IStringTypeSymbol extends IPrimitiveTypeSymbol {}
+export interface IVoidTypeSymbol extends IPrimitiveTypeSymbol {}
+export interface INullTypeSymbol extends IPrimitiveTypeSymbol {}
+export interface IUndefinedTypeSymbol extends IPrimitiveTypeSymbol {}
 
-interface INumberTypeSymbol extends IPrimitiveTypeSymbol {}
-
-interface IBooleanTypeSymbol extends IPrimitiveTypeSymbol {}
-
-interface IStringTypeSymbol extends IPrimitiveTypeSymbol {}
-
-interface IVoidTypeSymbol extends IPrimitiveTypeSymbol {}
-
-interface INullTypeSymbol extends IPrimitiveTypeSymbol {}
-
-interface IUndefinedTypeSymbol extends IPrimitiveTypeSymbol {}
-
-interface IObjectTypeSymbol extends ITypeSymbol {
+export interface IObjectTypeSymbol extends ITypeSymbol {
   /// An object type containing call signatures is said to be a function type.
   isFunctionType(): boolean;
 
@@ -62,7 +62,7 @@ interface IObjectTypeSymbol extends ITypeSymbol {
   isConstructorType(): boolean;
 }
 
-interface IClassTypeSymbol
+export interface IClassTypeSymbol
   extends IMemberSymbol,
     IObjectTypeSymbol,
     IGenericSymbol {
@@ -82,7 +82,7 @@ interface IClassTypeSymbol
   constructorSymbol(): IConstructorSymbol;
 }
 
-interface IInterfaceTypeSymbol
+export interface IInterfaceTypeSymbol
   extends IMemberSymbol,
     IObjectTypeSymbol,
     IGenericSymbol {
@@ -97,17 +97,17 @@ interface IInterfaceTypeSymbol
   originalDefinition(): IInterfaceTypeSymbol;
 }
 
-interface IAnonymousTypeSymbol extends IObjectTypeSymbol {
+export interface IAnonymousTypeSymbol extends IObjectTypeSymbol {
   signatureCount(): number;
   signatureAt(index: number): ISignatureSymbol;
 }
 
-interface IEnumTypeSymbol extends IMemberSymbol, IObjectTypeSymbol {
+export interface IEnumTypeSymbol extends IMemberSymbol, IObjectTypeSymbol {
   variableCount(): number;
   variableAt(index: number): IVariableSymbol;
 }
 
-interface ITypeParameterSymbol extends ITypeSymbol {
+export interface ITypeParameterSymbol extends ITypeSymbol {
   /**
    * The ordinal position of the type parameter in the parameter list which declares
    * it. The first type parameter has ordinal zero.

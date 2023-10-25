@@ -1,3 +1,22 @@
+import { ICancellationToken } from '../core/cancellationToken';
+import { Diagnostic } from '../core/diagnosticCore';
+import { SyntaxNode } from '../syntax/syntaxNode';
+import {
+  ModuleDeclarationSyntax,
+  SourceUnitSyntax,
+  ClassDeclarationSyntax,
+  InterfaceDeclarationSyntax,
+  EnumDeclarationSyntax,
+  VariableDeclaratorSyntax,
+} from '../syntax/syntaxNodes.generated';
+import { SyntaxTree } from '../syntax/syntaxTree';
+import { ICompilation } from './ICompilation';
+import { IVariableSymbol } from './IMemberSymbol';
+import { ISymbol, IModuleSymbol, IModuleOrTypeSymbol } from './ISymbol';
+import { ISymbolInfo } from './ISymbolInfo';
+import { ITypeInfo } from './ITypeInfo';
+import { IObjectTypeSymbol } from './ITypeSymbol';
+
 export enum LookupOptions {
   /**
    * Consider all symbols.

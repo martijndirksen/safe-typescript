@@ -1,6 +1,6 @@
-///<reference path='ISymbol.ts' />
+import { IAnyTypeSymbol } from './ITypeSymbol';
 
-interface ISymbolVisitor {
+export interface ISymbolVisitor {
   visitAnyType(symbol: IAnyTypeSymbol): any;
 
   // Primitive types
@@ -15,9 +15,6 @@ interface ISymbolVisitor {
   visitClassType(symbol: IClassTypeSymbol): any;
   visitInterfaceType(symbol: IInterfaceTypeSymbol): any;
   visitAnonymousType(symbol: IAnonymousTypeSymbol): any;
-  // visitEnumType(symbol: IEnumTypeSymbol): any;
-  // visitFunctionType(symbol: IFunctionTypeSymbol): any;
-  // visitConstructorType(symbol: IConstructorTypeSymbol): any;
 
   visitTypeParameter(symbol: ITypeParameterSymbol): any;
 

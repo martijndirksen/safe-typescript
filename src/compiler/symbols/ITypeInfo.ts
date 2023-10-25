@@ -1,6 +1,6 @@
-///<reference path='ISymbol.ts' />
+import { ITypeSymbol } from './ITypeSymbol';
 
-interface ITypeInfo {
+export interface ITypeInfo {
   /**
    * The type of the expression represented by the syntax node. For expressions that do not
    * have a type, null is returned. If the type could not be determined due to an error, than

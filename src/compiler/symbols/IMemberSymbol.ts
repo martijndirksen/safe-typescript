@@ -1,3 +1,11 @@
+import {
+  IGenericSymbol,
+  IParameterSymbol,
+  IParameterizedSymbol,
+  ISymbol,
+} from './ISymbol';
+import { ITypeSymbol } from './ITypeSymbol';
+
 export interface IMemberSymbol extends ISymbol {}
 
 export interface IConstructorSymbol

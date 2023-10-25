@@ -1,5 +1,7 @@
 ///<reference path='ISymbol.ts' />
 
+import { ISymbol } from './ISymbol';
+
 /**
  * Indicates the reasons why a candidate (or set of candidate) symbols were not considered
  * correct in SemanticInfo. Higher values take precedence over lower values, so if, for
@@ -83,7 +85,7 @@ enum CandidateReason {
   Ambiguous,
 }
 
-interface ISymbolInfo {
+export interface ISymbolInfo {
   /**
    * The symbol that was referred to by the syntax node, if any. Returns null if the given
    * expression did not bind successfully to a single symbol. If null is returned, it may

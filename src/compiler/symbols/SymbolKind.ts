@@ -1,4 +1,4 @@
-enum SymbolKind {
+export enum SymbolKind {
   Module,
   Parameter,
 

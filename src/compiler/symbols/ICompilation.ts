@@ -1,3 +1,18 @@
+import { ICancellationToken } from '../core/cancellationToken';
+import { Diagnostic } from '../core/diagnosticCore';
+import { SyntaxTree } from '../syntax/syntaxTree';
+import { ISemanticModel } from './ISemanticModel';
+import { IModuleSymbol } from './ISymbol';
+import {
+  IAnyTypeSymbol,
+  INumberTypeSymbol,
+  IBooleanTypeSymbol,
+  IStringTypeSymbol,
+  IVoidTypeSymbol,
+  INullTypeSymbol,
+  IUndefinedTypeSymbol,
+} from './ITypeSymbol';
+
 export interface ICompilation {
   /**
    * Gets the syntax trees (parsed from source code) that this compilation was created with.

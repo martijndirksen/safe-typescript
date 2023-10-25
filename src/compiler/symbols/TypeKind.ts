@@ -1,7 +1,7 @@
 /**
  * Enumeration for possible kinds of type symbols.
  */
-enum TypeKind {
+export enum TypeKind {
   Any,
   Number,
   Boolean,

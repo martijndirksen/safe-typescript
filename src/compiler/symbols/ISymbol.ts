@@ -1,14 +1,14 @@
-///<reference path='..\Syntax\SyntaxNode.ts' />
-///<reference path='Accessibility.ts' />
-///<reference path='MethodKind.ts' />
-///<reference path='IMemberSymbol.ts' />
-///<reference path='ISymbolVisitor.ts' />
-///<reference path='SymbolDisplay.ts' />
-///<reference path='SymbolDisplay.Format.ts' />
-///<reference path='SymbolKind.ts' />
-///<reference path='TypeKind.ts' />
+import { Accessibility } from './Accessibility';
+import { IMemberSymbol, IVariableSymbol } from './IMemberSymbol';
+import { ISymbolVisitor } from './ISymbolVisitor';
+import {
+  IObjectTypeSymbol,
+  ITypeParameterSymbol,
+  ITypeSymbol,
+} from './ITypeSymbol';
+import { SymbolKind } from './SymbolKind';
 
-interface ISymbol {
+export interface ISymbol {
   kind(): SymbolKind;
 
   /**
@@ -30,8 +30,6 @@ interface ISymbol {
    * Gets the nearest enclosing module. Returns null if the symbol isn't contained in a module.
    */
   containingModule(): IModuleSymbol;
-
-  locations(): ILocation[];
 
   // True if this symbol is a definition.  False if it not (i.e. it is a constructed generic
   // symbol).
@@ -55,8 +53,6 @@ interface ISymbol {
 
   accept(visitor: ISymbolVisitor): any;
 
-  toSymbolDisplayParts(format: SymbolDisplay.Format): SymbolDisplay.Part[];
-
   isStatic(): boolean;
 
   isType(): boolean;
@@ -69,7 +65,7 @@ interface ISymbol {
 }
 
 /// Represents any symbol that has type parameters.
-interface IGenericSymbol extends ISymbol {
+export interface IGenericSymbol extends ISymbol {
   /**
    * Returns the type parameters that this type has. If this is a non-generic type,
    * returns an empty ReadOnlyArray.
@@ -82,19 +78,12 @@ interface IGenericSymbol extends ISymbol {
    * then the type parameter itself is consider the type argument.
    */
   typeArguments(): ITypeSymbol[];
-
-  /**
-   * Get the original definition of this type symbol. If this symbol is derived from another
-   * symbol by (say) type substitution, this gets the original symbol, as it was defined in
-   * source.
-   */
-  originalDefinition(): IGenericSymbol;
 }
 
 /**
  * Represents a parameter of a method or property.
  */
-interface IParameterSymbol extends ISymbol {
+export interface IParameterSymbol extends ISymbol {
   /**
    * Returns true if the parameter was declared as a parameter array.
    */
@@ -132,13 +121,13 @@ interface IParameterSymbol extends ISymbol {
 }
 
 /// Represents any symbol that takes parameters.
-interface IParameterizedSymbol extends ISymbol {
+export interface IParameterizedSymbol extends ISymbol {
   parameters(): IParameterSymbol[];
 }
 
-interface IModuleOrTypeSymbol extends ISymbol {}
+export interface IModuleOrTypeSymbol extends ISymbol {}
 
-interface IModuleSymbol extends IMemberSymbol, IModuleOrTypeSymbol {
+export interface IModuleSymbol extends IMemberSymbol, IModuleOrTypeSymbol {
   isGlobalModule(): boolean;
 
   memberCount(): number;

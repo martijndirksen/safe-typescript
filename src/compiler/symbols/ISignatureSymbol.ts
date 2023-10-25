@@ -1,3 +1,6 @@
+import { IGenericSymbol, IParameterizedSymbol, ISymbol } from './ISymbol';
+import { ITypeSymbol } from './ITypeSymbol';
+
 export interface ISignatureSymbol extends ISymbol {
   type(): ITypeSymbol;
 }
