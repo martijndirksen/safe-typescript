@@ -35,8 +35,6 @@ export interface ITypeSymbol extends IModuleOrTypeSymbol {
    */
   allInterfaces(): IInterfaceTypeSymbol[];
 
-  originalDefinition(): ITypeSymbol;
-
   // isSubTypeOf(type: ITypeSymbol): boolean;
   // isSuperTypeOf(type: ITypeSymbol): boolean;
   // isIdenticalTo(type: ITypeSymbol): boolean;
