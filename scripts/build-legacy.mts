@@ -26,59 +26,59 @@ async function copyTypings() {
     await copyFile(file.fullpath(), join(distPath, file.name));
   }
 }
-const compilerGlob = `src/legacy/compiler/**/*.ts`;
-const servicesGlob = 'src/legacy/services/**/*.ts';
-const tscGlob = 'src/legacy/compiler/{io,optionsParser,tsc}.ts';
-const rtGlob = 'src/legacy/runtime/rt.ts';
+const compilerGlob = `src/compiler/**/*.ts`;
+const servicesGlob = 'src/services/**/*.ts';
+const tscGlob = 'src/compiler/{io,optionsParser,tsc}.ts';
+const rtGlob = 'src/runtime/rt.ts';
 
 // There are quite some files which need to be ignored, so we won't try to put this all in a single glob
 // but rather just let the glob match them and then skip them in the build.
 const ignoredCompilerSources = [
-  'src/legacy/compiler/io.ts',
-  'src/legacy/compiler/nodeTypes.ts',
-  'src/legacy/compiler/optionsParser.ts',
-  'src/legacy/compiler/tsc.ts',
-  'src/legacy/compiler/walkContext.ts',
-  'src/legacy/compiler/core/cancellationToken.ts',
-  'src/legacy/compiler/core/cancellationTokenSource.ts',
-  'src/legacy/compiler/core/iterator.ts',
-  'src/legacy/compiler/symbols/**/*.ts',
-  'src/legacy/compiler/syntax/emitter.ts',
-  'src/legacy/compiler/syntax/prettyPrinter.ts',
-  'src/legacy/compiler/syntax/syntaxGenerator.ts',
-  'src/legacy/compiler/typecheck/rt.ts',
-  'src/legacy/compiler/typecheck/rtapi.ts',
-  'src/legacy/compiler/typecheck/rtnew.ts',
-  'src/legacy/compiler/typecheck/rtnewapi.ts',
-  'src/legacy/compiler/typecheck/rtweak.ts',
-  'src/legacy/compiler/typecheck/types.ts',
+  'src/compiler/io.ts',
+  'src/compiler/nodeTypes.ts',
+  'src/compiler/optionsParser.ts',
+  'src/compiler/tsc.ts',
+  'src/compiler/walkContext.ts',
+  'src/compiler/core/cancellationToken.ts',
+  'src/compiler/core/cancellationTokenSource.ts',
+  'src/compiler/core/iterator.ts',
+  'src/compiler/symbols/**/*.ts',
+  'src/compiler/syntax/emitter.ts',
+  'src/compiler/syntax/prettyPrinter.ts',
+  'src/compiler/syntax/syntaxGenerator.ts',
+  'src/compiler/typecheck/rt.ts',
+  'src/compiler/typecheck/rtapi.ts',
+  'src/compiler/typecheck/rtnew.ts',
+  'src/compiler/typecheck/rtnewapi.ts',
+  'src/compiler/typecheck/rtweak.ts',
+  'src/compiler/typecheck/types.ts',
 ];
 
 const ignoredCompilerTscSources = [
-  'src/legacy/compiler/nodeTypes.ts',
-  'src/legacy/compiler/walkContext.ts',
-  'src/legacy/compiler/core/cancellationToken.ts',
-  'src/legacy/compiler/core/cancellationTokenSource.ts',
-  'src/legacy/compiler/core/iterator.ts',
-  'src/legacy/compiler/symbols/**/*.ts',
-  'src/legacy/compiler/syntax/emitter.ts',
-  'src/legacy/compiler/syntax/prettyPrinter.ts',
-  'src/legacy/compiler/syntax/syntaxGenerator.ts',
-  'src/legacy/compiler/typecheck/rt.ts',
-  'src/legacy/compiler/typecheck/rtapi.ts',
-  'src/legacy/compiler/typecheck/rtnew.ts',
-  'src/legacy/compiler/typecheck/rtnewapi.ts',
-  'src/legacy/compiler/typecheck/rtweak.ts',
-  'src/legacy/compiler/typecheck/types.ts',
+  'src/compiler/nodeTypes.ts',
+  'src/compiler/walkContext.ts',
+  'src/compiler/core/cancellationToken.ts',
+  'src/compiler/core/cancellationTokenSource.ts',
+  'src/compiler/core/iterator.ts',
+  'src/compiler/symbols/**/*.ts',
+  'src/compiler/syntax/emitter.ts',
+  'src/compiler/syntax/prettyPrinter.ts',
+  'src/compiler/syntax/syntaxGenerator.ts',
+  'src/compiler/typecheck/rt.ts',
+  'src/compiler/typecheck/rtapi.ts',
+  'src/compiler/typecheck/rtnew.ts',
+  'src/compiler/typecheck/rtnewapi.ts',
+  'src/compiler/typecheck/rtweak.ts',
+  'src/compiler/typecheck/types.ts',
 ];
 
 const ignoredSafeTsSources = [
-  'src/legacy/compiler/nodeTypes.ts',
-  'src/legacy/compiler/walkContext.ts',
-  'src/legacy/compiler/core/cancellationToken.ts',
-  'src/legacy/compiler/core/cancellationTokenSource.ts',
-  'src/legacy/compiler/core/iterator.ts',
-  'src/legacy/compiler/symbols/**/*.ts',
+  'src/compiler/nodeTypes.ts',
+  'src/compiler/walkContext.ts',
+  'src/compiler/core/cancellationToken.ts',
+  'src/compiler/core/cancellationTokenSource.ts',
+  'src/compiler/core/iterator.ts',
+  'src/compiler/symbols/**/*.ts',
 ];
 
 const baseCompilerOptions: ts.CompilerOptions = {
