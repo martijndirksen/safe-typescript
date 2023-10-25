@@ -1,4 +1,3 @@
-// Modified by N.Swamy (2014)
 ///<reference path='resources\references.ts' />
 ///<reference path='core\references.ts' />
 ///<reference path='text\references.ts' />

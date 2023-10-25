@@ -1,4 +1,3 @@
-// Modified by N.Swamy (2014)
 ///<reference path='require.ts' />
 
 ///<reference path='..\resources\references.ts' />

@@ -1,4 +1,3 @@
-// Modified by N.Swamy (2014)
 ///<reference path='..\text\references.ts' />
 
 ///<reference path='characterInfo.ts' />

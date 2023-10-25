@@ -1,7 +1,6 @@
-// Modified by N.Swamy (2014)
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,16 +16,16 @@
 ///<reference path='typescript.ts' />
 
 module Tools {
-    export interface IWalkContext {
-        goChildren: boolean;
-        goNextSibling: boolean;
-        // visit siblings in reverse execution order
-        reverseSiblings: boolean;
-    }
+  export interface IWalkContext {
+    goChildren: boolean;
+    goNextSibling: boolean;
+    // visit siblings in reverse execution order
+    reverseSiblings: boolean;
+  }
 
-    export class BaseWalkContext implements IWalkContext {
-        public goChildren = true;
-        public goNextSibling = true;
-        public reverseSiblings = false;
-    }
+  export class BaseWalkContext implements IWalkContext {
+    public goChildren = true;
+    public goNextSibling = true;
+    public reverseSiblings = false;
+  }
 }

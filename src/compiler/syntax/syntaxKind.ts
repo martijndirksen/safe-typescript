@@ -1,4 +1,3 @@
-// Modified by N.Swamy (2014)
 // If you change anything in this enum, make sure you run SyntaxGenerator again!
 
 module TypeScript {

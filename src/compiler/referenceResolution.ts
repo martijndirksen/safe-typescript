@@ -1,7 +1,6 @@
-// Modified by N.Swamy (2014)
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,16 +13,13 @@
 // limitations under the License.
 //
 
-///<reference path='references.ts' />
-
 module TypeScript {
-
-    // Note: This is being using by the host (VS) and is marshaled back and forth. When changing this make sure the changes 
-    // are reflected in the managed side as well.
-    export interface IFileReference extends ILineAndCharacter {
-        path: string;
-        isResident: boolean;
-        position: number;
-        length: number;
-    }
+  // Note: This is being using by the host (VS) and is marshaled back and forth. When changing this make sure the changes
+  // are reflected in the managed side as well.
+  export interface IFileReference extends ILineAndCharacter {
+    path: string;
+    isResident: boolean;
+    position: number;
+    length: number;
+  }
 }

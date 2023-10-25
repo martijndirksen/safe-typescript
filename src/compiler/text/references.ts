@@ -1,4 +1,3 @@
-// Modified by N.Swamy (2014)
 ///<reference path='..\core\references.ts' />
 
 ///<reference path='characterCodes.ts' />

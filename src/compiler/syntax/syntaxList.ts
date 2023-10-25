@@ -1,6 +1,3 @@
-// Modified by N.Swamy (2014)
-///<reference path='references.ts' />
-
 import type { CheckedArray } from '../../runtime/rt';
 
 module TypeScript {
