@@ -1,4 +1,120 @@
-import type { CheckedArray } from '../../runtime/rt';
+import { RT, type CheckedArray } from '../../runtime/rt';
+import { ArrayUtilities } from '../core/arrayUtilities';
+import { Debug, AssertionLevel } from '../core/debug';
+import { Diagnostic, getLocalizedText } from '../core/diagnosticCore';
+import { Errors } from '../core/errors';
+import { LineMap } from '../core/lineMap';
+import { DiagnosticCode } from '../resources/diagnosticCode.generated';
+import { ISimpleText } from '../text/text';
+import { TextChangeRange } from '../text/textChangeRange';
+import { TextSpan } from '../text/textSpan';
+import { LanguageVersion } from './languageVersion';
+import { ParseOptions } from './parseOptions';
+import { Scanner } from './scanner';
+import { ISeparatedSyntaxList } from './separatedSyntaxList';
+import { ISlidingWindowSource, SlidingWindow } from './slidingWindow';
+import {
+  ISyntaxElement,
+  IModuleElementSyntax,
+  IModuleReferenceSyntax,
+  INameSyntax,
+  IClassElementSyntax,
+  ITypeMemberSyntax,
+  IStatementSyntax,
+  IIterationStatementSyntax,
+  IExpressionSyntax,
+  ISwitchClauseSyntax,
+  ISyntaxNode,
+  IUnaryExpressionSyntax,
+  IMemberExpressionSyntax,
+  IPostfixExpressionSyntax,
+  IPrimaryExpressionSyntax,
+  IPropertyAssignmentSyntax,
+  ITypeSyntax,
+} from './syntaxElement';
+import { SyntaxKind } from './syntaxKind';
+import { ISyntaxList } from './syntaxList';
+import { SyntaxNode } from './syntaxNode';
+import { ISyntaxNodeOrToken } from './syntaxNodeOrToken';
+import {
+  SourceUnitSyntax,
+  ImportDeclarationSyntax,
+  ExportAssignmentSyntax,
+  ExternalModuleReferenceSyntax,
+  ModuleNameModuleReferenceSyntax,
+  TypeArgumentListSyntax,
+  EnumDeclarationSyntax,
+  EnumElementSyntax,
+  EqualsValueClauseSyntax,
+  ClassDeclarationSyntax,
+  GetAccessorSyntax,
+  SetAccessorSyntax,
+  ConstructorDeclarationSyntax,
+  BlockSyntax,
+  MemberFunctionDeclarationSyntax,
+  MemberVariableDeclarationSyntax,
+  IndexMemberDeclarationSyntax,
+  CallSignatureSyntax,
+  FunctionDeclarationSyntax,
+  ModuleDeclarationSyntax,
+  InterfaceDeclarationSyntax,
+  ObjectTypeSyntax,
+  ConstructSignatureSyntax,
+  IndexSignatureSyntax,
+  MethodSignatureSyntax,
+  PropertySignatureSyntax,
+  HeritageClauseSyntax,
+  DebuggerStatementSyntax,
+  DoStatementSyntax,
+  LabeledStatementSyntax,
+  TryStatementSyntax,
+  CatchClauseSyntax,
+  FinallyClauseSyntax,
+  WithStatementSyntax,
+  WhileStatementSyntax,
+  EmptyStatementSyntax,
+  VariableDeclarationSyntax,
+  ForInStatementSyntax,
+  ForStatementSyntax,
+  BreakStatementSyntax,
+  ContinueStatementSyntax,
+  CaseSwitchClauseSyntax,
+  DefaultSwitchClauseSyntax,
+  ThrowStatementSyntax,
+  ReturnStatementSyntax,
+  ExpressionStatementSyntax,
+  IfStatementSyntax,
+  ElseClauseSyntax,
+  VariableStatementSyntax,
+  VariableDeclaratorSyntax,
+  TypeAnnotationSyntax,
+  ArgumentListSyntax,
+  ElementAccessExpressionSyntax,
+  TypeOfExpressionSyntax,
+  DeleteExpressionSyntax,
+  VoidExpressionSyntax,
+  FunctionExpressionSyntax,
+  CastExpressionSyntax,
+  ParenthesizedExpressionSyntax,
+  ParenthesizedArrowFunctionExpressionSyntax,
+  SimpleArrowFunctionExpressionSyntax,
+  ObjectLiteralExpressionSyntax,
+  FunctionPropertyAssignmentSyntax,
+  SimplePropertyAssignmentSyntax,
+  ArrayLiteralExpressionSyntax,
+  TypeParameterListSyntax,
+  TypeParameterSyntax,
+  ConstraintSyntax,
+  ParameterListSyntax,
+  TypeQuerySyntax,
+  FunctionTypeSyntax,
+  ConstructorTypeSyntax,
+  ParameterSyntax,
+} from './syntaxNodes.generated';
+import { ISyntaxToken } from './syntaxToken';
+import { SyntaxTree } from './syntaxTree';
+import { ISyntaxTrivia } from './syntaxTrivia';
+import { ISyntaxTriviaList } from './syntaxTriviaList';
 
 module TypeScript.Parser {
   // Information the parser needs to effectively rewind.

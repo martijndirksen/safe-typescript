@@ -1,3 +1,14 @@
+import { ArrayUtilities } from './core/arrayUtilities';
+import { Diagnostic } from './core/diagnosticCore';
+import { Errors } from './core/errors';
+import { SyntaxKind } from './syntax/syntaxKind';
+import { ISyntaxTrivia } from './syntax/syntaxTrivia';
+import { PullDecl } from './typecheck/pullDecls';
+import { PullElementFlags } from './typecheck/pullFlags';
+import { PullSymbol, PullTypeSymbol } from './typecheck/pullSymbols';
+import { Pair } from './typecheck/sound/tcUtil';
+import { TIndexMap, TVar } from './typecheck/sound/types';
+
 export enum TypeName {
   Void,
   String,
@@ -31,7 +42,7 @@ export class SoundType {
   public virtual = false;
   public nominal = false;
   public instantiated = false;
-  public fullName: string[];
+  public fullName: string[] = [];
 
   constructor(public typeName: TypeName) {}
 

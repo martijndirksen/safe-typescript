@@ -1,3 +1,131 @@
+import {
+  ParameterList,
+  Parameter,
+  ClassDeclaration,
+  VariableDeclaration,
+  AST,
+  ImportDeclaration,
+  ExternalModuleReference,
+  ModuleNameModuleReference,
+  IASTSpan,
+  Comment,
+  ObjectLiteralExpression,
+  ArrayLiteralExpression,
+  ObjectCreationExpression,
+  MemberAccessExpression,
+  InvocationExpression,
+  Block,
+  SourceUnit,
+  EnumDeclaration,
+  ModuleDeclaration,
+  IASTToken,
+  Identifier,
+  EnumElement,
+  ElementAccessExpression,
+  SimpleArrowFunctionExpression,
+  ParenthesizedArrowFunctionExpression,
+  ConstructorDeclaration,
+  GetAccessor,
+  SetAccessor,
+  FunctionExpression,
+  FunctionDeclaration,
+  VariableDeclarator,
+  MemberVariableDeclaration,
+  ISeparatedSyntaxList2,
+  NewLineMode,
+  ISyntaxList2,
+  ExpressionStatement,
+  MemberFunctionDeclaration,
+  LiteralExpression,
+  ThisExpression,
+  SuperExpression,
+  ParenthesizedExpression,
+  CastExpression,
+  PrefixUnaryExpression,
+  PostfixUnaryExpression,
+  TypeOfExpression,
+  DeleteExpression,
+  VoidExpression,
+  QualifiedName,
+  BinaryExpression,
+  SimplePropertyAssignment,
+  FunctionPropertyAssignment,
+  ConditionalExpression,
+  ThrowStatement,
+  LabeledStatement,
+  BreakStatement,
+  ContinueStatement,
+  WhileStatement,
+  DoStatement,
+  IfStatement,
+  ElseClause,
+  ReturnStatement,
+  ForInStatement,
+  ForStatement,
+  WithStatement,
+  SwitchStatement,
+  CaseSwitchClause,
+  DefaultSwitchClause,
+  TryStatement,
+  CatchClause,
+  FinallyClause,
+  DebuggerStatement,
+  NumericLiteral,
+  RegularExpressionLiteral,
+  StringLiteral,
+  EqualsValueClause,
+  InterfaceDeclaration,
+  VariableStatement,
+  GenericType,
+  ExportAssignment,
+} from './ast';
+import {
+  importDeclarationIsElided,
+  Parameters,
+  IParameters,
+  isLastNameOfModule,
+  isValidAstNode,
+  scriptIsElided,
+  getExtendsHeritageClause,
+  enumIsElided,
+  moduleIsElided,
+} from './astHelpers';
+import { ArrayUtilities } from './core/arrayUtilities';
+import { Debug } from './core/debug';
+import { Diagnostic } from './core/diagnosticCore';
+import { Errors } from './core/errors';
+import { TextWriter } from './declarationEmitter';
+import { Document } from './document';
+import { ModuleGenTarget, hasFlag } from './flags';
+import {
+  convertToDirectoryPath,
+  switchToForwardSlashes,
+  filePathComponents,
+  isTSFile,
+  isQuoted,
+} from './pathUtils';
+import { tripleSlashReferenceRegExp } from './precompile';
+import { DiagnosticCode } from './resources/diagnosticCode.generated';
+import { ImmutableCompilationSettings } from './settings';
+import { SourceMapper, SourceMapping } from './sourceMapping';
+import { SyntaxKind } from './syntax/syntaxKind';
+import { getModuleNames } from './typecheck/pullDeclCollection';
+import { PullDecl, PullEnumElementDecl } from './typecheck/pullDecls';
+import {
+  PullElementFlags,
+  PullElementKind,
+  hasModifier,
+} from './typecheck/pullFlags';
+import { PullHelpers } from './typecheck/pullHelpers';
+import { SemanticInfoChain } from './typecheck/pullSemanticInfo';
+import {
+  PullTypeAliasSymbol,
+  PullSymbol,
+  PullContainerSymbol,
+} from './typecheck/pullSymbols';
+import { isTypesOnlyLocation } from './typecheck/pullTypeResolution';
+import { TypeScriptCompiler, OutputFile } from './typescript';
+
 export enum EmitContainer {
   Prog,
   Module,

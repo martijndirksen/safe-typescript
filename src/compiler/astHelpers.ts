@@ -1,3 +1,59 @@
+import {
+  SourceUnit,
+  ModuleDeclaration,
+  ISyntaxList2,
+  EnumDeclaration,
+  ImportDeclaration,
+  IASTSpan,
+  AST,
+  HeritageClause,
+  MemberAccessExpression,
+  InvocationExpression,
+  ClassDeclaration,
+  InterfaceDeclaration,
+  VariableDeclarator,
+  FunctionDeclaration,
+  MemberFunctionDeclaration,
+  Parameter,
+  TypeParameter,
+  SimplePropertyAssignment,
+  FunctionPropertyAssignment,
+  EnumElement,
+  QualifiedName,
+  Identifier,
+  EqualsValueClause,
+  ParameterList,
+  Comment,
+  ConstructorDeclaration,
+  ParenthesizedArrowFunctionExpression,
+  ConstructSignature,
+  FunctionExpression,
+  MethodSignature,
+  ConstructorType,
+  FunctionType,
+  CallSignature,
+  GetAccessor,
+  SetAccessor,
+  IndexSignature,
+  PropertySignature,
+  MemberVariableDeclaration,
+  CatchClause,
+  TypeAnnotation,
+  VariableStatement,
+  PrefixUnaryExpression,
+  NumericLiteral,
+} from './ast';
+import { IAstWalker, getAstWalkerFactory } from './astWalker';
+import { lastParameterIsRest } from './emitter';
+import { hasFlag, ModuleGenTarget } from './flags';
+import { isDTSFile } from './pathUtils';
+import { ImmutableCompilationSettings } from './settings';
+import { SyntaxKind } from './syntax/syntaxKind';
+import { getModuleNames } from './typecheck/pullDeclCollection';
+import { hasModifier, PullElementFlags } from './typecheck/pullFlags';
+import { SemanticInfoChain } from './typecheck/pullSemanticInfo';
+import { PullTypeAliasSymbol } from './typecheck/pullSymbols';
+
 export function scriptIsElided(sourceUnit: SourceUnit): boolean {
   return (
     isDTSFile(sourceUnit.fileName()) ||

@@ -868,7 +868,6 @@ export class DeclarationEmitter {
       funcDecl,
       this.semanticInfoChain
     );
-    TypeScript.declarationEmitGetAccessorFunctionTime += new Date().getTime();
 
     var comments: Comment[] = [];
     if (accessors.getter) {

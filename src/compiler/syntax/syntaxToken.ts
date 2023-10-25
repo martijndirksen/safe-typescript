@@ -1,3 +1,20 @@
+import { Debug } from '../core/debug';
+import { Errors } from '../core/errors';
+import { StringUtilities } from '../core/stringUtilities';
+import { CharacterCodes } from '../text/characterCodes';
+import { CharacterInfo } from './characterInfo';
+import { PositionedElement, PositionedToken } from './positionedElement';
+import {
+  INameSyntax,
+  IPrimaryExpressionSyntax,
+  ISyntaxElement,
+} from './syntaxElement';
+import { SyntaxKind } from './syntaxKind';
+import { ISyntaxNodeOrToken } from './syntaxNodeOrToken';
+import { ISyntaxTrivia } from './syntaxTrivia';
+import { ISyntaxTriviaList } from './syntaxTriviaList';
+import { ISyntaxVisitor } from './syntaxVisitor.generated';
+
 export interface ISyntaxToken
   extends ISyntaxNodeOrToken,
     INameSyntax,
