@@ -442,6 +442,12 @@ module TypeScript.PrettyPrinter {
             this.appendToken(node.closeBracketToken);
         }
 
+        public visitTupleType(node: TupleTypeSyntax): void {
+            node.type.accept(this);
+            this.appendToken(node.openBracketToken);
+            this.appendToken(node.closeBracketToken);
+        }
+
         public visitGenericType(node: GenericTypeSyntax): void {
             node.name.accept(this);
             node.typeArgumentList.accept(this);

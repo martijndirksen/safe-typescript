@@ -696,6 +696,19 @@ module TypeScript {
             return result;
         }
 
+        public visitTupleType(node: TupleTypeSyntax): TupleType {
+            var start = this.position;
+
+            var underlying: AST = this.visitType(node.type);
+            this.movePast(node.openBracketToken);
+            this.movePast(node.closeBracketToken);
+
+            var result = new TupleType(underlying);
+            this.setSpan(result, start, node);
+
+            return result;
+        }
+
         public visitGenericType(node: GenericTypeSyntax): GenericType {
             var start = this.position;
 
@@ -1862,6 +1875,16 @@ module TypeScript {
             var result: ArrayType = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitArrayType(node);
+                this.setAST(node, result);
+            }
+
+            return result;
+        }
+        
+        public visitTupleType(node: TupleTypeSyntax): TupleType {
+            var result: TupleType = this.getAndMovePastAST(node);
+            if (!result) {
+                result = super.visitTupleType(node);
                 this.setAST(node, result);
             }
 

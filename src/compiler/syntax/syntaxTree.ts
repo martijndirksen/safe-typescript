@@ -1431,6 +1431,14 @@ module TypeScript {
             this.inAmbientDeclaration = savedInAmbientDeclaration;
         }
 
+        public visitTupleType(node: TupleTypeSyntax): void {
+            // All code in an object type is implicitly ambient. (i.e. parameters can't have initializer, etc.)
+            var savedInAmbientDeclaration = this.inAmbientDeclaration;
+            this.inAmbientDeclaration = true;
+            super.visitTupleType(node);
+            this.inAmbientDeclaration = savedInAmbientDeclaration;
+        }
+
         public visitFunctionType(node: FunctionTypeSyntax): void {
             // All code in an object type is implicitly ambient. (i.e. parameters can't have initializer, etc.)
             var savedInAmbientDeclaration = this.inAmbientDeclaration;

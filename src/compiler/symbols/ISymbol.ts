@@ -66,6 +66,7 @@ interface ISymbol {
     isPrimitiveType(): boolean;
     isObjectType(): boolean;
     isArrayType(): boolean;
+    isTupleType(): boolean;
 }
 
 /// Represents any symbol that has type parameters.

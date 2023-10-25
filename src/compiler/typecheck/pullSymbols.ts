@@ -1566,12 +1566,14 @@ module TypeScript {
         }
 
         // REVIEW
+        // TODO: MD Is a tuple-variant necessary? What does this pullSymbols stuff do?
         public getArrayType(): PullTypeSymbol { return this._arrayVersionOfThisType; }
 
         public getElementType(): PullTypeSymbol {
             return null;
         }
 
+        // TODO: MD Is a tuple-variant necessary? What does this pullSymbols stuff do?
         public setArrayType(arrayType: PullTypeSymbol) {
             this._arrayVersionOfThisType = arrayType;
         }

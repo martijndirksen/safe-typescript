@@ -202,9 +202,18 @@ module SymbolDisplay {
             }
         }
 
+        private visitTupleType(symbol: IClassTypeSymbol): void {
+            // TODO: MD Create visitor implementation
+        }
+
         private visitClassType(symbol: IClassTypeSymbol): void {
             if (symbol.isArrayType()) {
                 this.visitArrayType(symbol);
+                return;
+            }
+
+            if (symbol.isTupleType()) {
+                this.visitTupleType(symbol);
                 return;
             }
 

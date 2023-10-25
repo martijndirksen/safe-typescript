@@ -13,7 +13,7 @@ enum SymbolKind {
     UndefinedType,
     ClassType,
     InterfaceType,
-    // ArrayType,
+    // ArrayType, // MD: For some reason this is not included?
     AnonymousType,
     EnumType,
     TypeParameter,

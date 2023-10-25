@@ -46,7 +46,6 @@ module TypeScript {
         Force
     }
 
-    //export interface Pair<TVar, TsStarType>[] extends Array<Pair<TVar, TsStarType>> { }
     export class SoundType {
         public virtual = false;
         public nominal = false;
@@ -969,6 +968,22 @@ module TypeScript {
         }
 
         public structuralEquals(ast: ArrayType, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.type, ast.type, includingPosition);
+        }
+    }
+
+    export class TupleType extends AST {
+        constructor(public type: AST) {
+            super();
+            type && (type.parent = this);
+        }
+
+        public kind(): SyntaxKind {
+            return SyntaxKind.TupleType;
+        }
+
+        public structuralEquals(ast: TupleType, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.type, ast.type, includingPosition);
         }

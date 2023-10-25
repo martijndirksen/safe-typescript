@@ -148,9 +148,10 @@ module TypeScript.Parser {
         ParameterList_Parameters = 1 << 17,
         TypeArgumentList_Types = 1 << 18,
         TypeParameterList_TypeParameters = 1 << 19,
+        Tuple_ElementTypes = 1 << 20,
 
         FirstListParsingState = SourceUnit_ModuleElements,
-        LastListParsingState = TypeArgumentList_Types,
+        LastListParsingState = Tuple_ElementTypes,
     }
 
     // Allows one to easily move over a syntax tree.  Used during incremental parsing to move over
@@ -2507,6 +2508,18 @@ module TypeScript.Parser {
             return this.factory.objectType(openBraceToken, typeMembers, closeBraceToken);
         }
 
+        private parseTupleType(): TupleTypeSyntax {
+            var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
+            
+            var result = this.parseSeparatedSyntaxList(ListParsingState.Tuple_ElementTypes);
+            openBracketToken = this.addSkippedTokensAfterToken(openBracketToken, result.skippedTokens);
+
+            var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
+            // TODO search for tupleType factory method implementation
+            // Seems to be generated somehow, ensure this is indeed generated now
+            return this.factory.tupleType(openBracketToken, result.list, closeBracketToken);
+        }
+
         private isTypeMember(inErrorRecovery: boolean): boolean {
             if (this.currentNode() !== null && this.currentNode().isTypeMember()) {
                 return true;
@@ -4727,6 +4740,10 @@ module TypeScript.Parser {
                 case SyntaxKind.OpenBraceToken:
                     return this.parseObjectType();
 
+                // Tuple type
+                case SyntaxKind.OpenBracketToken:
+                    return this.parseTupleType();
+
                 // Function type:
                 case SyntaxKind.OpenParenToken:
                 case SyntaxKind.LessThanToken:
@@ -5197,6 +5214,7 @@ module TypeScript.Parser {
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                 case ListParsingState.TypeArgumentList_Types:
                 case ListParsingState.TypeParameterList_TypeParameters:
+                case ListParsingState.Tuple_ElementTypes:
                     return SyntaxKind.CommaToken;
 
                 case ListParsingState.ObjectType_TypeMembers:
@@ -5288,6 +5306,9 @@ module TypeScript.Parser {
                 case ListParsingState.TypeArgumentList_Types:
                     return this.isExpectedTypeArgumentList_TypesTerminator();
 
+                case ListParsingState.Tuple_ElementTypes:
+                    return this.isExpectedTuple_ElementTypesTerminator();
+
                 case ListParsingState.TypeParameterList_TypeParameters:
                     return this.isExpectedTypeParameterList_TypeParametersTerminator();
 
@@ -5320,6 +5341,10 @@ module TypeScript.Parser {
         }
 
         private isExpectedLiteralExpression_AssignmentExpressionsTerminator(): boolean {
+            return this.currentToken().tokenKind === SyntaxKind.CloseBracketToken;
+        }
+
+        private isExpectedTuple_ElementTypesTerminator(): boolean {
             return this.currentToken().tokenKind === SyntaxKind.CloseBracketToken;
         }
 
@@ -5524,6 +5549,7 @@ module TypeScript.Parser {
                     return this.isParameter();
 
                 case ListParsingState.TypeArgumentList_Types:
+                case ListParsingState.Tuple_ElementTypes:
                     return this.isType();
 
                 case ListParsingState.TypeParameterList_TypeParameters:
@@ -5604,6 +5630,7 @@ module TypeScript.Parser {
                     return this.parseParameter();
 
                 case ListParsingState.TypeArgumentList_Types:
+                case ListParsingState.Tuple_ElementTypes:
                     return this.parseType();
 
                 case ListParsingState.TypeParameterList_TypeParameters:
@@ -5660,6 +5687,7 @@ module TypeScript.Parser {
                     return getLocalizedText(DiagnosticCode.parameter, null);
 
                 case ListParsingState.TypeArgumentList_Types:
+                case ListParsingState.Tuple_ElementTypes:
                     return getLocalizedText(DiagnosticCode.type, null);
 
                 case ListParsingState.TypeParameterList_TypeParameters:

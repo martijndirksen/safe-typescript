@@ -334,6 +334,18 @@ var definitions:ITypeDefinition[] = [
         isTypeScriptSpecific: true
     },
     <any>{
+        name: 'TupleTypeSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: ['ITypeSyntax'],
+        // TODO: MD Check syntax tree correctness
+        children: [
+            <any>{ name: 'openBracketToken', isToken: true },
+            <any>{ name: 'types', isSeparatedList: true, elementType: 'ITypeSyntax' },
+            <any>{ name: 'closeBracketToken', isToken: true }
+        ],
+        isTypeScriptSpecific: true
+    },
+    <any>{
         name: 'GenericTypeSyntax',
         baseType: 'SyntaxNode',
         interfaces: ['ITypeSyntax'],

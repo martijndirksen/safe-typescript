@@ -2441,6 +2441,11 @@ module TypeScript {
 
                 typeDeclSymbol = arraySymbol;
             }
+            else if (term.kind() === SyntaxKind.TupleType) {
+                var tupleType = <TupleType>term;
+                // TODO MD: Do this properly
+                typeDeclSymbol = this.semanticInfoChain.anyTypeSymbol;
+            }
             else {
                 throw Errors.invalidOperation("unknown type");
             }

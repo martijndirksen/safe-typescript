@@ -58,6 +58,8 @@ module TypeScript.Syntax {
             switch (parent.kind()) {
                 case SyntaxKind.ArrayType:
                     return (<ArrayTypeSyntax>parent).type === nodeOrToken;
+                case SyntaxKind.TupleType:
+                    return (<TupleTypeSyntax>parent).type === nodeOrToken;
                 case SyntaxKind.CastExpression:
                     return (<CastExpressionSyntax>parent).type === nodeOrToken;
                 case SyntaxKind.TypeAnnotation:

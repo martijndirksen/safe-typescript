@@ -403,6 +403,7 @@ module TypeScript {
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.ModuleDeclaration:
             case SyntaxKind.ArrayType:
+            case SyntaxKind.TupleType:
             case SyntaxKind.ObjectType:
             case SyntaxKind.TypeParameter:
             case SyntaxKind.ConstructorDeclaration:

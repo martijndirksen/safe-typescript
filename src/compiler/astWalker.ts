@@ -376,6 +376,10 @@ module TypeScript {
         walker.walk(preAst.type);
     }
 
+    function walkTupleTypeChildren(ast: AST, walker: AstWalker): void { var preAst = <TupleType>ast;
+        walker.walk(preAst.type);
+    }
+
     function walkModuleDeclarationChildren(ast: AST, walker: AstWalker): void { var preAst = <ModuleDeclaration>ast;
         walker.walk(preAst.name);
         walker.walk(preAst.stringLiteral);
@@ -440,6 +444,7 @@ module TypeScript {
     childrenWalkers[SyntaxKind.ArgumentList] = walkArgumentListChildren;
     childrenWalkers[SyntaxKind.ArrayLiteralExpression] = walkArrayLiteralExpressionChildren;
     childrenWalkers[SyntaxKind.ArrayType] = walkArrayTypeChildren;
+    childrenWalkers[SyntaxKind.TupleType] = walkTupleTypeChildren;
     childrenWalkers[SyntaxKind.SimpleArrowFunctionExpression] = walkSimpleArrowFunctionExpressionChildren;
     childrenWalkers[SyntaxKind.ParenthesizedArrowFunctionExpression] = walkParenthesizedArrowFunctionExpressionChildren;
     childrenWalkers[SyntaxKind.AssignmentExpression] = walkBinaryExpressionChildren;

@@ -237,6 +237,7 @@ module TypeScript {
                 case SyntaxKind.StringKeyword:
                 case SyntaxKind.VoidKeyword:
                 case SyntaxKind.ArrayType:
+                case SyntaxKind.TupleType:
                 case SyntaxKind.GenericType:
                 case SyntaxKind.ObjectType:
                 case SyntaxKind.TypeQuery:
@@ -1891,6 +1892,7 @@ module TypeScript {
         }
         private computeType(ast: AST): SoundType {
             switch (ast.kind()) {
+                // TODO: MD There could be a case here for TupleType?
                 case SyntaxKind.AnyKeyword: return TConstant.Any;
                 case SyntaxKind.BooleanKeyword: return TConstant.Bool;
                 case SyntaxKind.NumericLiteral:

@@ -787,6 +787,7 @@ module TypeScript {
             case SyntaxKind.ObjectType: return "ObjectType";
             case SyntaxKind.FunctionType: return "FunctionType";
             case SyntaxKind.ArrayType: return "ArrayType";
+            case SyntaxKind.TupleType: return "TupleType";
             case SyntaxKind.ConstructorType: return "ConstructorType";
             case SyntaxKind.GenericType: return "GenericType";
             case SyntaxKind.TypeQuery: return "TypeQuery";
