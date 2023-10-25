@@ -1,5 +1,7 @@
 // Modified by N.Swamy, A.Rastogi (2014)
 
+import type { CheckedArray } from '../../../runtime/rt';
+
 module RT {
   export interface Nominal {}
   export interface Virtual {}

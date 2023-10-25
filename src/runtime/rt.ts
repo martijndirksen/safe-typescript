@@ -6,7 +6,7 @@
 // - Fixed multiple type errors related to the misuse of undefined
 // - Added a few more checks to detect undefined in RT procedures
 
-interface CheckedArray<T> {
+export interface CheckedArray<T> {
   toString(): string;
   toLocaleString(): string;
   concat(...items: T[]): T[];

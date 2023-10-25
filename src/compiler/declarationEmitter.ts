@@ -16,6 +16,8 @@
 
 ///<reference path='references.ts' />
 
+import type { CheckedArray } from "../runtime/rt";
+
 module TypeScript {
     export class TextWriter {
         private contents = "";

@@ -93,6 +93,7 @@ const baseCompilerOptions: ts.CompilerOptions = {
     compilerOptions: {
       ...baseCompilerOptions,
       outFile: join(distPath, 'typescript.js'),
+      skipLibCheck: true,
     },
   });
   addLicenseInfoToFile(join(distPath, 'typescript.js'));
