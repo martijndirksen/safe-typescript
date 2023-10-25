@@ -139,7 +139,7 @@ function getDiagnosticInfoFromKey(diagnosticKey: string): DiagnosticInfo {
 
 export function getLocalizedText(
   diagnosticKey: string,
-  args: string[]
+  args?: string[]
 ): string {
   if (LocalizedDiagnosticMessages) {
     //Debug.assert(LocalizedDiagnosticMessages.hasOwnProperty(diagnosticKey));
@@ -188,23 +188,20 @@ export function getLocalizedText(
   diagnosticMessageText = diagnosticMessageText.replace(
     /{(\d+)}/g,
     function (match, num?) {
-      return typeof args[num] !== 'undefined' ? args[num] : match;
+      return args && typeof args[num] !== 'undefined' ? args[num] : match;
     }
   );
 
-  diagnosticMessageText = diagnosticMessageText.replace(
-    /{(NL)}/g,
-    function (match) {
-      return EOL;
-    }
-  );
+  diagnosticMessageText = diagnosticMessageText.replace(/{(NL)}/g, function () {
+    return EOL;
+  });
 
   return diagnosticMessageText;
 }
 
 export function getDiagnosticMessage(
   diagnosticKey: string,
-  args: string[]
+  args?: string[]
 ): string {
   var diagnostic = getDiagnosticInfoFromKey(diagnosticKey);
   var diagnosticMessageText = getLocalizedText(diagnosticKey, args);

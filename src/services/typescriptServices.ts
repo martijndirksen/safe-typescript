@@ -1,6 +1,6 @@
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -34,103 +34,109 @@
 ///<reference path='getScriptLexicalStructureWalker.ts' />
 ///<reference path='../compiler/typecheck/sound/tc.ts' />
 
+import { Errors } from '../compiler/core/errors';
+
 module TypeScript.Services {
-    export function copyDataObject(dst: any, src: any): any {
-        for (var e in dst) {
-            if (typeof dst[e] == "object") {
-                copyDataObject(dst[e], src[e]);
-            }
-            else if (typeof dst[e] != "function") {
-                dst[e] = src[e];
-            }
-        }
-        return dst;
+  export function copyDataObject(dst: any, src: any): any {
+    for (var e in dst) {
+      if (typeof dst[e] == 'object') {
+        copyDataObject(dst[e], src[e]);
+      } else if (typeof dst[e] != 'function') {
+        dst[e] = src[e];
+      }
+    }
+    return dst;
+  }
+
+  export class TypeScriptServicesFactory implements IShimFactory {
+    private _shims: IShim[] = [];
+
+    public createPullLanguageService(
+      host: TypeScript.Services.ILanguageServiceHost
+    ): TypeScript.Services.ILanguageService {
+      try {
+        return new TypeScript.Services.LanguageService(host);
+      } catch (err) {
+        TypeScript.Services.logInternalError(host, err);
+        throw err;
+      }
     }
 
-    export class TypeScriptServicesFactory implements IShimFactory {
-        private _shims: IShim[] = [];
-
-        public createPullLanguageService(host: TypeScript.Services.ILanguageServiceHost): TypeScript.Services.ILanguageService {
-            try {
-                return new TypeScript.Services.LanguageService(host);
-            }
-            catch (err) {
-                TypeScript.Services.logInternalError(host, err);
-                throw err;
-            }
-        }
-
-        public createLanguageServiceShim(host: ILanguageServiceShimHost): ILanguageServiceShim {
-            try {
-                var hostAdapter = new LanguageServiceShimHostAdapter(host);
-                var pullLanguageService = this.createPullLanguageService(hostAdapter);
-                return new LanguageServiceShim(this, host, pullLanguageService);
-            }
-            catch (err) {
-                TypeScript.Services.logInternalError(host, err);
-                throw err;
-            }
-        }
-
-        public createClassifier(host: TypeScript.Services.IClassifierHost): TypeScript.Services.Classifier {
-            try {
-                return new TypeScript.Services.Classifier(host);
-            }
-            catch (err) {
-                TypeScript.Services.logInternalError(host, err);
-                throw err;
-            }
-        }
-
-        public createClassifierShim(host: TypeScript.Services.IClassifierHost): ClassifierShim {
-            try {
-                return new ClassifierShim(this, host);
-            }
-            catch (err) {
-                TypeScript.Services.logInternalError(host, err);
-                throw err;
-            }
-        }
-
-        public createCoreServices(host: TypeScript.Services.ICoreServicesHost): TypeScript.Services.CoreServices {
-            try {
-                return new TypeScript.Services.CoreServices(host);
-            }
-            catch (err) {
-                TypeScript.Services.logInternalError(host.logger, err);
-                throw err;
-            }
-        }
-
-        public createCoreServicesShim(host: TypeScript.Services.ICoreServicesHost): CoreServicesShim {
-            try {
-                return new CoreServicesShim(this, host);
-            }
-            catch (err) {
-                TypeScript.Services.logInternalError(host.logger, err);
-                throw err;
-            }
-        }
-
-        public close(): void {
-            // Forget all the registered shims
-            this._shims = [];
-        }
-
-        public registerShim(shim: IShim): void {
-            this._shims.push(shim);
-        }
-
-        public unregisterShim(shim: IShim): void {
-            for(var i =0, n = this._shims.length; i<n; i++) {
-                if (this._shims[i] === shim) {
-                    delete this._shims[i];
-                    return;
-                }
-            }
-
-            throw TypeScript.Errors.invalidOperation();
-        }
+    public createLanguageServiceShim(
+      host: ILanguageServiceShimHost
+    ): ILanguageServiceShim {
+      try {
+        var hostAdapter = new LanguageServiceShimHostAdapter(host);
+        var pullLanguageService = this.createPullLanguageService(hostAdapter);
+        return new LanguageServiceShim(this, host, pullLanguageService);
+      } catch (err) {
+        TypeScript.Services.logInternalError(host, err);
+        throw err;
+      }
     }
+
+    public createClassifier(
+      host: TypeScript.Services.IClassifierHost
+    ): TypeScript.Services.Classifier {
+      try {
+        return new TypeScript.Services.Classifier(host);
+      } catch (err) {
+        TypeScript.Services.logInternalError(host, err);
+        throw err;
+      }
+    }
+
+    public createClassifierShim(
+      host: TypeScript.Services.IClassifierHost
+    ): ClassifierShim {
+      try {
+        return new ClassifierShim(this, host);
+      } catch (err) {
+        TypeScript.Services.logInternalError(host, err);
+        throw err;
+      }
+    }
+
+    public createCoreServices(
+      host: TypeScript.Services.ICoreServicesHost
+    ): TypeScript.Services.CoreServices {
+      try {
+        return new TypeScript.Services.CoreServices(host);
+      } catch (err) {
+        TypeScript.Services.logInternalError(host.logger, err);
+        throw err;
+      }
+    }
+
+    public createCoreServicesShim(
+      host: TypeScript.Services.ICoreServicesHost
+    ): CoreServicesShim {
+      try {
+        return new CoreServicesShim(this, host);
+      } catch (err) {
+        TypeScript.Services.logInternalError(host.logger, err);
+        throw err;
+      }
+    }
+
+    public close(): void {
+      // Forget all the registered shims
+      this._shims = [];
+    }
+
+    public registerShim(shim: IShim): void {
+      this._shims.push(shim);
+    }
+
+    public unregisterShim(shim: IShim): void {
+      for (var i = 0, n = this._shims.length; i < n; i++) {
+        if (this._shims[i] === shim) {
+          delete this._shims[i];
+          return;
+        }
+      }
+
+      throw Errors.invalidOperation();
+    }
+  }
 }
-

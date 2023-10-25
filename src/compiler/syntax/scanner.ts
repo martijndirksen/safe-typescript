@@ -113,7 +113,7 @@ import type { CheckedArray } from '../../runtime/rt';
       spaceAvailable: number
     ): number {
       var charactersRemaining = this.text.length() - sourceIndex;
-      var amountToRead = MathPrototype.min(charactersRemaining, spaceAvailable);
+      var amountToRead = Math.min(charactersRemaining, spaceAvailable);
       this.text.copyTo(sourceIndex, window, destinationIndex, amountToRead);
       return amountToRead;
     }
@@ -1362,7 +1362,7 @@ import type { CheckedArray } from '../../runtime/rt';
             new Diagnostic(
               this.fileName,
               this.text.lineMap(),
-              MathPrototype.min(
+              Math.min(
                 this.slidingWindow.absoluteIndex(),
                 this.text.length()
               ),

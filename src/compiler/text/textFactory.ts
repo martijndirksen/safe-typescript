@@ -340,14 +340,11 @@ module TypeScript.TextFactory {
     }
 
     private getCompositeSpan(start: number, length: number): TextSpan {
-      var compositeStart = MathPrototype.min(
+      var compositeStart = Math.min(
         this.text.length(),
         this.span.start() + start
       );
-      var compositeEnd = MathPrototype.min(
-        this.text.length(),
-        compositeStart + length
-      );
+      var compositeEnd = Math.min(this.text.length(), compositeStart + length);
       return new TextSpan(compositeStart, compositeEnd - compositeStart);
     }
 
@@ -540,14 +537,11 @@ module TypeScript.SimpleText {
     }
 
     private getCompositeSpan(start: number, length: number): TextSpan {
-      var compositeStart = MathPrototype.min(
+      var compositeStart = Math.min(
         this.text.length(),
         this.span.start() + start
       );
-      var compositeEnd = MathPrototype.min(
-        this.text.length(),
-        compositeStart + length
-      );
+      var compositeEnd = Math.min(this.text.length(), compositeStart + length);
       return new TextSpan(compositeStart, compositeEnd - compositeStart);
     }
 

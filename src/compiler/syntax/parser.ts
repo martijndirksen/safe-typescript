@@ -757,7 +757,7 @@ module TypeScript.Parser {
 
         var position = token.fullStart();
 
-        start = MathPrototype.max(0, position - 1);
+        start = Math.max(0, position - 1);
       }
 
       var finalSpan = TextSpan.fromBounds(start, changeRange.span().end());

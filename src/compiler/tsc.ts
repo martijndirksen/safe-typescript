@@ -7,6 +7,7 @@
 
 import { EOL } from "os";
 import { IO } from "./io";
+import { Environment } from "./core/environment";
 
 
   class SourceFile {
@@ -79,162 +80,10 @@ import { IO } from "./io";
         this.resolve();
 
         this.compile();
-
-        if (this.compilationSettings.gatherDiagnostics()) {
-          this.logger.log('');
-          this.logger.log(
-            'File resolution time:                     ' +
-              TypeScript.fileResolutionTime
-          );
-          this.logger.log(
-            '           file read:                     ' +
-              TypeScript.fileResolutionIOTime
-          );
-          this.logger.log(
-            '        scan imports:                     ' +
-              TypeScript.fileResolutionScanImportsTime
-          );
-          this.logger.log(
-            '       import search:                     ' +
-              TypeScript.fileResolutionImportFileSearchTime
-          );
-          this.logger.log(
-            '        get lib.d.ts:                     ' +
-              TypeScript.fileResolutionGetDefaultLibraryTime
-          );
-
-          this.logger.log(
-            'SyntaxTree parse time:                    ' +
-              TypeScript.syntaxTreeParseTime
-          );
-          this.logger.log(
-            'Syntax Diagnostics time:                  ' +
-              TypeScript.syntaxDiagnosticsTime
-          );
-          this.logger.log(
-            'AST translation time:                     ' +
-              TypeScript.astTranslationTime
-          );
-          this.logger.log('');
-          this.logger.log(
-            'Type check time:                          ' +
-              TypeScript.typeCheckTime
-          );
-          this.logger.log('');
-          this.logger.log(
-            'Emit time:                                ' + TypeScript.emitTime
-          );
-          this.logger.log(
-            'Declaration emit time:                    ' +
-              TypeScript.declarationEmitTime
-          );
-
-          this.logger.log(
-            'Total number of symbols created:          ' +
-              TypeScript.pullSymbolID
-          );
-          this.logger.log(
-            'Specialized types created:                ' +
-              TypeScript.nSpecializationsCreated
-          );
-          this.logger.log(
-            'Specialized signatures created:           ' +
-              TypeScript.nSpecializedSignaturesCreated
-          );
-
-          this.logger.log(
-            '  IsExternallyVisibleTime:                ' +
-              TypeScript.declarationEmitIsExternallyVisibleTime
-          );
-          this.logger.log(
-            '  TypeSignatureTime:                      ' +
-              TypeScript.declarationEmitTypeSignatureTime
-          );
-          this.logger.log(
-            '  GetBoundDeclTypeTime:                   ' +
-              TypeScript.declarationEmitGetBoundDeclTypeTime
-          );
-          this.logger.log(
-            '  IsOverloadedCallSignatureTime:          ' +
-              TypeScript.declarationEmitIsOverloadedCallSignatureTime
-          );
-          this.logger.log(
-            '  FunctionDeclarationGetSymbolTime:       ' +
-              TypeScript.declarationEmitFunctionDeclarationGetSymbolTime
-          );
-          this.logger.log(
-            '  GetBaseTypeTime:                        ' +
-              TypeScript.declarationEmitGetBaseTypeTime
-          );
-          this.logger.log(
-            '  GetAccessorFunctionTime:                ' +
-              TypeScript.declarationEmitGetAccessorFunctionTime
-          );
-          this.logger.log(
-            '  GetTypeParameterSymbolTime:             ' +
-              TypeScript.declarationEmitGetTypeParameterSymbolTime
-          );
-          this.logger.log(
-            '  GetImportDeclarationSymbolTime:         ' +
-              TypeScript.declarationEmitGetImportDeclarationSymbolTime
-          );
-
-          this.logger.log(
-            'Emit write file time:                     ' +
-              TypeScript.emitWriteFileTime
-          );
-
-          this.logger.log(
-            'Compiler resolve path time:               ' +
-              TypeScript.compilerResolvePathTime
-          );
-          this.logger.log(
-            'Compiler directory name time:             ' +
-              TypeScript.compilerDirectoryNameTime
-          );
-          this.logger.log(
-            'Compiler directory exists time:           ' +
-              TypeScript.compilerDirectoryExistsTime
-          );
-          this.logger.log(
-            'Compiler file exists time:                ' +
-              TypeScript.compilerFileExistsTime
-          );
-
-          this.logger.log(
-            'IO host resolve path time:                ' +
-              TypeScript.ioHostResolvePathTime
-          );
-          this.logger.log(
-            'IO host directory name time:              ' +
-              TypeScript.ioHostDirectoryNameTime
-          );
-          this.logger.log(
-            'IO host create directory structure time:  ' +
-              TypeScript.ioHostCreateDirectoryStructureTime
-          );
-          this.logger.log(
-            'IO host write file time:                  ' +
-              TypeScript.ioHostWriteFileTime
-          );
-
-          this.logger.log(
-            'Node make directory time:                 ' +
-              TypeScript.nodeMakeDirectoryTime
-          );
-          this.logger.log(
-            'Node writeFileSync time:                  ' +
-              TypeScript.nodeWriteFileSyncTime
-          );
-          this.logger.log(
-            'Node createBuffer time:                   ' +
-              TypeScript.nodeCreateBufferTime
-          );
-        }
       }
       this.reportDiagStats();
       // Exit with the appropriate error code
-      this.ioHost.quit(0); //this.hasErrors ? 1 : 0);
+      this.ioHost.quit(0);
     }
 
     private resolve() {
@@ -287,7 +136,6 @@ import { IO } from "./io";
         }
       }
 
-      var defaultLibStart = new Date().getTime();
       if (includeDefaultLibrary) {
         var libraryResolvedFile: IResolvedFile = {
           path: this.getDefaultLibraryFilePath(),
@@ -298,12 +146,7 @@ import { IO } from "./io";
         // Prepend the library to the resolved list
         resolvedFiles = [libraryResolvedFile].concat(resolvedFiles);
       }
-      TypeScript.fileResolutionGetDefaultLibraryTime +=
-        new Date().getTime() - defaultLibStart;
-
       this.resolvedFiles = resolvedFiles;
-
-      TypeScript.fileResolutionTime = new Date().getTime() - start;
     }
 
     // Returns true if compilation failed from some reason.

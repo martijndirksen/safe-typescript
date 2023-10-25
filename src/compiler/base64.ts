@@ -1,3 +1,6 @@
+import { getDiagnosticMessage } from './core/diagnosticCore';
+import { DiagnosticCode } from './resources/diagnosticCode.generated';
+
 class Base64Format {
   static encodedValues =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';

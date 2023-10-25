@@ -1,7 +1,6 @@
 import { Errors } from './errors';
-import type { RT } from '../../runtime/rt';
 
-export class ArrayUtilities implements RT.Virtual {
+export class ArrayUtilities {
   public static isArray(value: any): boolean {
     return (
       value instanceof Array
@@ -84,7 +83,6 @@ export class ArrayUtilities implements RT.Virtual {
   }
 
   public static min<T>(array: T[], func: (v: T) => number): number {
-    // Debug.assert(array.length > 0);
     var min = func(array[0]);
 
     for (var i = 1; i < array.length; i++) {
@@ -98,7 +96,6 @@ export class ArrayUtilities implements RT.Virtual {
   }
 
   public static max<T>(array: T[], func: (v: T) => number): number {
-    // Debug.assert(array.length > 0);
     var max = func(array[0]);
 
     for (var i = 1; i < array.length; i++) {
@@ -233,10 +230,13 @@ export class ArrayUtilities implements RT.Virtual {
     return ~low;
   }
 
-  public static createArray<T>(length: number, defaultValue: T): T[] {
+  public static createArray<T>(length: number, defaultValue?: T): T[] {
     var result = new Array<T>(length);
-    for (var i = 0; i < length; i++) {
-      result[i] = defaultValue;
+
+    if (defaultValue) {
+      for (var i = 0; i < length; i++) {
+        result[i] = defaultValue;
+      }
     }
 
     return result;

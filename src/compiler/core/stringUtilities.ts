@@ -1,3 +1,4 @@
+import { RT } from "../../runtime/rt";
 
   export class StringUtilities {
     public static isString(value: any): boolean {
@@ -6,17 +7,6 @@
 
     public static fromCharCodeArray(array: number[]): string {
       return RT.applyVariadic<number>(String, 'fromCharCode', array);
-      //return String.fromCharCode.apply(null, array);
-    }
-
-    public static endsWith(string: string, value: string): boolean {
-      return (
-        string.substring(string.length - value.length, string.length) === value
-      );
-    }
-
-    public static startsWith(string: string, value: string): boolean {
-      return string.substr(0, value.length) === value;
     }
 
     public static copyTo(

@@ -148,9 +148,9 @@
       // specified minimum indent (hence, max(initial - dedentAmount, minIndent).  *But* if
       // the initial column was less than that minimum indent, then we'll keep it at that column.
       // (hence min(initial, desired)).
-      var newFirstNonWhitespaceColumn = MathPrototype.min(
+      var newFirstNonWhitespaceColumn = Math.min(
         firstNonWhitespaceColumn,
-        MathPrototype.max(
+        Math.max(
           firstNonWhitespaceColumn - this.dedentationAmount,
           this.minimumIndent
         )

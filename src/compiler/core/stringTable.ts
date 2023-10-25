@@ -1,3 +1,7 @@
+import { ArrayUtilities } from './arrayUtilities';
+import { Hash } from './hash';
+import { StringUtilities } from './stringUtilities';
+
 module TypeScript.Collections {
   export var DefaultStringTableCapacity = 256;
 
@@ -24,13 +28,12 @@ module TypeScript.Collections {
   // string and the bucket for the table.  However, that is only incurred the first time each unique
   // string is added.
   export class StringTable {
-    // TODO: uncomment this once typecheck bug is fixed.
     private entries: StringTableEntry[];
     private count: number = 0;
 
     constructor(capacity: number) {
       var size = Hash.getPrime(capacity);
-      this.entries = ArrayUtilities.createArray<StringTableEntry>(size, null);
+      this.entries = ArrayUtilities.createArray<StringTableEntry>(size);
     }
 
     public addCharArray(key: number[], start: number, len: number): string {
@@ -94,45 +97,12 @@ module TypeScript.Collections {
       return e.Text;
     }
 
-    //private dumpStats() {
-    //    var standardOut = Environment.standardOut;
-
-    //    standardOut.WriteLine("----------------------")
-    //    standardOut.WriteLine("String table stats");
-    //    standardOut.WriteLine("Count            : " + this.count);
-    //    standardOut.WriteLine("Entries Length   : " + this.entries.length);
-
-    //    var longestSlot = 0;
-    //    var occupiedSlots = 0;
-    //    for (var i = 0; i < this.entries.length; i++) {
-    //        if (this.entries[i] !== null) {
-    //            occupiedSlots++;
-
-    //            var current = this.entries[i];
-    //            var slotCount = 0;
-    //            while (current !== null) {
-    //                slotCount++;
-    //                current = current.Next;
-    //            }
-
-    //            longestSlot = MathPrototype.max(longestSlot, slotCount);
-    //        }
-    //    }
-
-    //    standardOut.WriteLine("Occupied slots   : " + occupiedSlots);
-    //    standardOut.WriteLine("Longest  slot    : " + longestSlot);
-    //    standardOut.WriteLine("Avg Length/Slot  : " + (this.count / occupiedSlots));
-    //    standardOut.WriteLine("----------------------");
-    //}
-
     private grow(): void {
-      // this.dumpStats();
-
       var newSize = Hash.expandPrime(this.entries.length);
 
       var oldEntries = this.entries;
       var newEntries: StringTableEntry[] =
-        ArrayUtilities.createArray<StringTableEntry>(newSize, null);
+        ArrayUtilities.createArray<StringTableEntry>(newSize);
 
       this.entries = newEntries;
 
@@ -146,8 +116,6 @@ module TypeScript.Collections {
           e = tmp;
         }
       }
-
-      // this.dumpStats();
     }
 
     private static textCharArrayEquals(

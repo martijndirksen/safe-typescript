@@ -11,7 +11,7 @@ export class LineMap {
     private length: number
   ) {}
 
-  public toJSON(key: any) {
+  public toJSON() {
     return { lineStarts: this.lineStarts(), length: this.length };
   }
 

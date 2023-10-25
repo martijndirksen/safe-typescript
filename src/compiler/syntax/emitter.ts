@@ -1,5 +1,7 @@
 ///<reference path='References.ts' />
 
+import { defaultHashTableCapacity } from '../core/hashTable';
+
 module TypeScript.Emitter1 {
   function callSignature(parameter: ParameterSyntax): CallSignatureSyntax {
     return CallSignatureSyntax.create1().withParameterList(
@@ -9,8 +11,8 @@ module TypeScript.Emitter1 {
 
   // Class that makes sure we're not reusing tokens in a tree
   class EnsureTokenUniquenessRewriter extends SyntaxRewriter {
-    private tokenTable = Collections.createHashTable(
-      Collections.DefaultHashTableCapacity,
+    private tokenTable = createHashTable(
+      defaultHashTableCapacity,
       Collections.identityHashCode
     );
 

@@ -169,17 +169,14 @@ module TypeScript.Indentation {
     options: FormattingOptions
   ): string {
     var numberOfTabs = 0;
-    var numberOfSpaces = MathPrototype.max(0, column);
+    var numberOfSpaces = Math.max(0, column);
 
     if (options.useTabs) {
       numberOfTabs = Math.floor(column / options.spacesPerTab);
       numberOfSpaces -= numberOfTabs * options.spacesPerTab;
     }
 
-    return (
-      StringUtilities.repeat('\t', numberOfTabs) +
-      StringUtilities.repeat(' ', numberOfSpaces)
-    );
+    return '\t'.repeat(numberOfTabs) + ' '.repeat(numberOfSpaces);
   }
 
   export function indentationTrivia(

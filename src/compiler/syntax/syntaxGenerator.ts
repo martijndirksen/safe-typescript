@@ -3,6 +3,8 @@
 ///<reference path='syntaxFacts.ts' />
 ///<reference path='syntaxKind.ts' />
 
+import { ArrayUtilities } from '../core/arrayUtilities';
+
 // Adds argument checking to the generated nodes.  Argument checking appears to slow things down
 // parsing about 7%.  If we want to get that perf back, we can always remove this.
 var argumentChecks = false;
@@ -1342,12 +1344,8 @@ var definitions: ITypeDefinition[] = [
   },
 ];
 
-//function endsWith(string: string, value: string): boolean {
-//    return string.substring(string.length - value.length, string.length) === value;
-//}
-
 function getStringWithoutSuffix(definition: string) {
-  if (TypeScript.StringUtilities.endsWith(definition, 'Syntax')) {
+  if (definition.endsWith('Syntax')) {
     return definition.substring(0, definition.length - 'Syntax'.length);
   }
 
@@ -1670,7 +1668,7 @@ function isOptional(child: IMemberDefinition) {
 }
 
 function generateFactory1Method(definition: ITypeDefinition): string {
-  var mandatoryChildren = TypeScript.ArrayUtilities.where(
+  var mandatoryChildren = ArrayUtilities.where(
     definition.children,
     (c) => !isOptional(c)
   );
@@ -1719,12 +1717,12 @@ function generateFactory1Method(definition: ITypeDefinition): string {
 }
 
 function isKeywordOrPunctuation(kind: string): boolean {
-  if (TypeScript.StringUtilities.endsWith(kind, 'Keyword')) {
+  if (kind.endsWith('Keyword')) {
     return true;
   }
 
   if (
-    TypeScript.StringUtilities.endsWith(kind, 'Token') &&
+    kind.endsWith('Token') &&
     kind !== 'IdentifierName' &&
     kind !== 'EndOfFileToken'
   ) {
@@ -2159,7 +2157,7 @@ function generateWithMethod(
   result += '    }\r\n';
 
   if (child.isList || child.isSeparatedList) {
-    if (TypeScript.StringUtilities.endsWith(child.name, 's')) {
+    if (child.name.endsWith('s')) {
       var pascalName = pascalCase(child.name);
       pascalName = pascalName.substring(0, pascalName.length - 1);
 
