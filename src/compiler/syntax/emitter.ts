@@ -1,6 +1,68 @@
-///<reference path='References.ts' />
-
-import { defaultHashTableCapacity } from '../core/hashTable';
+import { ArrayUtilities } from '../core/arrayUtilities';
+import { Debug } from '../core/debug';
+import { Errors } from '../core/errors';
+import { createHashTable, defaultHashTableCapacity } from '../core/hashTable';
+import {
+  IFormattingOptions,
+  createFormattingOptions,
+} from './formattingOptions';
+import { SyntaxDedenter } from './syntaxDedenter';
+import {
+  ISyntaxNode,
+  IModuleElementSyntax,
+  INameSyntax,
+  IArrowFunctionExpressionSyntax,
+  IExpressionSyntax,
+  IStatementSyntax,
+  IClassElementSyntax,
+} from './syntaxElement';
+import { SyntaxIndenter } from './syntaxIndenter';
+import { SyntaxInformationMap } from './syntaxInformationMap';
+import { SyntaxKind } from './syntaxKind';
+import { ISyntaxList } from './syntaxList';
+import { SyntaxNode } from './syntaxNode';
+import { SyntaxNodeInvariantsChecker } from './syntaxNodeInvariantsChecker';
+import { ISyntaxNodeOrToken } from './syntaxNodeOrToken';
+import {
+  ArgumentListSyntax,
+  BinaryExpressionSyntax,
+  BlockSyntax,
+  CallSignatureSyntax,
+  CastExpressionSyntax,
+  ClassDeclarationSyntax,
+  ConstructorDeclarationSyntax,
+  ElementAccessExpressionSyntax,
+  EnumDeclarationSyntax,
+  EnumElementSyntax,
+  ExpressionStatementSyntax,
+  FunctionDeclarationSyntax,
+  FunctionExpressionSyntax,
+  HeritageClauseSyntax,
+  IfStatementSyntax,
+  InterfaceDeclarationSyntax,
+  InvocationExpressionSyntax,
+  MemberAccessExpressionSyntax,
+  MemberFunctionDeclarationSyntax,
+  MemberVariableDeclarationSyntax,
+  MethodSignatureSyntax,
+  ModuleDeclarationSyntax,
+  ObjectLiteralExpressionSyntax,
+  ParameterListSyntax,
+  ParameterSyntax,
+  ParenthesizedArrowFunctionExpressionSyntax,
+  ParenthesizedExpressionSyntax,
+  QualifiedNameSyntax,
+  ReturnStatementSyntax,
+  SimpleArrowFunctionExpressionSyntax,
+  SimplePropertyAssignmentSyntax,
+  SourceUnitSyntax,
+  TypeParameterListSyntax,
+  VariableDeclaratorSyntax,
+  VariableStatementSyntax,
+} from './syntaxNodes.generated';
+import { SyntaxRewriter } from './syntaxRewriter.generated';
+import { ISyntaxToken } from './syntaxToken';
+import { ISyntaxTriviaList } from './syntaxTriviaList';
 
 module TypeScript.Emitter1 {
   function callSignature(parameter: ParameterSyntax): CallSignatureSyntax {
@@ -30,19 +92,19 @@ module TypeScript.Emitter1 {
 
   class EmitterImpl extends SyntaxRewriter {
     private syntaxInformationMap: SyntaxInformationMap;
-    private options: FormattingOptions;
+    private options: IFormattingOptions;
     private space: ISyntaxTriviaList;
     private newLine: ISyntaxTriviaList;
     private factory: Syntax.IFactory = Syntax.normalModeFactory;
 
     constructor(
       syntaxInformationMap: SyntaxInformationMap,
-      options: FormattingOptions
+      options?: IFormattingOptions
     ) {
       super();
 
       this.syntaxInformationMap = syntaxInformationMap;
-      this.options = options || FormattingOptions.defaultOptions;
+      this.options = options ?? createFormattingOptions();
 
       // TODO: use proper new line based on options.
       this.space = Syntax.spaceTriviaList;
@@ -1893,7 +1955,7 @@ module TypeScript.Emitter1 {
 
   export function emit(
     input: SourceUnitSyntax,
-    options: FormattingOptions = null
+    options?: IFormattingOptions
   ): SourceUnitSyntax {
     // Make sure no one is passing us a bogus tree.
     SyntaxNodeInvariantsChecker.checkInvariants(input);

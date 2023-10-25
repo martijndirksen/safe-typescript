@@ -1,3 +1,4 @@
+import { IFormattingOptions } from "./formattingOptions";
 
   export class SyntaxIndenter extends SyntaxRewriter {
     private lastTriviaWasNewLine: boolean;
@@ -6,7 +7,7 @@
     constructor(
       indentFirstToken: boolean,
       private indentationAmount: number,
-      private options: FormattingOptions
+      private options: IFormattingOptions
     ) {
       super();
       this.lastTriviaWasNewLine = indentFirstToken;
@@ -183,7 +184,7 @@
       node: ISyntaxNode,
       indentFirstToken: boolean,
       indentAmount: number,
-      options: FormattingOptions
+      options: IFormattingOptions
     ): SyntaxNode {
       var indenter = new SyntaxIndenter(
         indentFirstToken,
@@ -197,7 +198,7 @@
       nodes: SyntaxNode[],
       indentFirstToken: boolean,
       indentAmount: number,
-      options: FormattingOptions
+      options: IFormattingOptions
     ): SyntaxNode[] {
       // Note: it is necessary for correctness that we reuse the same SyntaxIndenter here.
       // That's because when working on nodes 1-N, we need to know if the previous node ended

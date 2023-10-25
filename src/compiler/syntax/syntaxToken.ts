@@ -1,43 +1,41 @@
+export interface ISyntaxToken
+  extends ISyntaxNodeOrToken,
+    INameSyntax,
+    IPrimaryExpressionSyntax {
+  // Same as kind(), just exposed through a property for perf.
+  tokenKind: SyntaxKind;
 
-  export interface ISyntaxToken
-    extends ISyntaxNodeOrToken,
-      INameSyntax,
-      IPrimaryExpressionSyntax {
-    // Same as kind(), just exposed through a property for perf.
-    tokenKind: SyntaxKind;
+  // Text for this token, not including leading or trailing trivia.
+  text(): string;
 
-    // Text for this token, not including leading or trailing trivia.
-    text(): string;
+  value(): any;
+  valueText(): string;
 
-    value(): any;
-    valueText(): string;
+  hasLeadingTrivia(): boolean;
+  hasLeadingComment(): boolean;
+  hasLeadingNewLine(): boolean;
+  hasLeadingSkippedText(): boolean;
 
-    hasLeadingTrivia(): boolean;
-    hasLeadingComment(): boolean;
-    hasLeadingNewLine(): boolean;
-    hasLeadingSkippedText(): boolean;
+  hasTrailingTrivia(): boolean;
+  hasTrailingComment(): boolean;
+  hasTrailingNewLine(): boolean;
+  hasTrailingSkippedText(): boolean;
 
-    hasTrailingTrivia(): boolean;
-    hasTrailingComment(): boolean;
-    hasTrailingNewLine(): boolean;
-    hasTrailingSkippedText(): boolean;
+  hasSkippedToken(): boolean;
 
-    hasSkippedToken(): boolean;
+  leadingTrivia(): ISyntaxTriviaList;
+  trailingTrivia(): ISyntaxTriviaList;
 
-    leadingTrivia(): ISyntaxTriviaList;
-    trailingTrivia(): ISyntaxTriviaList;
+  withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
+  withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken;
 
-    withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
-    withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken;
+  clone(): ISyntaxToken;
+}
 
-    clone(): ISyntaxToken;
-  }
-
-  export interface ITokenInfo {
-    leadingTrivia?: ISyntaxTrivia[];
-    text?: string;
-    trailingTrivia?: ISyntaxTrivia[];
-  }
+export interface ITokenInfo {
+  leadingTrivia?: ISyntaxTrivia[];
+  text?: string;
+  trailingTrivia?: ISyntaxTrivia[];
 }
 
 module TypeScript.Syntax {

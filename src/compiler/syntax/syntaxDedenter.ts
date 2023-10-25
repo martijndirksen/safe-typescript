@@ -1,3 +1,4 @@
+import { IFormattingOptions } from "./formattingOptions";
 
   export class SyntaxDedenter extends SyntaxRewriter {
     private lastTriviaWasNewLine: boolean;
@@ -6,7 +7,7 @@
       dedentFirstToken: boolean,
       private dedentationAmount: number,
       private minimumIndent: number,
-      private options: FormattingOptions
+      private options: IFormattingOptions
     ) {
       super();
       this.lastTriviaWasNewLine = dedentFirstToken;
@@ -215,7 +216,7 @@
       dedentFirstToken: boolean,
       dedentAmount: number,
       minimumIndent: number,
-      options: FormattingOptions
+      options: IFormattingOptions
     ): ISyntaxNode {
       var dedenter = new SyntaxDedenter(
         dedentFirstToken,

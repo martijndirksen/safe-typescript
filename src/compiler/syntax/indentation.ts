@@ -1,8 +1,17 @@
+import { ArrayUtilities } from '../core/arrayUtilities';
+import { CharacterCodes } from '../text/characterCodes';
+import { CharacterInfo } from './characterInfo';
+import { IFormattingOptions } from './formattingOptions';
+import { SyntaxInformationMap } from './syntaxInformationMap';
+import { SyntaxKind } from './syntaxKind';
+import { ISyntaxToken } from './syntaxToken';
+import { ISyntaxTrivia } from './syntaxTrivia';
+
 module TypeScript.Indentation {
   export function columnForEndOfToken(
     token: ISyntaxToken,
     syntaxInformationMap: SyntaxInformationMap,
-    options: FormattingOptions
+    options: IFormattingOptions
   ): number {
     return (
       columnForStartOfToken(token, syntaxInformationMap, options) +
@@ -13,7 +22,7 @@ module TypeScript.Indentation {
   export function columnForStartOfToken(
     token: ISyntaxToken,
     syntaxInformationMap: SyntaxInformationMap,
-    options: FormattingOptions
+    options: IFormattingOptions
   ): number {
     // Walk backward from this token until we find the first token in the line.  For each token
     // we see (that is not the first tokem in line), push the entirety of the text into the text
@@ -64,7 +73,7 @@ module TypeScript.Indentation {
   export function columnForStartOfFirstTokenInLineContainingToken(
     token: ISyntaxToken,
     syntaxInformationMap: SyntaxInformationMap,
-    options: FormattingOptions
+    options: IFormattingOptions
   ): number {
     // Walk backward through the tokens until we find the first one on the line.
     var firstTokenInLine =
@@ -114,7 +123,7 @@ module TypeScript.Indentation {
 
   function columnForLeadingTextInReverse(
     leadingTextInReverse: string[],
-    options: FormattingOptions
+    options: IFormattingOptions
   ): number {
     var column = 0;
 
@@ -137,7 +146,7 @@ module TypeScript.Indentation {
   export function columnForPositionInString(
     input: string,
     position: number,
-    options: FormattingOptions
+    options: IFormattingOptions
   ): number {
     return columnForPositionInStringWorker(input, position, 0, options);
   }
@@ -146,7 +155,7 @@ module TypeScript.Indentation {
     input: string,
     position: number,
     startColumn: number,
-    options: FormattingOptions
+    options: IFormattingOptions
   ): number {
     var column = startColumn;
     var spacesPerTab = options.spacesPerTab;
@@ -166,7 +175,7 @@ module TypeScript.Indentation {
 
   export function indentationString(
     column: number,
-    options: FormattingOptions
+    options: IFormattingOptions
   ): string {
     var numberOfTabs = 0;
     var numberOfSpaces = Math.max(0, column);
@@ -181,7 +190,7 @@ module TypeScript.Indentation {
 
   export function indentationTrivia(
     column: number,
-    options: FormattingOptions
+    options: IFormattingOptions
   ): ISyntaxTrivia {
     return Syntax.whitespace(indentationString(column, options));
   }

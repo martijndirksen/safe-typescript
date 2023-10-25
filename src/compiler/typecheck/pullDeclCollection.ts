@@ -3,6 +3,8 @@
 
 ///<reference path='..\references.ts' />
 
+import { ModuleDeclaration } from "../ast";
+
 
   class DeclCollectionContext {
     public isDeclareFile = false;

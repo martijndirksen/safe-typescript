@@ -4,6 +4,8 @@
 
 ///<reference path='typescriptServices.ts' />
 
+import { createFormattingOptions } from "../compiler/syntax/formattingOptions";
+
 module TypeScript.Services {
     export class LanguageService implements ILanguageService {
         private logger: TypeScript.ILogger;
@@ -1766,8 +1768,13 @@ module TypeScript.Services {
             var scriptSnapshot = this.compiler.getScriptSnapshot(fileName);
             var scriptText = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
             var textSnapshot = new TypeScript.Services.Formatting.TextSnapshot(scriptText);
-            var options = new FormattingOptions(!editorOptions.ConvertTabsToSpaces, editorOptions.TabSize, editorOptions.IndentSize, editorOptions.NewLineCharacter)
-
+            const options = createFormattingOptions({
+                useTabs: !editorOptions.ConvertTabsToSpaces,
+                spacesPerTab: editorOptions.TabSize,
+                indentSize: editorOptions.IndentSize,
+                newLineCharacter: editorOptions.NewLineCharacter
+            });
+            
             return TypeScript.Services.Formatting.SingleTokenIndenter.getIndentationAmount(position, syntaxTree.sourceUnit(), textSnapshot, options);
         }
 

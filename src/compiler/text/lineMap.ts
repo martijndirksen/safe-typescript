@@ -1,8 +1,13 @@
+import { LineMap } from '../core/lineMap';
+import { IScriptSnapshot } from './scriptSnapshot';
+import { ISimpleText } from './text';
+import { parseLineStarts } from './textUtilities';
+
 export module LineMap1 {
   export function fromSimpleText(text: ISimpleText): LineMap {
     return new LineMap(
       () =>
-        TextUtilities.parseLineStarts({
+        parseLineStarts({
           charCodeAt(index) {
             return text.charCodeAt(index);
           },
@@ -20,9 +25,6 @@ export module LineMap1 {
   }
 
   export function fromString(text: string): LineMap {
-    return new LineMap(
-      () => TextUtilities.parseLineStarts(new String(text)),
-      text.length
-    );
+    return new LineMap(() => parseLineStarts(new String(text)), text.length);
   }
 }

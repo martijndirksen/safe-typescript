@@ -42,7 +42,7 @@ module RT {
         UN
     }
     //The base interface for the representation of all runtime types
-    export interface RTTI extends Virtual {
+    export interface RTTI {
         tt: TT;
         fieldTable: FieldTable;
         methodTable: MethodTable;
