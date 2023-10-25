@@ -1,6 +1,5 @@
 import { Accessibility } from './Accessibility';
 import { IMemberSymbol, IVariableSymbol } from './IMemberSymbol';
-import { ISymbolVisitor } from './ISymbolVisitor';
 import {
   IObjectTypeSymbol,
   ITypeParameterSymbol,
@@ -50,8 +49,6 @@ export interface ISymbol {
   canBeReferencedByName(): boolean;
 
   accessibility(): Accessibility;
-
-  accept(visitor: ISymbolVisitor): any;
 
   isStatic(): boolean;
 
