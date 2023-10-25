@@ -77,7 +77,7 @@ const ignoredSafeTsSources = [
 
 const baseCompilerOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ES5,
-  //module: ts.ModuleKind.CommonJS,
+  //module: ts.ModuleKind.CommonJS, // This is incompatible with outFile
   noImplicitAny: true,
   preserveConstEnums: true,
   removeComments: true,

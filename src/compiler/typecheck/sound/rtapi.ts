@@ -1,5 +1,4 @@
 // Modified by N.Swamy, A.Rastogi (2014)
-///<reference path='../../../../dist/lib.d.ts' />
 
 module RT {
   export interface Nominal {}
