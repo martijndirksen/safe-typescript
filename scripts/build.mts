@@ -20,12 +20,6 @@ async function createDistDirectory() {
   await mkdir(distPath);
 }
 
-async function copyTypings() {
-  const g = new Glob('typings/*.d.ts', { withFileTypes: true });
-  for await (const file of g) {
-    await copyFile(file.fullpath(), join(distPath, file.name));
-  }
-}
 const compilerGlob = `src/compiler/**/*.ts`;
 const servicesGlob = 'src/services/**/*.ts';
 const tscGlob = 'src/compiler/{io,optionsParser,tsc}.ts';
@@ -83,7 +77,7 @@ const ignoredSafeTsSources = [
 
 const baseCompilerOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ES5,
-  module: ts.ModuleKind.CommonJS,
+  //module: ts.ModuleKind.CommonJS,
   noImplicitAny: true,
   preserveConstEnums: true,
   removeComments: true,
@@ -93,7 +87,6 @@ const baseCompilerOptions: ts.CompilerOptions = {
 (async () => {
   await cleanDistDirectory();
   await createDistDirectory();
-  await copyTypings();
   await buildProgram({
     globPattern: [compilerGlob],
     ignore: ignoredCompilerSources,
@@ -103,47 +96,47 @@ const baseCompilerOptions: ts.CompilerOptions = {
     },
   });
   addLicenseInfoToFile(join(distPath, 'typescript.js'));
-  await buildProgram({
-    globPattern: [compilerGlob, tscGlob],
-    ignore: ignoredCompilerTscSources,
-    compilerOptions: {
-      ...baseCompilerOptions,
-      outFile: join(distPath, 'tsc.js'),
-    },
-  });
-  addLicenseInfoToFile(join(distPath, 'tsc.js'));
-  await buildProgram({
-    globPattern: [compilerGlob, servicesGlob],
-    ignore: ignoredCompilerSources,
-    compilerOptions: {
-      ...baseCompilerOptions,
-      outFile: join(distPath, 'typescriptServices.js'),
-    },
-  });
-  addLicenseInfoToFile(join(distPath, 'typescriptServices.js'));
-  await buildProgram({
-    globPattern: [rtGlob],
-    compilerOptions: {
-      ...baseCompilerOptions,
-      declaration: true,
-      outDir: join(distPath, 'lib'),
-    },
-  });
-  await buildProgram({
-    globPattern: [compilerGlob],
-    ignore: ignoredSafeTsSources,
-    compilerOptions: {
-      ...baseCompilerOptions,
-      outFile: join(distPath, 'tsc.safe.js'),
-    },
-  });
-  concatFiles(
-    join(distPath, 'tsc.safe.js'),
-    join(rootPath, 'CopyrightNotice.txt'),
-    join(rootPath, 'ThirdPartyNoticeText.txt'),
-    join(distPath, 'lib', 'rt.js'),
-    join(distPath, 'tsc.safe.js')
-  );
+  // await buildProgram({
+  //   globPattern: [compilerGlob, tscGlob],
+  //   ignore: ignoredCompilerTscSources,
+  //   compilerOptions: {
+  //     ...baseCompilerOptions,
+  //     outFile: join(distPath, 'tsc.js'),
+  //   },
+  // });
+  // addLicenseInfoToFile(join(distPath, 'tsc.js'));
+  // await buildProgram({
+  //   globPattern: [compilerGlob, servicesGlob],
+  //   ignore: ignoredCompilerSources,
+  //   compilerOptions: {
+  //     ...baseCompilerOptions,
+  //     outFile: join(distPath, 'typescriptServices.js'),
+  //   },
+  // });
+  // addLicenseInfoToFile(join(distPath, 'typescriptServices.js'));
+  // await buildProgram({
+  //   globPattern: [rtGlob],
+  //   compilerOptions: {
+  //     ...baseCompilerOptions,
+  //     declaration: true,
+  //     outDir: join(distPath, 'lib'),
+  //   },
+  // });
+  // await buildProgram({
+  //   globPattern: [compilerGlob],
+  //   ignore: ignoredSafeTsSources,
+  //   compilerOptions: {
+  //     ...baseCompilerOptions,
+  //     outFile: join(distPath, 'tsc.safe.js'),
+  //   },
+  // });
+  // concatFiles(
+  //   join(distPath, 'tsc.safe.js'),
+  //   join(rootPath, 'CopyrightNotice.txt'),
+  //   join(rootPath, 'ThirdPartyNoticeText.txt'),
+  //   join(distPath, 'lib', 'rt.js'),
+  //   join(distPath, 'tsc.safe.js')
+  // );
 })();
 
 async function buildProgram({
