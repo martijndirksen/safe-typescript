@@ -1,4 +1,4 @@
-module TypeScript {
+
   export interface ISyntaxToken
     extends ISyntaxNodeOrToken,
       INameSyntax,

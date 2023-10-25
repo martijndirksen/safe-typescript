@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class CharacterInfo {
     public static isDecimalDigit(c: number): boolean {
       return c >= CharacterCodes._0 && c <= CharacterCodes._9;

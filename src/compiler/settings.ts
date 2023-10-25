@@ -1,4 +1,4 @@
-module TypeScript {
+
   export interface KnownWarning {
     category?: string;
     fileName: string;

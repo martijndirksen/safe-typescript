@@ -3,7 +3,7 @@
 
 ///<reference path='..\references.ts' />
 
-module TypeScript {
+
   class DeclCollectionContext {
     public isDeclareFile = false;
     public parentChain: PullDecl[] = [];

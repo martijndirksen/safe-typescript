@@ -1,6 +1,8 @@
 ///<reference path='..\references.ts' />
 
-module TypeScript {
+import { EOL } from "os";
+
+
   export interface IPullTypeCollection {
     getLength: () => number;
     getTypeAtIndex(index: number): PullTypeSymbol;
@@ -19847,7 +19849,7 @@ module TypeScript {
     public addMessage(message: string) {
       if (!this.onlyCaptureFirstError && this.message) {
         this.message =
-          this.message + TypeScript.newLine() + this.indentString() + message;
+          this.message + EOL + this.indentString() + message;
       } else {
         this.message = this.indentString() + message;
       }

@@ -3,7 +3,7 @@
 
 ///<reference path='..\references.ts' />
 
-module TypeScript {
+
   export class PullSymbolBinder {
     private declsBeingBound: number[] = [];
 

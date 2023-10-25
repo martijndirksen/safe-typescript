@@ -1,4 +1,4 @@
-module TypeScript {
+
   export enum SyntaxConstants {
     // Masks that we use to place information about trivia into a single int. The first two flags
     // mark bools that tell us if the trivia contains a comment or a newline. The width of the

@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class Hash implements RT.Virtual {
     // This table uses FNV1a as a string hash
     private static FNV_BASE = 2166136261;

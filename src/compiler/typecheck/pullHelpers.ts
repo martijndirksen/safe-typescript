@@ -3,7 +3,7 @@
 
 ///<reference path='..\references.ts' />
 
-module TypeScript {
+
   export module PullHelpers {
     export interface SignatureInfoForFuncDecl {
       signature: PullSignatureSymbol;

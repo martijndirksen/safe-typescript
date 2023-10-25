@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class SyntaxIndenter extends SyntaxRewriter {
     private lastTriviaWasNewLine: boolean;
     private indentationTrivia: ISyntaxTrivia;

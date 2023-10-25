@@ -1,4 +1,4 @@
-module TypeScript {
+
   export interface ISyntaxVisitor {
     visitToken(token: ISyntaxToken): any;
     visitSourceUnit(node: SourceUnitSyntax): any;

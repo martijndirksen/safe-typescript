@@ -1,7 +1,7 @@
 /**
  * Immutable representation of a line in an IText instance.
  */
-module TypeScript {
+
   export interface ITextLine {
     /**
      * Start of the line.

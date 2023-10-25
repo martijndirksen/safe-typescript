@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class SyntaxUtilities {
     public static isAngleBracket(
       positionedElement: PositionedElement

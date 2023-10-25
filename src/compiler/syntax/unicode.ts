@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class Unicode {
     /*
             As per ECMAScript Language Specification 3th Edition, Section 7.6: Identifiers

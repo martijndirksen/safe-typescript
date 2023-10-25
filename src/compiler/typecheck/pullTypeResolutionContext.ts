@@ -3,7 +3,7 @@
 
 ///<reference path='..\references.ts' />
 
-module TypeScript {
+
   export class CandidateInferenceInfo {
     public typeParameter: PullTypeParameterSymbol = null;
     public isFixed = false;

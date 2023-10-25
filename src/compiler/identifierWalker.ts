@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class IdentifierWalker extends SyntaxWalker {
     constructor(public list: IIndexable<boolean>) {
       super();

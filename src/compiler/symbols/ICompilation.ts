@@ -1,9 +1,4 @@
-///<reference path='..\Syntax\SyntaxTree.ts' />
-///<reference path='..\Core\ICancellationToken.ts' />
-///<reference path='ISemanticModel.ts' />
-///<reference path='ISymbol.ts' />
-
-interface ICompilation {
+export interface ICompilation {
   /**
    * Gets the syntax trees (parsed from source code) that this compilation was created with.
    */

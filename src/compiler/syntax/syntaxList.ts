@@ -1,6 +1,6 @@
 import type { CheckedArray } from '../../runtime/rt';
 
-module TypeScript {
+
   export interface ISyntaxList extends ISyntaxElement {
     childAt(index: number): ISyntaxNodeOrToken;
     toArray(): ISyntaxNodeOrToken[];

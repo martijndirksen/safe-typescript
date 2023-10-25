@@ -1,7 +1,7 @@
 // Modified by N.Swamy, A.Rastogi (2014)
 ///<reference path='../../references.ts' />
 /* The first file in the dependency chain of the sound type-checker */
-module TypeScript {
+
     export interface Pair<S, T> {
         fst: S;
         snd: T;

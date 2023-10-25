@@ -3,7 +3,7 @@
 
 ///<reference path='..\references.ts' />
 
-module TypeScript {
+
   export var pullDeclID = 0;
   var sentinelEmptyPullDeclArray: any[] = [];
 

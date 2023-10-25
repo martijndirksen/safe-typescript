@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class ParseOptions {
     private _languageVersion: LanguageVersion;
     private _allowAutomaticSemicolonInsertion: boolean;

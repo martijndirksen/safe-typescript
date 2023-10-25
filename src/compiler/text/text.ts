@@ -1,7 +1,7 @@
 /**
  * Represents an immutable snapshot of text.
  */
-module TypeScript {
+
   export interface ISimpleText {
     /**
      * Total number of characters in the text source.

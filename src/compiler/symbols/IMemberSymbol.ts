@@ -1,11 +1,10 @@
-///<reference path='ISymbol.ts' />
-///<reference path='ITypeSymbol.ts' />
+export interface IMemberSymbol extends ISymbol {}
 
-interface IMemberSymbol extends ISymbol {}
+export interface IConstructorSymbol
+  extends IMemberSymbol,
+    IParameterizedSymbol {}
 
-interface IConstructorSymbol extends IMemberSymbol, IParameterizedSymbol {}
-
-interface IFunctionSymbol
+export interface IFunctionSymbol
   extends IMemberSymbol,
     IParameterizedSymbol,
     IGenericSymbol {
@@ -15,7 +14,7 @@ interface IFunctionSymbol
 /**
  * Represents a variable in a class, module or enum.
  */
-interface IVariableSymbol extends IMemberSymbol {
+export interface IVariableSymbol extends IMemberSymbol {
   /**
    * Gets the type of this field.
    */

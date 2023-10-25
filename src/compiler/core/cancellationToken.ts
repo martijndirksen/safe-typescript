@@ -1,3 +1,3 @@
-interface ICancellationToken {
+export interface ICancellationToken {
   isCancellationRequested(): boolean;
 }

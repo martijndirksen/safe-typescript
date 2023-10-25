@@ -3,7 +3,7 @@
 
 ///<reference path='..\references.ts' />
 
-module TypeScript {
+
   // PULLTODO: Get rid of these
   export var declCacheHit = 0;
   export var declCacheMiss = 0;

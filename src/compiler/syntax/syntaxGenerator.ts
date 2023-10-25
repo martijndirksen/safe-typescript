@@ -2450,7 +2450,7 @@ function generateNode(definition: ITypeDefinition): string {
 function generateNodes(): string {
   var result = "///<reference path='references.ts' />\r\n\r\n";
 
-  result += 'module TypeScript {\r\n';
+  result += '\r\n';
 
   for (var i = 0; i < definitions.length; i++) {
     var definition = definitions[i];
@@ -2483,7 +2483,7 @@ function generateRewriter(): string {
   var result = "///<reference path='references.ts' />\r\n\r\n";
 
   result +=
-    'module TypeScript {\r\n' +
+    '\r\n' +
     '    export class SyntaxRewriter implements ISyntaxVisitor {\r\n' +
     '        public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n' +
     '            return token;\r\n' +
@@ -3081,7 +3081,7 @@ function generateWalker(): string {
   result +=
     "///<reference path='references.ts' />\r\n" +
     '\r\n' +
-    'module TypeScript {\r\n' +
+    '\r\n' +
     '    export class SyntaxWalker implements ISyntaxVisitor {\r\n' +
     '        public visitToken(token: ISyntaxToken): void {\r\n' +
     '        }\r\n' +
@@ -3279,7 +3279,7 @@ function generateScannerUtilities(): string {
   var result =
     "///<reference path='references.ts' />\r\n" +
     '\r\n' +
-    'module TypeScript {\r\n' +
+    '\r\n' +
     '    export class ScannerUtilities {\r\n';
 
   var i: number;
@@ -3344,7 +3344,7 @@ function generateVisitor(): string {
 
   result += "///<reference path='references.ts' />\r\n\r\n";
 
-  result += 'module TypeScript {\r\n';
+  result += '\r\n';
   result += '    export interface ISyntaxVisitor {\r\n';
   result += '        visitToken(token: ISyntaxToken): any;\r\n';
 

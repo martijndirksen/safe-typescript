@@ -1,6 +1,6 @@
 var global: any = <any>Function('return this').call(null);
 
-module TypeScript {
+
   module Clock {
     export var now: () => number;
     export var resolution: number;

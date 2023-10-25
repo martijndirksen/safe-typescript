@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0.
 ///<reference path="..\typescript.ts" />
 
-module TypeScript {
+
   export enum GenerativeTypeClassification {
     Unknown,
     Open,

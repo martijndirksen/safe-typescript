@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class SyntaxNode implements ISyntaxNodeOrToken {
     private _data: number;
 

@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class PositionTrackingWalker extends SyntaxWalker {
     private _position: number = 0;
 

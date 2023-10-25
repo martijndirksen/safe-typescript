@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class SourceUnitSyntax extends SyntaxNode {
     constructor(
       public moduleElements: ISyntaxList,

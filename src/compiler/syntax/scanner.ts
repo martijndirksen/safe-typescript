@@ -1,6 +1,6 @@
 import type { CheckedArray } from '../../runtime/rt';
 
-module TypeScript {
+
   var isKeywordStartCharacter: boolean[] = ArrayUtilities.createArray<boolean>(
     CharacterCodes.maxAsciiCharacter,
     false

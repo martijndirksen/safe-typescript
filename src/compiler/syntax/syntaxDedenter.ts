@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class SyntaxDedenter extends SyntaxRewriter {
     private lastTriviaWasNewLine: boolean;
 

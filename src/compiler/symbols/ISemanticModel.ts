@@ -1,8 +1,4 @@
-///<reference path='ICompilation.ts' />
-///<reference path='ISymbolInfo.ts' />
-///<reference path='ITypeInfo.ts' />
-
-enum LookupOptions {
+export enum LookupOptions {
   /**
    * Consider all symbols.
    */
@@ -14,7 +10,7 @@ enum LookupOptions {
   ModulesOrTypesOnly = 1 << 1,
 }
 
-interface ISemanticModel {
+export interface ISemanticModel {
   compilation(): ICompilation;
   syntaxTree(): SyntaxTree;
 

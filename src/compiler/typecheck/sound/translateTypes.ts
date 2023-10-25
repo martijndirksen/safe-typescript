@@ -1,7 +1,7 @@
 // Modified by N.Swamy, A.Rastogi (2014)
 ///<reference path='../../references.ts' />
 ///<reference path='types.ts' />
-module TypeScript {
+
 
     /* ******************************************************************************************
       *

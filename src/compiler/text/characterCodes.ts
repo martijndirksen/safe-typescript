@@ -1,4 +1,4 @@
-module TypeScript {
+
   export enum CharacterCodes {
     nullCharacter = 0,
     maxAsciiCharacter = 127,

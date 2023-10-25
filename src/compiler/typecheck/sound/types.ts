@@ -5,7 +5,7 @@
  * Defines the abstract syntax of types used in the sound type-checker 
  * All these types derive from the type SoundType defined in ast.ts
  ***********************************************************************/
-module TypeScript {
+
     function substType(s: Pair<TVar, SoundType>[], descend: boolean): (t: Pair<NamedType, AST>) => Pair<NamedType, AST> {
         return (t: Pair<NamedType, AST>) => pair(<NamedType>t.fst.subst(s, descend), t.snd);
     }

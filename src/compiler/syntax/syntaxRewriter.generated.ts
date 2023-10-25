@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class SyntaxRewriter implements ISyntaxVisitor {
     public visitToken(token: ISyntaxToken): ISyntaxToken {
       return token;

@@ -3,7 +3,7 @@
 
 ///<reference path='..\references.ts' />
 
-module TypeScript {
+
   export enum PullElementFlags {
     None = 0,
     Exported = 1,

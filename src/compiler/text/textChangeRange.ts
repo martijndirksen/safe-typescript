@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class TextChangeRange {
     public static unchanged = new TextChangeRange(new TextSpan(0, 0), 0);
 

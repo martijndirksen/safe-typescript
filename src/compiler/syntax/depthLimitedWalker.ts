@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class DepthLimitedWalker extends PositionTrackingWalker {
     private _depth: number = 0;
     private _maximumDepth: number = 0;

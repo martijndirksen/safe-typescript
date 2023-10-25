@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class SyntaxWalker implements ISyntaxVisitor {
     public visitToken(token: ISyntaxToken): void {}
 

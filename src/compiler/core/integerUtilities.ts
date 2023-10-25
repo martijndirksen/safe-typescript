@@ -1,4 +1,4 @@
-module TypeScript {
+
   export module IntegerUtilities {
     export function integerDivide(
       numerator: number,

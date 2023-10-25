@@ -1,4 +1,4 @@
-module TypeScript {
+
   export interface ISyntaxElement extends RT.Nominal {
     kind(): SyntaxKind;
 

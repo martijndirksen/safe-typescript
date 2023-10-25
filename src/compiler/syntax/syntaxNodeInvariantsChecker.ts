@@ -4,7 +4,7 @@
 // the node, then it will not have a unique position, previous token, etc. etc. and that can screw
 // many algorithms.  For this reason, when generating trees, it is important that nodes that are
 // reused are cloned before insertion.
-module TypeScript {
+
   export class SyntaxNodeInvariantsChecker extends SyntaxWalker {
     private tokenTable = Collections.createHashTable(
       Collections.DefaultHashTableCapacity,

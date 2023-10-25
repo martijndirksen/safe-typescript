@@ -1,4 +1,4 @@
-module TypeScript {
+
   export interface ISeparatedSyntaxList extends ISyntaxElement {
     childAt(index: number): ISyntaxNodeOrToken;
 

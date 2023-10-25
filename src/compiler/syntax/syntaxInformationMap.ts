@@ -1,4 +1,4 @@
-module TypeScript {
+
   export interface ITokenInformation {
     previousToken: ISyntaxToken;
     nextToken: ISyntaxToken;

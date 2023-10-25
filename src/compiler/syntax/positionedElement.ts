@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class PositionedElement {
     private _parent: PositionedElement;
     private _element: ISyntaxElement;

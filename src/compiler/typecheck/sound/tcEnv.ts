@@ -1,7 +1,7 @@
 ///<reference path='../../references.ts' />
 ///<reference path='tcUtil.ts' />
 ///<reference path='translateTypes.ts' />
-module TypeScript {
+
   export enum ScopeType {
     RegularBlock,
     FunctionBlock,

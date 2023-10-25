@@ -1,6 +1,6 @@
 import type { CheckedArray } from '../../runtime/rt';
 
-module TypeScript {
+
   export interface ISlidingWindowSource {
     // Asks the source to copy items starting at sourceIndex into the window at 'destinationIndex'
     // with up to 'spaceAvailable' items.  The actual number of items fetched should be given as

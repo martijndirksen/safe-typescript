@@ -1,4 +1,4 @@
-module TypeScript {
+
   export interface ISyntaxTriviaList {
     count(): number;
     syntaxTriviaAt(index: number): ISyntaxTrivia;

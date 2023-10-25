@@ -1,4 +1,4 @@
-enum Accessibility {
+export enum Accessibility {
   NotApplicable,
   Private,
   Public,

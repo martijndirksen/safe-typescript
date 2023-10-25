@@ -1,8 +1,6 @@
-module TypeScript {
-  export enum DiagnosticCategory {
-    Warning,
-    Error,
-    Message,
-    NoPrefix,
-  }
+export enum DiagnosticCategory {
+  Warning,
+  Error,
+  Message,
+  NoPrefix,
 }

@@ -1,4 +1,4 @@
-module TypeScript {
+
   export class ScannerUtilities {
     public static identifierKind(
       array: number[],

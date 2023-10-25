@@ -1,6 +1,6 @@
 /// <reference path='ast.ts' />
 
-module TypeScript {
+
   export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
     public position = 0;
 

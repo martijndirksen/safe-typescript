@@ -1,7 +1,7 @@
 // Modified by N.Swamy, A.Rastogi (2014)
 ///<reference path='../../references.ts' />
 ///<reference path='treln.ts' />
-module TypeScript {
+
     export class SoundTypeChecker {
         private static emittedBaseClassHierarchy = false;
         private result_t: SoundType = null;      //a bit of state to keep track of the expected result type for bidirectional type-checking
