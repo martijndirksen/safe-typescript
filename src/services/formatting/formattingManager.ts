@@ -23,6 +23,7 @@ import { SyntaxTree } from '../../compiler/syntax/syntaxTree';
 import { TextSpan } from '../../compiler/text/textSpan';
 import { EditorOptions, TextEdit } from '../languageService';
 import { Formatter } from './formatter';
+import { FormattingRequestKind } from './formattingRequestKind';
 import { RulesProvider } from './rulesProvider';
 import { ITextSnapshot } from './textSnapshot';
 
@@ -38,7 +39,7 @@ export class FormattingManager {
     this.options = createFormattingOptions({
       useTabs: !editorOptions.ConvertTabsToSpaces,
       spacesPerTab: editorOptions.TabSize,
-      indentSize: editorOptions.IndentSize,
+      indentSpaces: editorOptions.IndentSize,
       newLineCharacter: editorOptions.NewLineCharacter,
     });
   }

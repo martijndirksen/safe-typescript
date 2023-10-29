@@ -398,7 +398,6 @@ export class LanguageServiceShim
   // some external native objects holds onto us (e.g. Com/Interop).
   public dispose(dummy: any): void {
     this.logger.log('dispose()');
-    // @ts-expect-error dispose magic
     this.languageService = null;
 
     // force a GC
@@ -408,7 +407,6 @@ export class LanguageServiceShim
       this.logger?.log('CollectGarbage()');
     }
 
-    // @ts-expect-error dispose magic
     this.logger = null;
 
     super.dispose(dummy);

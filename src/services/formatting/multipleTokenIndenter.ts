@@ -13,7 +13,25 @@
 // limitations under the License.
 //
 
+import { Errors } from '../../compiler/core/errors';
+import { CharacterInfo } from '../../compiler/syntax/characterInfo';
 import { IFormattingOptions } from '../../compiler/syntax/formattingOptions';
+import {
+  columnForPositionInString,
+  firstNonWhitespacePosition,
+  indentString,
+} from '../../compiler/syntax/indentation';
+import { SyntaxKind } from '../../compiler/syntax/syntaxKind';
+import { SourceUnitSyntax } from '../../compiler/syntax/syntaxNodes.generated';
+import { ISyntaxToken } from '../../compiler/syntax/syntaxToken';
+import {
+  ISyntaxTrivia,
+  splitMultiLineCommentTriviaIntoMultipleLines,
+} from '../../compiler/syntax/syntaxTrivia';
+import { TextSpan } from '../../compiler/text/textSpan';
+import { IndentationTrackingWalker } from './indentationTrackingWalker';
+import { TextEditInfo } from './textEditInfo';
+import { ITextSnapshot } from './textSnapshot';
 
 export class MultipleTokenIndenter extends IndentationTrackingWalker {
   private _edits: TextEditInfo[] = [];
@@ -54,9 +72,9 @@ export class MultipleTokenIndenter extends IndentationTrackingWalker {
     }
 
     // Compute an indentation string for this token
-    var indentationStr = indentationString(indentationAmount, this.options);
+    var indentationStr = indentString(indentationAmount, this.options);
 
-    var commentIndentationStr = Indentation.indentationString(
+    var commentIndentationStr = indentString(
       commentIndentationAmount,
       this.options
     );
@@ -231,13 +249,13 @@ export class MultipleTokenIndenter extends IndentationTrackingWalker {
     }
 
     // Find number of columns in first segment
-    var whiteSpaceColumnsInFirstSegment = Indentation.columnForPositionInString(
+    var whiteSpaceColumnsInFirstSegment = columnForPositionInString(
       leadingWhiteSpace,
       leadingWhiteSpace.length,
       this.options
     );
 
-    var indentationColumns = Indentation.columnForPositionInString(
+    var indentationColumns = columnForPositionInString(
       indentationString,
       indentationString.length,
       this.options
@@ -266,11 +284,10 @@ export class MultipleTokenIndenter extends IndentationTrackingWalker {
     whiteSpaceColumnsInFirstSegment: number
   ): void {
     // Indent subsequent lines using a column delta of the actual indentation relative to the first line
-    var firstNonWhitespacePosition =
-      Indentation.firstNonWhitespacePosition(segment);
-    var leadingWhiteSpaceColumns = Indentation.columnForPositionInString(
+    var firstNonWhitespacePos = firstNonWhitespacePosition(segment);
+    var leadingWhiteSpaceColumns = columnForPositionInString(
       segment,
-      firstNonWhitespacePosition,
+      firstNonWhitespacePos,
       this.options
     );
     var deltaFromFirstSegment =
@@ -279,29 +296,22 @@ export class MultipleTokenIndenter extends IndentationTrackingWalker {
     if (finalColumns < 0) {
       finalColumns = 0;
     }
-    var indentationString = Indentation.indentationString(
-      finalColumns,
-      this.options
-    );
+    var indentationString = indentString(finalColumns, this.options);
 
     if (
-      firstNonWhitespacePosition < segment.length &&
-      CharacterInfo.isLineTerminator(
-        segment.charCodeAt(firstNonWhitespacePosition)
-      )
+      firstNonWhitespacePos < segment.length &&
+      CharacterInfo.isLineTerminator(segment.charCodeAt(firstNonWhitespacePos))
     ) {
       // If this segment was just a newline, then don't bother indenting it.  That will just
       // leave the user with an ugly indent in their output that they probably do not want.
       return;
     }
 
-    if (
-      indentationString === segment.substring(0, firstNonWhitespacePosition)
-    ) {
+    if (indentationString === segment.substring(0, firstNonWhitespacePos)) {
       return;
     }
 
     // Record the edit
-    this.recordEdit(fullStart, firstNonWhitespacePosition, indentationString);
+    this.recordEdit(fullStart, firstNonWhitespacePos, indentationString);
   }
 }

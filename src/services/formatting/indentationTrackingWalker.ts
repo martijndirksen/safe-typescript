@@ -13,7 +13,25 @@
 // limitations under the License.
 //
 
+import { Errors } from '../../compiler/core/errors';
 import { IFormattingOptions } from '../../compiler/syntax/formattingOptions';
+import {
+  columnForPositionInString,
+  firstNonWhitespacePosition,
+} from '../../compiler/syntax/indentation';
+import { SyntaxKind } from '../../compiler/syntax/syntaxKind';
+import { SyntaxNode } from '../../compiler/syntax/syntaxNode';
+import {
+  SourceUnitSyntax,
+  ElseClauseSyntax,
+  IfStatementSyntax,
+} from '../../compiler/syntax/syntaxNodes.generated';
+import { ISyntaxToken } from '../../compiler/syntax/syntaxToken';
+import { SyntaxWalker } from '../../compiler/syntax/syntaxWalker.generated';
+import { TextSpan } from '../../compiler/text/textSpan';
+import { IndentationNodeContext } from './indentationNodeContext';
+import { IndentationNodeContextPool } from './indentationNodeContextPool';
+import { ITextSnapshot } from './textSnapshot';
 
 export class IndentationTrackingWalker extends SyntaxWalker {
   private _position: number = 0;
@@ -200,11 +218,10 @@ export class IndentationTrackingWalker extends SyntaxWalker {
       var line = this._snapshot
         .getLineFromPosition(this._parent.start())
         .getText();
-      var firstNonWhiteSpacePosition =
-        Indentation.firstNonWhitespacePosition(line);
-      parentIndentationAmount = Indentation.columnForPositionInString(
+      var firstNonWhiteSpacePos = firstNonWhitespacePosition(line);
+      parentIndentationAmount = columnForPositionInString(
         line,
-        firstNonWhiteSpacePosition,
+        firstNonWhiteSpacePos,
         this.options
       );
     }

@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0.
 // See LICENSE.txt in the project root for complete license information.
 
-///<reference path='typescriptServices.ts' />
-
 import {
   AST,
   Identifier,
@@ -30,9 +28,11 @@ import {
 } from '../compiler/astHelpers';
 import { ArrayUtilities } from '../compiler/core/arrayUtilities';
 import { Debug } from '../compiler/core/debug';
+import { DiagnosticCategory } from '../compiler/core/diagnosticCategory';
 import {
   LocalizedDiagnosticMessages,
   Diagnostic,
+  setLocalizedDiagnosticMessages,
 } from '../compiler/core/diagnosticCore';
 import { Errors } from '../compiler/core/errors';
 import { ILogger } from '../compiler/diagnostics';
@@ -45,6 +45,7 @@ import { SyntaxKind } from '../compiler/syntax/syntaxKind';
 import { SyntaxTree } from '../compiler/syntax/syntaxTree';
 import { Unicode } from '../compiler/syntax/unicode';
 import { CharacterCodes } from '../compiler/text/characterCodes';
+import { fromScriptSnapshot } from '../compiler/text/textFactory';
 import { TextSpan } from '../compiler/text/textSpan';
 import { PullDecl } from '../compiler/typecheck/pullDecls';
 import {
@@ -84,7 +85,6 @@ import {
   NavigateToItem,
   MatchKind,
   ScriptElementKindModifier,
-  DiagnosticCategory,
   TypeInfo,
   CompletionInfo,
   CompletionEntryDetails,
@@ -115,7 +115,9 @@ export class LanguageService implements ILanguageService {
 
     // Check if the localized messages json is set, otherwise query the host for it
     if (!LocalizedDiagnosticMessages) {
-      LocalizedDiagnosticMessages = this.host.getLocalizedDiagnosticMessages();
+      setLocalizedDiagnosticMessages(
+        this.host.getLocalizedDiagnosticMessages()
+      );
     }
   }
 
@@ -1389,7 +1391,7 @@ export class LanguageService implements ILanguageService {
       emitResult.diagnostics = semanticDiagnostics;
       return emitResult;
     } catch (e) {
-      console.log('**************Emission failed ' + e.stack);
+      console.log('**************Emission failed ' + (e as any).stack);
     }
   }
 
@@ -1412,7 +1414,7 @@ export class LanguageService implements ILanguageService {
     var diagnostics: Diagnostic[] = [];
 
     this.compiler.fileNames().map((fileName) => {
-      console.log('######Calling gsd(' + fileName + ')');
+      console.log('Calling gsd(' + fileName + ')');
       return diagnostics.push.apply(
         diagnostics,
         this.compiler.getSemanticDiagnostics(fileName)
@@ -2507,7 +2509,7 @@ export class LanguageService implements ILanguageService {
 
     // Convert IScriptSnapshot to ITextSnapshot
     var scriptSnapshot = this.compiler.getScriptSnapshot(fileName);
-    var scriptText = SimpleText.fromScriptSnapshot(scriptSnapshot);
+    var scriptText = fromScriptSnapshot(scriptSnapshot);
     var textSnapshot = new TextSnapshot(scriptText);
 
     var manager = new FormattingManager(
@@ -2540,12 +2542,12 @@ export class LanguageService implements ILanguageService {
     var syntaxTree = this.getSyntaxTree(fileName);
 
     var scriptSnapshot = this.compiler.getScriptSnapshot(fileName);
-    var scriptText = SimpleText.fromScriptSnapshot(scriptSnapshot);
+    var scriptText = fromScriptSnapshot(scriptSnapshot);
     var textSnapshot = new TextSnapshot(scriptText);
     const options = createFormattingOptions({
       useTabs: !editorOptions.ConvertTabsToSpaces,
       spacesPerTab: editorOptions.TabSize,
-      indentSize: editorOptions.IndentSize,
+      indentSpaces: editorOptions.IndentSize,
       newLineCharacter: editorOptions.NewLineCharacter,
     });
 

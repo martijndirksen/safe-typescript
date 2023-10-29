@@ -13,6 +13,9 @@
 // limitations under the License.
 //
 
+import { SyntaxNode } from '../../compiler/syntax/syntaxNode';
+import { IndentationNodeContext } from './indentationNodeContext';
+
 export class IndentationNodeContextPool {
   private nodes: IndentationNodeContext[] = [];
 

@@ -246,7 +246,7 @@ import { ISyntaxTrivia, spaceTrivia } from "./syntaxTrivia";
     }
   }
 
-  export function triviaList(trivia: ISyntaxTrivia[]): ISyntaxTriviaList {
+  export function triviaList(trivia: ISyntaxTrivia[] | null | undefined): ISyntaxTriviaList {
     if (trivia === undefined || trivia === null || trivia.length === 0) {
       return emptyTriviaList;
     }

@@ -13,9 +13,27 @@
 // limitations under the License.
 //
 
-///<reference path='formatting.ts' />
-
+import { Debug } from '../../compiler/core/debug';
+import { Errors } from '../../compiler/core/errors';
+import { CharacterInfo } from '../../compiler/syntax/characterInfo';
 import { IFormattingOptions } from '../../compiler/syntax/formattingOptions';
+import { SyntaxKind } from '../../compiler/syntax/syntaxKind';
+import { SourceUnitSyntax } from '../../compiler/syntax/syntaxNodes.generated';
+import { ISyntaxToken } from '../../compiler/syntax/syntaxToken';
+import { ISyntaxTriviaList } from '../../compiler/syntax/syntaxTriviaList';
+import { TextSpan } from '../../compiler/text/textSpan';
+import { FormattingContext } from './formattingContext';
+import { FormattingRequestKind } from './formattingRequestKind';
+import { IndentationNodeContext } from './indentationNodeContext';
+import { MultipleTokenIndenter } from './multipleTokenIndenter';
+import { Rule } from './rule';
+import { RuleAction } from './ruleAction';
+import { RuleFlags } from './ruleFlag';
+import { RulesProvider } from './rulesProvider';
+import { TextEditInfo } from './textEditInfo';
+import { ITextSnapshot } from './textSnapshot';
+import { ITextSnapshotLine } from './textSnapshotLine';
+import { TokenSpan } from './tokenSpan';
 
 export class Formatter extends MultipleTokenIndenter {
   private previousTokenSpan: TokenSpan = null;

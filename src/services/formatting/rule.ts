@@ -13,6 +13,10 @@
 // limitations under the License.
 //
 
+import { RuleDescriptor } from './ruleDescriptor';
+import { RuleFlags } from './ruleFlag';
+import { RuleOperation } from './ruleOperation';
+
 export class Rule {
   constructor(
     public Descriptor: RuleDescriptor,

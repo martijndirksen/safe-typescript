@@ -4,6 +4,7 @@ import { INameSyntax } from '../compiler/syntax/syntaxElement';
 import { SyntaxKind } from '../compiler/syntax/syntaxKind';
 import { ISyntaxList, list, emptyList } from '../compiler/syntax/syntaxList';
 import { SyntaxNode } from '../compiler/syntax/syntaxNode';
+import { ISyntaxNodeOrToken } from '../compiler/syntax/syntaxNodeOrToken';
 import {
   MemberVariableDeclarationSyntax,
   VariableStatementSyntax,
@@ -36,8 +37,9 @@ import {
   TryStatementSyntax,
   LabeledStatementSyntax,
 } from '../compiler/syntax/syntaxNodes.generated';
-import { ISyntaxToken } from '../compiler/syntax/syntaxToken';
+import { ISyntaxToken, token } from '../compiler/syntax/syntaxToken';
 import { SyntaxUtilities } from '../compiler/syntax/syntaxUtilities';
+import { CheckedArray } from '../runtime/rt';
 import {
   NavigateToItem,
   MatchKind,
@@ -138,7 +140,9 @@ export class GetScriptLexicalStructureWalker extends PositionTrackingWalker {
       var modifiers =
         nameIndex === 0
           ? node.modifiers
-          : list([Syntax.token(SyntaxKind.ExportKeyword)]);
+          : list([
+              token(SyntaxKind.ExportKeyword),
+            ] as CheckedArray<ISyntaxNodeOrToken>);
       var name = names[nameIndex];
       var kind = ScriptElementKind.moduleElement;
       this.createItem(node, node.modifiers, kind, name);

@@ -13,6 +13,14 @@
 // limitations under the License.
 //
 
+import { Debug } from '../../compiler/core/debug';
+import { childOffset } from '../../compiler/syntax/syntax';
+import { BlockSyntax } from '../../compiler/syntax/syntaxNodes.generated';
+import { FormattingRequestKind } from './formattingRequestKind';
+import { IndentationNodeContext } from './indentationNodeContext';
+import { ITextSnapshot } from './textSnapshot';
+import { TokenSpan } from './tokenSpan';
+
 export class FormattingContext {
   public currentTokenSpan: TokenSpan = null;
   public nextTokenSpan: TokenSpan = null;

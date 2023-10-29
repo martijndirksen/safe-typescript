@@ -27,9 +27,11 @@ import {
   CompilationSettings,
 } from '../compiler/settings';
 import { LanguageVersion } from '../compiler/syntax/languageVersion';
+import { incrementalParse, parse } from '../compiler/syntax/parser';
 import { SyntaxTree } from '../compiler/syntax/syntaxTree';
 import { IScriptSnapshot } from '../compiler/text/scriptSnapshot';
 import { TextChangeRange } from '../compiler/text/textChangeRange';
+import { fromScriptSnapshot } from '../compiler/text/textFactory';
 import { PullDecl } from '../compiler/typecheck/pullDecls';
 import { TypeScriptCompiler, EmitOutput } from '../compiler/typescript';
 import { ILanguageServiceHost } from './languageService';
@@ -204,12 +206,12 @@ export class SyntaxTreeCache {
     fileName: string,
     scriptSnapshot: IScriptSnapshot
   ): SyntaxTree {
-    var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
+    var text = fromScriptSnapshot(scriptSnapshot);
 
     // For the purposes of features that use this syntax tree, we can just use the default
     // compilation settings.  The features only use the syntax (and not the diagnostics),
     // and the syntax isn't affected by the compilation settings.
-    var syntaxTree = Parser.parse(
+    var syntaxTree = parse(
       fileName,
       text,
       isDTSFile(fileName),
@@ -237,10 +239,10 @@ export class SyntaxTreeCache {
       return this.createSyntaxTree(fileName, scriptSnapshot);
     }
 
-    var nextSyntaxTree = Parser.incrementalParse(
+    var nextSyntaxTree = incrementalParse(
       previousSyntaxTree,
       editRange,
-      SimpleText.fromScriptSnapshot(scriptSnapshot)
+      fromScriptSnapshot(scriptSnapshot)
     );
 
     this.ensureInvariants(

@@ -18,6 +18,7 @@ import { SyntaxKind } from '../../compiler/syntax/syntaxKind';
 import { FormattingContext } from './formattingContext';
 import { Rule } from './rule';
 import { RuleAction } from './ruleAction';
+import { TokenRange } from './tokenRange';
 
 export class RulesMap {
   public map: RulesBucket[];
@@ -67,8 +68,8 @@ export class RulesMap {
     rulesBucketConstructionStateList: RulesBucketConstructionState[]
   ): void {
     var specificRule =
-      rule.Descriptor.LeftTokenRange != Shared.TokenRange.Any &&
-      rule.Descriptor.RightTokenRange != Shared.TokenRange.Any;
+      rule.Descriptor.LeftTokenRange != TokenRange.Any &&
+      rule.Descriptor.RightTokenRange != TokenRange.Any;
 
     rule.Descriptor.LeftTokenRange.GetTokens().forEach((left) => {
       rule.Descriptor.RightTokenRange.GetTokens().forEach((right) => {

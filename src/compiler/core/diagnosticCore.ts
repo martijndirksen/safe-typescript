@@ -9,6 +9,10 @@ import { diagnosticInformationMap } from '../resources/diagnosticInformationMap.
 
 export var LocalizedDiagnosticMessages: any = null;
 
+export function setLocalizedDiagnosticMessages(value: any): void {
+  LocalizedDiagnosticMessages = value;
+}
+
 export class Diagnostic {
   private _fileName: string;
   private _lineMap: LineMap;

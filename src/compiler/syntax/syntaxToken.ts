@@ -736,7 +736,10 @@ class RealizedToken implements ISyntaxToken {
   }
 }
 
-export function token(kind: SyntaxKind, info: ITokenInfo = null): ISyntaxToken {
+export function token(
+  kind: SyntaxKind,
+  info: ITokenInfo | null = null
+): ISyntaxToken {
   var text =
     info !== null && info.text !== undefined
       ? info.text
@@ -754,7 +757,7 @@ export function token(kind: SyntaxKind, info: ITokenInfo = null): ISyntaxToken {
 
 export function identifier(
   text: string,
-  info: ITokenInfo = null
+  info: ITokenInfo | null = null
 ): ISyntaxToken {
   info = info || {};
   info.text = text;

@@ -13,6 +13,11 @@
 // limitations under the License.
 //
 
+import { nodeHasSkippedOrMissingTokens } from '../../compiler/syntax/syntax';
+import { SyntaxKind } from '../../compiler/syntax/syntaxKind';
+import { SyntaxNode } from '../../compiler/syntax/syntaxNode';
+import { IndentationNodeContextPool } from './indentationNodeContextPool';
+
 export class IndentationNodeContext {
   private _node: SyntaxNode;
   private _parent: IndentationNodeContext;
