@@ -11,7 +11,7 @@ export enum TypeKind {
   Undefined,
   Class,
   Interface,
-  // Array,
+  // Array, // MD: For some reason this is not included?
   Anonymous,
   Enum,
   TypeParameter,

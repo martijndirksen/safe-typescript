@@ -2816,7 +2816,7 @@ export class Emitter {
 
       svModuleName = this.moduleName;
       this.moduleName = sourceUnit.fileName();
-      if (TypeScript.isTSFile(this.moduleName)) {
+      if (isTSFile(this.moduleName)) {
         this.moduleName = this.moduleName.substring(
           0,
           this.moduleName.length - '.ts'.length

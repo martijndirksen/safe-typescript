@@ -638,8 +638,8 @@
       }
 
       // Reset global counters
-      TypeScript.pullSymbolID = 0;
-      TypeScript.globalTyvarID = 0;
+      pullSymbolID = 0;
+      globalTyvarID = 0;
 
       this.resetGlobalSymbols();
 

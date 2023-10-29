@@ -105,7 +105,7 @@
 
     function isOneDeclarationOfKind(
       symbol: PullSymbol,
-      kind: TypeScript.PullElementKind
+      kind: PullElementKind
     ): boolean {
       var decls = symbol.getDeclarations();
       for (var i = 0; i < decls.length; i++) {
@@ -158,15 +158,15 @@
         var containerKind = container.kind;
         if (
           containerKind &
-          (TypeScript.PullElementKind.SomeFunction |
-            TypeScript.PullElementKind.FunctionType)
+          (PullElementKind.SomeFunction |
+            PullElementKind.FunctionType)
         ) {
           return true;
         }
 
         if (
-          containerKind == TypeScript.PullElementKind.ConstructorType &&
-          !symbol.anyDeclHasFlag(TypeScript.PullElementFlags.Static)
+          containerKind == PullElementKind.ConstructorType &&
+          !symbol.anyDeclHasFlag(PullElementFlags.Static)
         ) {
           return true;
         }

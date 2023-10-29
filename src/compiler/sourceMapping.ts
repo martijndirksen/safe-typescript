@@ -119,7 +119,7 @@
       // Decode mapRoot and sourceRoot
 
       // Js File Name = pretty name of js file
-      var prettyJsFileName = TypeScript.getPrettyName(jsFilePath, false, true);
+      var prettyJsFileName = getPrettyName(jsFilePath, false, true);
       var prettyMapFileName = prettyJsFileName + SourceMapper.MapFileExtension;
       this.jsFileName = prettyJsFileName;
 

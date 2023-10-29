@@ -697,7 +697,7 @@ import { Environment } from "./core/environment";
         filePath,
         this.compilationSettings.codepage()
       );
-      TypeScript.LocalizedDiagnosticMessages = JSON.parse(
+      LocalizedDiagnosticMessages = JSON.parse(
         fileContents.contents
       );
       return true;
@@ -897,7 +897,7 @@ import { Environment } from "./core/environment";
         var start = new Date().getTime();
         exists = this.ioHost.fileExists(path);
         this.fileExistsCache[path] = exists;
-        TypeScript.compilerFileExistsTime += new Date().getTime() - start;
+        compilerFileExistsTime += new Date().getTime() - start;
       }
 
       return exists;
@@ -906,7 +906,7 @@ import { Environment } from "./core/environment";
     getParentDirectory(path: string): string {
       var start = new Date().getTime();
       var result = this.ioHost.dirName(path);
-      TypeScript.compilerDirectoryNameTime += new Date().getTime() - start;
+      compilerDirectoryNameTime += new Date().getTime() - start;
 
       return result;
     }
@@ -1050,13 +1050,13 @@ import { Environment } from "./core/environment";
         contents,
         writeByteOrderMark
       );
-      TypeScript.emitWriteFileTime += new Date().getTime() - start;
+      emitWriteFileTime += new Date().getTime() - start;
     }
 
     directoryExists(path: string): boolean {
       var start = new Date().getTime();
       var result = this.ioHost.directoryExists(path);
-      TypeScript.compilerDirectoryExistsTime += new Date().getTime() - start;
+      compilerDirectoryExistsTime += new Date().getTime() - start;
       return result;
     }
 
@@ -1070,7 +1070,7 @@ import { Environment } from "./core/environment";
         var start = new Date().getTime();
         cachedValue = this.ioHost.resolvePath(path);
         this.resolvePathCache[path] = cachedValue;
-        TypeScript.compilerResolvePathTime += new Date().getTime() - start;
+        compilerResolvePathTime += new Date().getTime() - start;
       }
 
       return cachedValue;
@@ -1078,6 +1078,6 @@ import { Environment } from "./core/environment";
   }
 
   // Start the batch compilation using the current hosts IO
-  var batch = new TypeScript.BatchCompiler(IO);
+  var batch = new BatchCompiler(IO);
   batch.batchCompile();
 }

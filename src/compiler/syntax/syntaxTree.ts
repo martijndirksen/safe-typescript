@@ -109,7 +109,7 @@ class GrammarCheckerWalker extends PositionTrackingWalker {
     parent: ISyntaxElement,
     child: ISyntaxElement
   ): number {
-    return this.position() + Syntax.childOffset(parent, child);
+    return this.position() + childOffset(parent, child);
   }
 
   private childStart(parent: ISyntaxNode, child: ISyntaxElement): number {
@@ -267,7 +267,7 @@ class GrammarCheckerWalker extends PositionTrackingWalker {
     if (parameter.modifiers.childCount() > 0) {
       var modifiers = parameter.modifiers;
       var modifierFullStart =
-        parameterFullStart + Syntax.childOffset(parameter, modifiers);
+        parameterFullStart + childOffset(parameter, modifiers);
 
       for (var i = 0, n = modifiers.childCount(); i < n; i++) {
         var modifier = <ISyntaxToken>modifiers.childAt(i);
@@ -705,7 +705,7 @@ class GrammarCheckerWalker extends PositionTrackingWalker {
           ) {
             var identifierFullStart =
               moduleElementFullStart +
-              Syntax.childOffset(moduleElement, functionDeclaration.identifier);
+              childOffset(moduleElement, functionDeclaration.identifier);
             this.pushDiagnostic1(
               identifierFullStart,
               functionDeclaration.identifier,
@@ -787,10 +787,7 @@ class GrammarCheckerWalker extends PositionTrackingWalker {
           ) {
             propertyNameFullStart =
               classElementFullStart +
-              Syntax.childOffset(
-                classElement,
-                memberFunctionDeclaration.propertyName
-              );
+              childOffset(classElement, memberFunctionDeclaration.propertyName);
             this.pushDiagnostic1(
               propertyNameFullStart,
               memberFunctionDeclaration.propertyName,
@@ -806,10 +803,7 @@ class GrammarCheckerWalker extends PositionTrackingWalker {
           if (isStaticOverload !== isInStaticOverloadChain) {
             propertyNameFullStart =
               classElementFullStart +
-              Syntax.childOffset(
-                classElement,
-                memberFunctionDeclaration.propertyName
-              );
+              childOffset(classElement, memberFunctionDeclaration.propertyName);
             var diagnostic = isInStaticOverloadChain
               ? DiagnosticCode.Function_overload_must_be_static
               : DiagnosticCode.Function_overload_must_not_be_static;
@@ -1240,7 +1234,7 @@ class GrammarCheckerWalker extends PositionTrackingWalker {
     var parameterListFullStart = this.childFullStart(node, parameterList);
     var parameterFullStart =
       parameterListFullStart +
-      Syntax.childOffset(parameterList, parameterList.openParenToken);
+      childOffset(parameterList, parameterList.openParenToken);
     var parameter = <ParameterSyntax>parameterList.parameters.childAt(0);
 
     if (parameter.questionToken) {

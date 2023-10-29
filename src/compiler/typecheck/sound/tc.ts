@@ -1909,8 +1909,8 @@
                     }
                     else if (this.compilationSettings.generics()) {
                         var tt = <TPoly>TranslateTypes.translateTypeOrSig(this.symbol(gt.name), this.tcenv);
-                        var targs = TypeScript.TcUtil.mapSepList2(gt.typeArgumentList.typeArguments, (t) => this.computeType(t));
-                        var res = new TypeScript.TInst(tt, targs);
+                        var targs = TcUtil.mapSepList2(gt.typeArgumentList.typeArguments, (t) => this.computeType(t));
+                        var res = new TInst(tt, targs);
                         return res;
                     } else {
                         TcUtil.Logger.error(DiagnosticCode.SEC_Generic_types_unsupported, [nm], ast);

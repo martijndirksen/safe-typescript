@@ -66,12 +66,11 @@ export module IOUtils {
 
     var start = new Date().getTime();
     createDirectoryStructure(ioHost, dirName);
-    TypeScript.ioHostCreateDirectoryStructureTime +=
-      new Date().getTime() - start;
+    ioHostCreateDirectoryStructureTime += new Date().getTime() - start;
 
     var start = new Date().getTime();
     ioHost.writeFile(path, contents, writeByteOrderMark);
-    TypeScript.ioHostWriteFileTime += new Date().getTime() - start;
+    ioHostWriteFileTime += new Date().getTime() - start;
   }
 
   export function throwIOError(message: string, error: Error) {
@@ -184,10 +183,9 @@ export var IO = (function () {
           }
         } catch (e) {
           IOUtils.throwIOError(
-            getDiagnosticMessage(
-              TypeScript.DiagnosticCode.Could_not_create_directory_0,
-              [path]
-            ),
+            getDiagnosticMessage(DiagnosticCode.Could_not_create_directory_0, [
+              path,
+            ]),
             e
           );
         }

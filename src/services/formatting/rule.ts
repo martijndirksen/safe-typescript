@@ -1,6 +1,6 @@
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,20 +13,24 @@
 // limitations under the License.
 //
 
-///<reference path='formatting.ts' />
+export class Rule {
+  constructor(
+    public Descriptor: RuleDescriptor,
+    public Operation: RuleOperation,
+    public Flag: RuleFlags = RuleFlags.None
+  ) {}
 
-module TypeScript.Services.Formatting {
-    export class Rule {
-        constructor(
-            public Descriptor: RuleDescriptor,
-            public Operation: RuleOperation,
-            public Flag: RuleFlags = RuleFlags.None) {
-        }
-
-        public toString() {
-            return "[desc=" + this.Descriptor + "," +
-                "operation=" + this.Operation + "," +
-                "flag=" + this.Flag + "]";
-        }
-    }
+  public toString() {
+    return (
+      '[desc=' +
+      this.Descriptor +
+      ',' +
+      'operation=' +
+      this.Operation +
+      ',' +
+      'flag=' +
+      this.Flag +
+      ']'
+    );
+  }
 }

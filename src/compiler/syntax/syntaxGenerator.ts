@@ -1503,11 +1503,11 @@ function generateSwitchKindCheck(
 
   var result = '';
 
-  var identifierName = TypeScript.ArrayUtilities.where(
+  var identifierName = ArrayUtilities.where(
     tokenKinds,
     (v) => v.indexOf('IdentifierName') >= 0
   );
-  var notIdentifierName = TypeScript.ArrayUtilities.where(
+  var notIdentifierName = ArrayUtilities.where(
     tokenKinds,
     (v) => v.indexOf('IdentifierName') < 0
   );
@@ -1773,7 +1773,7 @@ function isMandatory(child: IMemberDefinition): boolean {
 }
 
 function generateFactory2Method(definition: ITypeDefinition): string {
-  var mandatoryChildren: IMemberDefinition[] = TypeScript.ArrayUtilities.where(
+  var mandatoryChildren: IMemberDefinition[] = ArrayUtilities.where(
     definition.children,
     isMandatory
   );
@@ -1854,7 +1854,7 @@ function generateIsMethod(definition: ITypeDefinition): string {
       var current = ifaces[i];
 
       while (current !== undefined) {
-        if (!TypeScript.ArrayUtilities.contains(ifaces, current)) {
+        if (!ArrayUtilities.contains(ifaces, current)) {
           ifaces.push(current);
         }
 
@@ -2066,7 +2066,7 @@ function generateInsertChildrenIntoMethod(definition: ITypeDefinition): string {
 }
 
 function baseType(definition: ITypeDefinition): ITypeDefinition {
-  return TypeScript.ArrayUtilities.firstOrDefault(
+  return ArrayUtilities.firstOrDefault(
     definitions,
     (d) => d.name === definition.baseType
   );
@@ -2074,7 +2074,7 @@ function baseType(definition: ITypeDefinition): ITypeDefinition {
 
 function memberDefinitionType(child: IMemberDefinition): ITypeDefinition {
   // Debug.assert(child.type !== undefined);
-  return TypeScript.ArrayUtilities.firstOrDefault(
+  return ArrayUtilities.firstOrDefault(
     definitions,
     (d) => d.name === child.type
   );
@@ -2095,7 +2095,7 @@ function derivesFrom(def1: ITypeDefinition, def2: ITypeDefinition): boolean {
 }
 
 function contains(definition: ITypeDefinition, child: IMemberDefinition) {
-  return TypeScript.ArrayUtilities.any(
+  return ArrayUtilities.any(
     definition.children,
     (c) =>
       c.name === child.name &&
@@ -2343,9 +2343,9 @@ function generateIsTypeScriptSpecificMethod(
 function couldBeRegularExpressionToken(child: IMemberDefinition): boolean {
   var kinds = tokenKinds(child);
   return (
-    TypeScript.ArrayUtilities.contains(kinds, 'SlashToken') ||
-    TypeScript.ArrayUtilities.contains(kinds, 'SlashEqualsToken') ||
-    TypeScript.ArrayUtilities.contains(kinds, 'RegularExpressionLiteral')
+    ArrayUtilities.contains(kinds, 'SlashToken') ||
+    ArrayUtilities.contains(kinds, 'SlashEqualsToken') ||
+    ArrayUtilities.contains(kinds, 'RegularExpressionLiteral')
   );
 }
 
@@ -2515,7 +2515,7 @@ function generateRewriter(): string {
     '            }\r\n' +
     '\r\n' +
     '            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n' +
-    '            return newItems === null ? list : Syntax.list(newItems);\r\n' +
+    '            return newItems === null ? list : list(newItems);\r\n' +
     '        }\r\n' +
     '\r\n' +
     '        public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n' +
@@ -2538,7 +2538,7 @@ function generateRewriter(): string {
     '            }\r\n' +
     '\r\n' +
     '            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n' +
-    '            return newItems === null ? list : Syntax.separatedList(newItems);\r\n' +
+    '            return newItems === null ? list : separatedList(newItems);\r\n' +
     '        }\r\n';
 
   for (var i = 0; i < definitions.length; i++) {
@@ -2937,10 +2937,7 @@ function generateToken(
 }
 
 function generateTokens(): string {
-  var result =
-    "///<reference path='references.ts' />\r\n" +
-    '\r\n' +
-    'module TypeScript.Syntax {\r\n';
+  var result = '';
 
   result += generateToken(
     /*isFixedWidth:*/ false,
@@ -3068,8 +3065,6 @@ function generateTokens(): string {
     '        return (value & SyntaxConstants.TriviaNewLineMask) !== 0;\r\n' +
     '    }\r\n';
 
-  result += '}';
-
   return result;
 }
 
@@ -3077,9 +3072,6 @@ function generateWalker(): string {
   var result = '';
 
   result +=
-    "///<reference path='references.ts' />\r\n" +
-    '\r\n' +
-    '\r\n' +
     '    export class SyntaxWalker implements ISyntaxVisitor {\r\n' +
     '        public visitToken(token: ISyntaxToken): void {\r\n' +
     '        }\r\n' +
@@ -3197,7 +3189,7 @@ function firstEnumName(e: any, value: number) {
 }
 
 function generateKeywordCondition(
-  keywords: { text: string; kind: TypeScript.SyntaxKind }[],
+  keywords: { text: string; kind: SyntaxKind }[],
   currentCharacter: number,
   indent: string
 ): string {
@@ -3213,7 +3205,7 @@ function generateKeywordCondition(
       return (
         indent +
         'return SyntaxKind.' +
-        firstEnumName(TypeScript.SyntaxKind, keyword.kind) +
+        firstEnumName(SyntaxKind, keyword.kind) +
         ';\r\n'
       );
     }
@@ -3233,7 +3225,7 @@ function generateKeywordCondition(
 
     result +=
       ') ? SyntaxKind.' +
-      firstEnumName(TypeScript.SyntaxKind, keyword.kind) +
+      firstEnumName(SyntaxKind, keyword.kind) +
       ' : SyntaxKind.IdentifierName;\r\n';
   } else {
     index =
@@ -3242,7 +3234,7 @@ function generateKeywordCondition(
         : 'startIndex + ' + currentCharacter;
     result += indent + 'switch(array[' + index + ']) {\r\n';
 
-    var groupedKeywords = TypeScript.ArrayUtilities.groupBy(keywords, (k) =>
+    var groupedKeywords = ArrayUtilities.groupBy(keywords, (k) =>
       k.text.substr(currentCharacter, 1)
     );
 
@@ -3252,10 +3244,9 @@ function generateKeywordCondition(
         result +=
           indent +
           '    // ' +
-          TypeScript.ArrayUtilities.select(
-            groupedKeywords[c],
-            (k: any) => k.text
-          ).join(', ') +
+          ArrayUtilities.select(groupedKeywords[c], (k: any) => k.text).join(
+            ', '
+          ) +
           '\r\n';
         result += generateKeywordCondition(
           groupedKeywords[c],
@@ -3281,31 +3272,21 @@ function generateScannerUtilities(): string {
     '    export class ScannerUtilities {\r\n';
 
   var i: number;
-  var keywords: { text: string; kind: TypeScript.SyntaxKind }[] = [];
+  var keywords: { text: string; kind: SyntaxKind }[] = [];
 
-  for (
-    i = TypeScript.SyntaxKind.FirstKeyword;
-    i <= TypeScript.SyntaxKind.LastKeyword;
-    i++
-  ) {
-    keywords.push({ kind: i, text: TypeScript.SyntaxFacts.getText(i) });
+  for (i = SyntaxKind.FirstKeyword; i <= SyntaxKind.LastKeyword; i++) {
+    keywords.push({ kind: i, text: SyntaxFacts.getText(i) });
   }
 
   result +=
     '        public static identifierKind(array: number[], startIndex: number, length: number): SyntaxKind {\r\n';
 
-  var minTokenLength = TypeScript.ArrayUtilities.min(
-    keywords,
-    (k) => k.text.length
-  );
-  var maxTokenLength = TypeScript.ArrayUtilities.max(
-    keywords,
-    (k) => k.text.length
-  );
+  var minTokenLength = ArrayUtilities.min(keywords, (k) => k.text.length);
+  var maxTokenLength = ArrayUtilities.max(keywords, (k) => k.text.length);
   result += '            switch (length) {\r\n';
 
   for (i = minTokenLength; i <= maxTokenLength; i++) {
-    var keywordsOfLengthI = TypeScript.ArrayUtilities.where(
+    var keywordsOfLengthI = ArrayUtilities.where(
       keywords,
       (k) => k.text.length === i
     );
@@ -3313,9 +3294,7 @@ function generateScannerUtilities(): string {
       result += '            case ' + i + ':\r\n';
       result +=
         '                // ' +
-        TypeScript.ArrayUtilities.select(keywordsOfLengthI, (k) => k.text).join(
-          ', '
-        ) +
+        ArrayUtilities.select(keywordsOfLengthI, (k) => k.text).join(', ') +
         '\r\n';
 
       result += generateKeywordCondition(keywordsOfLengthI, 0, '            ');
@@ -3391,9 +3370,8 @@ function generateVisitor(): string {
 }
 
 function generateFactory(): string {
-  var result = "///<reference path='references.ts' />\r\n";
+  var result = '';
 
-  result += '\r\nmodule TypeScript.Syntax {\r\n';
   result += '    export interface IFactory {\r\n';
 
   var i: number;
@@ -3486,7 +3464,6 @@ function generateFactory(): string {
     '    export var normalModeFactory: IFactory = new NormalModeFactory();\r\n';
   result +=
     '    export var strictModeFactory: IFactory = new StrictModeFactory();\r\n';
-  result += '}';
 
   return result;
 }
@@ -3499,44 +3476,44 @@ var scannerUtilities = generateScannerUtilities();
 var visitor = generateVisitor();
 var factory = generateFactory();
 
-TypeScript.Environment.writeFile(
-  TypeScript.Environment.currentDirectory() +
+Environment.writeFile(
+  Environment.currentDirectory() +
     '\\src\\compiler\\syntax\\syntaxNodes.generated.ts',
   syntaxNodes,
   false
 );
-TypeScript.Environment.writeFile(
-  TypeScript.Environment.currentDirectory() +
+Environment.writeFile(
+  Environment.currentDirectory() +
     '\\src\\compiler\\syntax\\syntaxRewriter.generated.ts',
   rewriter,
   false
 );
-TypeScript.Environment.writeFile(
-  TypeScript.Environment.currentDirectory() +
+Environment.writeFile(
+  Environment.currentDirectory() +
     '\\src\\compiler\\syntax\\syntaxToken.generated.ts',
   tokens,
   false
 );
-TypeScript.Environment.writeFile(
-  TypeScript.Environment.currentDirectory() +
+Environment.writeFile(
+  Environment.currentDirectory() +
     '\\src\\compiler\\syntax\\syntaxWalker.generated.ts',
   walker,
   false
 );
-TypeScript.Environment.writeFile(
-  TypeScript.Environment.currentDirectory() +
+Environment.writeFile(
+  Environment.currentDirectory() +
     '\\src\\compiler\\syntax\\scannerUtilities.generated.ts',
   scannerUtilities,
   false
 );
-TypeScript.Environment.writeFile(
-  TypeScript.Environment.currentDirectory() +
+Environment.writeFile(
+  Environment.currentDirectory() +
     '\\src\\compiler\\syntax\\syntaxVisitor.generated.ts',
   visitor,
   false
 );
-TypeScript.Environment.writeFile(
-  TypeScript.Environment.currentDirectory() +
+Environment.writeFile(
+  Environment.currentDirectory() +
     '\\src\\compiler\\syntax\\syntaxFactory.generated.ts',
   factory,
   false

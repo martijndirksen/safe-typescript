@@ -101,7 +101,7 @@ import { DiagnosticCode } from "./resources/diagnosticCode.generated";
 
         var usageString = '  ';
         var type = option.type
-          ? ' ' + TypeScript.getLocalizedText(option.type, null)
+          ? ' ' + getLocalizedText(option.type, null)
           : '';
 
         if (option.short) {
@@ -112,7 +112,7 @@ import { DiagnosticCode } from "./resources/diagnosticCode.generated";
 
         output.push([
           usageString,
-          TypeScript.getLocalizedText(option.usage.locCode, option.usage.args),
+          getLocalizedText(option.usage.locCode, option.usage.args),
         ]);
 
         if (usageString.length > maxLength) {

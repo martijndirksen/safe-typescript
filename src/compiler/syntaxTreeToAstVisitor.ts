@@ -43,7 +43,7 @@
       element2: ISyntaxElement
     ): void {
       if (element2 !== null) {
-        this.position += Syntax.childOffset(element1, element2);
+        this.position += childOffset(element1, element2);
       }
     }
 
@@ -1970,7 +1970,7 @@
     }
   }
 
-  function applyDelta(ast: TypeScript.IASTSpan, delta: number) {
+  function applyDelta(ast: IASTSpan, delta: number) {
     if (ast) {
       if (ast._start !== -1) {
         ast._start += delta;
@@ -1982,7 +1982,7 @@
     }
   }
 
-  function applyDeltaToComments(comments: TypeScript.Comment[], delta: number) {
+  function applyDeltaToComments(comments: Comment[], delta: number) {
     if (comments && comments.length > 0) {
       for (var i = 0; i < comments.length; i++) {
         var comment = comments[i];
@@ -1992,12 +1992,12 @@
   }
 
   class SyntaxTreeToIncrementalAstVisitor extends SyntaxTreeToAstVisitor {
-    private applyDelta(ast: TypeScript.AST, delta: number) {
+    private applyDelta(ast: AST, delta: number) {
       if (delta === 0) {
         return;
       }
 
-      var pre = function (cur: TypeScript.AST) {
+      var pre = function (cur: AST) {
         // Apply delta to this node
         applyDelta(cur, delta);
         applyDeltaToComments(cur.preComments(), delta);
@@ -2031,7 +2031,7 @@
         }
       };
 
-      TypeScript.getAstWalkerFactory().simpleWalk(ast, pre);
+      getAstWalkerFactory().simpleWalk(ast, pre);
     }
 
     public setSpanExplicit(span: IASTSpan, start: number, end: number): void {

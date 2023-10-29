@@ -547,7 +547,7 @@ export class PullTypeResolver {
     //NS: June 15 ... added support for resolving fields in Just<T>
     if (
       parent &&
-      parent.kind === TypeScript.PullElementKind.Interface &&
+      parent.kind === PullElementKind.Interface &&
       parent.name === 'Just'
     ) {
       var repr = parent.getTypeArgumentsOrTypeParameters()[0];
@@ -4439,9 +4439,9 @@ export class PullTypeResolver {
       // check what enclosingDecl the varDecl is in and report an appropriate error message
       // varDecl is a function/constructor/constructor-signature parameter
       if (
-        wrapperDecl.kind === TypeScript.PullElementKind.Function ||
-        wrapperDecl.kind === TypeScript.PullElementKind.ConstructorMethod ||
-        wrapperDecl.kind === TypeScript.PullElementKind.ConstructSignature
+        wrapperDecl.kind === PullElementKind.Function ||
+        wrapperDecl.kind === PullElementKind.ConstructorMethod ||
+        wrapperDecl.kind === PullElementKind.ConstructSignature
       ) {
         context.postDiagnostic(
           this.semanticInfoChain.diagnosticFromAST(
@@ -4452,16 +4452,11 @@ export class PullTypeResolver {
         );
       }
       // varDecl is a method paremeter
-      else if (wrapperDecl.kind === TypeScript.PullElementKind.Method) {
+      else if (wrapperDecl.kind === PullElementKind.Method) {
         // check if the parent of wrapperDecl is ambient class declaration
         var parentDecl = wrapperDecl.getParentDecl();
         // parentDecl is not an ambient declaration; so report an error
-        if (
-          !TypeScript.hasFlag(
-            parentDecl.flags,
-            TypeScript.PullElementFlags.Ambient
-          )
-        ) {
+        if (!hasFlag(parentDecl.flags, PullElementFlags.Ambient)) {
           context.postDiagnostic(
             this.semanticInfoChain.diagnosticFromAST(
               varDeclOrParameter,
@@ -4472,14 +4467,8 @@ export class PullTypeResolver {
         }
         // parentDecl is an ambient declaration, but the wrapperDecl(method) is a not private; so report an error
         else if (
-          TypeScript.hasFlag(
-            parentDecl.flags,
-            TypeScript.PullElementFlags.Ambient
-          ) &&
-          !TypeScript.hasFlag(
-            wrapperDecl.flags,
-            TypeScript.PullElementFlags.Private
-          )
+          hasFlag(parentDecl.flags, PullElementFlags.Ambient) &&
+          !hasFlag(wrapperDecl.flags, PullElementFlags.Private)
         ) {
           context.postDiagnostic(
             this.semanticInfoChain.diagnosticFromAST(
@@ -4491,7 +4480,7 @@ export class PullTypeResolver {
         }
       }
       // varDecl is a property in object type
-      else if (wrapperDecl.kind === TypeScript.PullElementKind.ObjectType) {
+      else if (wrapperDecl.kind === PullElementKind.ObjectType) {
         context.postDiagnostic(
           this.semanticInfoChain.diagnosticFromAST(
             varDeclOrParameter,
@@ -4501,14 +4490,9 @@ export class PullTypeResolver {
         );
       }
       // varDecl is a variable declartion or class/interface property; Ignore variable in catch block or in the ForIn Statement
-      else if (wrapperDecl.kind !== TypeScript.PullElementKind.CatchBlock) {
+      else if (wrapperDecl.kind !== PullElementKind.CatchBlock) {
         // varDecl is not declared in ambient declaration; so report an error
-        if (
-          !TypeScript.hasFlag(
-            wrapperDecl.flags,
-            TypeScript.PullElementFlags.Ambient
-          )
-        ) {
+        if (!hasFlag(wrapperDecl.flags, PullElementFlags.Ambient)) {
           context.postDiagnostic(
             this.semanticInfoChain.diagnosticFromAST(
               varDeclOrParameter,
@@ -4519,11 +4503,8 @@ export class PullTypeResolver {
         }
         // varDecl is delcared in ambient declaration but it is not private; so report an error
         else if (
-          TypeScript.hasFlag(
-            wrapperDecl.flags,
-            TypeScript.PullElementFlags.Ambient
-          ) &&
-          !TypeScript.hasModifier(modifiers, PullElementFlags.Private)
+          hasFlag(wrapperDecl.flags, PullElementFlags.Ambient) &&
+          !hasModifier(modifiers, PullElementFlags.Private)
         ) {
           context.postDiagnostic(
             this.semanticInfoChain.diagnosticFromAST(
@@ -5825,16 +5806,10 @@ export class PullTypeResolver {
       //     - if it's a constructor, we set the return type link during binding
       else {
         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
-        var parentDeclFlags = TypeScript.PullElementFlags.None;
+        var parentDeclFlags = PullElementFlags.None;
         if (
-          TypeScript.hasFlag(
-            funcDecl.kind,
-            TypeScript.PullElementKind.Method
-          ) ||
-          TypeScript.hasFlag(
-            funcDecl.kind,
-            TypeScript.PullElementKind.ConstructorMethod
-          )
+          hasFlag(funcDecl.kind, PullElementKind.Method) ||
+          hasFlag(funcDecl.kind, PullElementKind.ConstructorMethod)
         ) {
           var parentDecl = funcDecl.getParentDecl();
           parentDeclFlags = parentDecl.flags;
@@ -5843,9 +5818,9 @@ export class PullTypeResolver {
         // if the noImplicitAny flag is set to be true, report an error
         if (
           this.compilationSettings.noImplicitAny() &&
-          (!TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) ||
-            (TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) &&
-              !TypeScript.hasFlag(funcDecl.flags, PullElementFlags.Private)))
+          (!hasFlag(parentDeclFlags, PullElementFlags.Ambient) ||
+            (hasFlag(parentDeclFlags, PullElementFlags.Ambient) &&
+              !hasFlag(funcDecl.flags, PullElementFlags.Private)))
         ) {
           var funcDeclASTName = name;
           context.postDiagnostic(
@@ -6039,16 +6014,10 @@ export class PullTypeResolver {
       else if (funcDecl.kind !== PullElementKind.ConstructSignature) {
         if (hasFlag(funcDecl.flags, PullElementFlags.Signature)) {
           signature.returnType = this.semanticInfoChain.anyTypeSymbol;
-          var parentDeclFlags = TypeScript.PullElementFlags.None;
+          var parentDeclFlags = PullElementFlags.None;
           if (
-            TypeScript.hasFlag(
-              funcDecl.kind,
-              TypeScript.PullElementKind.Method
-            ) ||
-            TypeScript.hasFlag(
-              funcDecl.kind,
-              TypeScript.PullElementKind.ConstructorMethod
-            )
+            hasFlag(funcDecl.kind, PullElementKind.Method) ||
+            hasFlag(funcDecl.kind, PullElementKind.ConstructorMethod)
           ) {
             var parentDecl = funcDecl.getParentDecl();
             parentDeclFlags = parentDecl.flags;
@@ -6057,9 +6026,9 @@ export class PullTypeResolver {
           // if the noImplicitAny flag is set to be true, report an error
           if (
             this.compilationSettings.noImplicitAny() &&
-            (!TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) ||
-              (TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) &&
-                !TypeScript.hasFlag(funcDecl.flags, PullElementFlags.Private)))
+            (!hasFlag(parentDeclFlags, PullElementFlags.Ambient) ||
+              (hasFlag(parentDeclFlags, PullElementFlags.Ambient) &&
+                !hasFlag(funcDecl.flags, PullElementFlags.Private)))
           ) {
             var funcDeclASTName = name;
             if (funcDeclASTName) {
@@ -8844,7 +8813,7 @@ export class PullTypeResolver {
         Debug.assert(
           false,
           'Failure nodeType: ' +
-            TypeScript.SyntaxKind[ast.kind()] +
+            SyntaxKind[ast.kind()] +
             '. Implement typeCheck when symbol is set for the ast as part of resolution.'
         );
     }
@@ -8897,7 +8866,7 @@ export class PullTypeResolver {
         Debug.assert(
           false,
           'Implement postTypeCheck clause to handle the postTypeCheck work, nodeType: ' +
-            TypeScript.SyntaxKind[ast.kind()]
+            SyntaxKind[ast.kind()]
         );
     }
   }
@@ -13624,8 +13593,7 @@ export class PullTypeResolver {
     ) {
       // Both are string constants
       return (
-        TypeScript.stripStartAndEndQuotes(t1.name) ===
-        TypeScript.stripStartAndEndQuotes(t2.name)
+        stripStartAndEndQuotes(t1.name) === stripStartAndEndQuotes(t2.name)
       );
     }
 
@@ -14414,8 +14382,8 @@ export class PullTypeResolver {
     ) {
       // Both are string constants
       return (
-        TypeScript.stripStartAndEndQuotes(source.name) ===
-        TypeScript.stripStartAndEndQuotes(target.name)
+        stripStartAndEndQuotes(source.name) ===
+        stripStartAndEndQuotes(target.name)
       );
     }
 

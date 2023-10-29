@@ -1,29 +1,28 @@
+import { LanguageVersion } from './languageVersion';
 
-  export class ParseOptions {
-    private _languageVersion: LanguageVersion;
-    private _allowAutomaticSemicolonInsertion: boolean;
+export class ParseOptions {
+  private _languageVersion: LanguageVersion;
+  private _allowAutomaticSemicolonInsertion: boolean;
 
-    constructor(
-      languageVersion: LanguageVersion,
-      allowAutomaticSemicolonInsertion: boolean
-    ) {
-      this._languageVersion = languageVersion;
-      this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
-    }
+  constructor(
+    languageVersion: LanguageVersion,
+    allowAutomaticSemicolonInsertion: boolean
+  ) {
+    this._languageVersion = languageVersion;
+    this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
+  }
 
-    public toJSON(key: any) {
-      return {
-        allowAutomaticSemicolonInsertion:
-          this._allowAutomaticSemicolonInsertion,
-      };
-    }
+  public toJSON(key: any) {
+    return {
+      allowAutomaticSemicolonInsertion: this._allowAutomaticSemicolonInsertion,
+    };
+  }
 
-    public languageVersion(): LanguageVersion {
-      return this._languageVersion;
-    }
+  public languageVersion(): LanguageVersion {
+    return this._languageVersion;
+  }
 
-    public allowAutomaticSemicolonInsertion(): boolean {
-      return this._allowAutomaticSemicolonInsertion;
-    }
+  public allowAutomaticSemicolonInsertion(): boolean {
+    return this._allowAutomaticSemicolonInsertion;
   }
 }

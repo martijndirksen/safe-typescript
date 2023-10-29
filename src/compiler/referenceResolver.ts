@@ -1,3 +1,4 @@
+import { fromScriptSnapshot } from "./text/textFactory";
 
 
 
@@ -8,7 +9,7 @@
   }
 
   export interface IReferenceResolverHost {
-    getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
+    getScriptSnapshot(fileName: string): IScriptSnapshot;
     resolveRelativePath(path: string, directory: string): string;
     fileExists(path: string): boolean;
     directoryExists(path: string): boolean;
@@ -17,7 +18,7 @@
 
   export class ReferenceResolutionResult {
     resolvedFiles: IResolvedFile[] = [];
-    diagnostics: TypeScript.Diagnostic[] = [];
+    diagnostics: Diagnostic[] = [];
     seenNoDefaultLibTag: boolean = false;
   }
 
@@ -90,7 +91,7 @@
         // Cannot reference self
         if (!referenceLocation.isImported) {
           resolutionResult.diagnostics.push(
-            new TypeScript.Diagnostic(
+            new Diagnostic(
               referenceLocation.filePath,
               referenceLocation.lineMap,
               referenceLocation.position,
@@ -118,7 +119,7 @@
       if (!this.host.fileExists(normalizedPath)) {
         if (!referenceLocation.isImported) {
           resolutionResult.diagnostics.push(
-            new TypeScript.Diagnostic(
+            new Diagnostic(
               referenceLocation.filePath,
               referenceLocation.lineMap,
               referenceLocation.position,
@@ -141,7 +142,7 @@
       referenceLocation: ReferenceLocation,
       resolutionResult: ReferenceResolutionResult
     ): string {
-      var isRelativePath = TypeScript.isRelative(path);
+      var isRelativePath = isRelative(path);
       var isRootedPath = isRelativePath ? false : isRooted(path);
 
       if (isRelativePath || isRootedPath) {
@@ -188,7 +189,7 @@
           parentDirectory = this.host.getParentDirectory(parentDirectory);
         } while (parentDirectory);
 
-        TypeScript.fileResolutionImportFileSearchTime +=
+        fileResolutionImportFileSearchTime +=
           new Date().getTime() - start;
 
         if (!searchFilePath) {
@@ -215,10 +216,10 @@
         var start = new Date().getTime();
         var scriptSnapshot = this.host.getScriptSnapshot(normalizedPath);
         var totalTime = new Date().getTime() - start;
-        TypeScript.fileResolutionIOTime += totalTime;
+        fileResolutionIOTime += totalTime;
 
-        var lineMap = LineMap1.fromScriptSnapshot(scriptSnapshot);
-        var preprocessedFileInformation = TypeScript.preProcessFile(
+        var lineMap = fromScriptSnapshot(scriptSnapshot);
+        var preprocessedFileInformation = preProcessFile(
           normalizedPath,
           scriptSnapshot
         );

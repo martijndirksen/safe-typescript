@@ -1018,7 +1018,7 @@
                 return false;
             }
             var cons = this.bvars[i].getConstraint();
-            return (cons ? TypeScript.TypeRelations.isSubtype(t, cons) : true);    
+            return (cons ? TypeRelations.isSubtype(t, cons) : true);    
         }
 
         public instantiate(args: SoundType[], descend: boolean= true): SoundType {

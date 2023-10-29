@@ -964,8 +964,8 @@
     }
 
     private getDocCommentsOfDecl(
-      decl: TypeScript.PullDecl
-    ): TypeScript.Comment[] {
+      decl: PullDecl
+    ): Comment[] {
       var ast = decl.ast();
 
       if (ast) {
@@ -975,8 +975,8 @@
         }
 
         if (
-          ast.kind() != TypeScript.SyntaxKind.ModuleDeclaration ||
-          decl.kind != TypeScript.PullElementKind.Variable
+          ast.kind() != SyntaxKind.ModuleDeclaration ||
+          decl.kind != PullElementKind.Variable
         ) {
           return docComments(ast);
         }
@@ -985,18 +985,18 @@
       return [];
     }
 
-    private getDocCommentArray(symbol: TypeScript.PullSymbol) {
-      var docComments: TypeScript.Comment[] = [];
+    private getDocCommentArray(symbol: PullSymbol) {
+      var docComments: Comment[] = [];
       if (!symbol) {
         return docComments;
       }
 
-      var isParameter = symbol.kind == TypeScript.PullElementKind.Parameter;
+      var isParameter = symbol.kind == PullElementKind.Parameter;
       var decls = symbol.getDeclarations();
       for (var i = 0; i < decls.length; i++) {
         if (
           isParameter &&
-          decls[i].kind == TypeScript.PullElementKind.Property
+          decls[i].kind == PullElementKind.Property
         ) {
           // Ignore declaration for property that was defined as parameter because they both
           // point to same doc comment
@@ -1008,7 +1008,7 @@
     }
 
     private static getDefaultConstructorSymbolForDocComments(
-      classSymbol: TypeScript.PullTypeSymbol
+      classSymbol: PullTypeSymbol
     ) {
       if (classSymbol.getHasDefaultConstructor()) {
         // get from parent if possible
@@ -1043,7 +1043,7 @@
       if (
         useConstructorAsClass &&
         decls.length &&
-        decls[0].kind == TypeScript.PullElementKind.ConstructorMethod
+        decls[0].kind == PullElementKind.ConstructorMethod
       ) {
         var classDecl = decls[0].getParentDecl();
         return this.getDocCommentText(this.getDocCommentsOfDecl(classDecl));
@@ -1053,18 +1053,18 @@
         var docComments: string = '';
         if (
           !useConstructorAsClass &&
-          this.kind == TypeScript.PullElementKind.ConstructSignature &&
+          this.kind == PullElementKind.ConstructSignature &&
           decls.length &&
-          decls[0].kind == TypeScript.PullElementKind.Class
+          decls[0].kind == PullElementKind.Class
         ) {
-          var classSymbol = (<TypeScript.PullSignatureSymbol>this).returnType;
+          var classSymbol = (<PullSignatureSymbol>this).returnType;
           var extendedTypes = classSymbol.getExtendedTypes();
           if (extendedTypes.length) {
             docComments = extendedTypes[0].getConstructorMethod().docComments();
           } else {
             docComments = '';
           }
-        } else if (this.kind == TypeScript.PullElementKind.Parameter) {
+        } else if (this.kind == PullElementKind.Parameter) {
           var parameterComments: string[] = [];
 
           var funcContainer = this.getEnclosingSignature();
@@ -1086,8 +1086,8 @@
           docComments = parameterComments.join('\n');
         } else {
           var getSymbolComments = true;
-          if (this.kind == TypeScript.PullElementKind.FunctionType) {
-            var functionSymbol = (<TypeScript.PullTypeSymbol>(
+          if (this.kind == PullElementKind.FunctionType) {
+            var functionSymbol = (<PullTypeSymbol>(
               this
             )).getFunctionSymbol();
 
@@ -1105,8 +1105,8 @@
           if (getSymbolComments) {
             docComments = this.getDocCommentText(this.getDocCommentArray(this));
             if (docComments == '') {
-              if (this.kind == TypeScript.PullElementKind.CallSignature) {
-                var callTypeSymbol = (<TypeScript.PullSignatureSymbol>this)
+              if (this.kind == PullElementKind.CallSignature) {
+                var callTypeSymbol = (<PullSignatureSymbol>this)
                   .functionType;
                 if (
                   callTypeSymbol &&

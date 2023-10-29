@@ -1,3 +1,8 @@
+import { RT } from "../../runtime/rt";
+import { ArrayUtilities } from "../core/arrayUtilities";
+import { Errors } from "../core/errors";
+import { SyntaxKind } from "./syntaxKind";
+import { ISyntaxTrivia, spaceTrivia } from "./syntaxTrivia";
 
   export interface ISyntaxTriviaList {
     count(): number;
@@ -22,7 +27,6 @@
   }
 }
 
-module TypeScript.Syntax {
   export var emptyTriviaList: ISyntaxTriviaList = {
     kind(): SyntaxKind {
       return SyntaxKind.TriviaList;
@@ -77,7 +81,6 @@ module TypeScript.Syntax {
 
     var trivia = list1.toArray();
     RT.applyVariadic<ISyntaxTrivia>(trivia, 'push', list2.toArray());
-    //trivia.push.apply(trivia, list2.toArray());
 
     return triviaList(trivia);
   }
@@ -245,7 +248,7 @@ module TypeScript.Syntax {
 
   export function triviaList(trivia: ISyntaxTrivia[]): ISyntaxTriviaList {
     if (trivia === undefined || trivia === null || trivia.length === 0) {
-      return Syntax.emptyTriviaList;
+      return emptyTriviaList;
     }
 
     if (trivia.length === 1) {
@@ -256,6 +259,5 @@ module TypeScript.Syntax {
   }
 
   export var spaceTriviaList: ISyntaxTriviaList = triviaList([
-    Syntax.spaceTrivia,
+    spaceTrivia,
   ]);
-}

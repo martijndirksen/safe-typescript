@@ -246,7 +246,7 @@
                     }
                     else {
                         var constraint = resolveConstraint((<PullTypeParameterSymbol> tp).getConstraint());
-                        t = new TypeScript.TVar(tp.name, tp.name, constraint);
+                        t = new TVar(tp.name, tp.name, constraint);
                         var x = t.asBinder();
                         x["push"] = true;
                         return x;

@@ -5,11 +5,11 @@ import { LineAndCharacter } from '../core/lineAndCharacter';
 import { LineMap } from '../core/lineMap';
 import { StringUtilities } from '../core/stringUtilities';
 import { CharacterCodes } from './characterCodes';
-import { LineMap1 } from './lineMap';
 import { IScriptSnapshot } from './scriptSnapshot';
 import { IText, ISimpleText } from './text';
 import { ITextLine } from './textLine';
 import { TextSpan } from './textSpan';
+import { isAnyLineBreakCharacter } from './textUtilities';
 
 /**
  * Return startLineBreak = index-1, lengthLineBreak = 2   if there is a \r\n at index-1
@@ -34,7 +34,7 @@ function getStartAndLengthOfLineBreakEndingAt(
       info.startPosition = index;
       info.length = 1;
     }
-  } else if (TextUtilities.isAnyLineBreakCharacter(c)) {
+  } else if (isAnyLineBreakCharacter(c)) {
     info.startPosition = index;
     info.length = 1;
   } else {

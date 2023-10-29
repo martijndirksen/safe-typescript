@@ -9,8 +9,8 @@ export interface PullSymbolInfo {
 
 export interface PullCallSymbolInfo {
   targetSymbol: PullSymbol;
-  resolvedSignatures: TypeScript.PullSignatureSymbol[];
-  candidateSignature: TypeScript.PullSignatureSymbol;
+  resolvedSignatures: PullSignatureSymbol[];
+  candidateSignature: PullSignatureSymbol;
   isConstructorCall: boolean;
   ast: AST;
   enclosingScopeSymbol: PullSymbol;
@@ -23,7 +23,7 @@ export interface PullVisibleSymbolsInfo {
 
 export class EmitOutput {
   public outputFiles: OutputFile[] = [];
-  public diagnostics: TypeScript.Diagnostic[] = [];
+  public diagnostics: Diagnostic[] = [];
 }
 
 export enum OutputFileType {
@@ -88,7 +88,7 @@ export class TypeScriptCompiler {
   }
 
   public getDocument(fileName: string): Document {
-    fileName = TypeScript.switchToForwardSlashes(fileName);
+    fileName = switchToForwardSlashes(fileName);
     return this.semanticInfoChain.getDocument(fileName);
   }
 
@@ -104,9 +104,9 @@ export class TypeScriptCompiler {
     isOpen: boolean,
     referencedFiles: string[] = []
   ): void {
-    fileName = TypeScript.switchToForwardSlashes(fileName);
+    fileName = switchToForwardSlashes(fileName);
 
-    TypeScript.sourceCharactersCompiled += scriptSnapshot.getLength();
+    sourceCharactersCompiled += scriptSnapshot.getLength();
 
     var document = Document.create(
       this,
@@ -129,7 +129,7 @@ export class TypeScriptCompiler {
     isOpen: boolean,
     textChangeRange: TextChangeRange
   ): void {
-    fileName = TypeScript.switchToForwardSlashes(fileName);
+    fileName = switchToForwardSlashes(fileName);
 
     var document = this.getDocument(fileName);
     var updatedDocument = document.update(
@@ -145,7 +145,7 @@ export class TypeScriptCompiler {
   }
 
   public removeFile(fileName: string): void {
-    fileName = TypeScript.switchToForwardSlashes(fileName);
+    fileName = switchToForwardSlashes(fileName);
     this.semanticInfoChain.removeDocument(fileName);
   }
 
@@ -344,7 +344,7 @@ export class TypeScriptCompiler {
     fileName: string,
     resolvePath: (path: string) => string
   ): EmitOutput {
-    fileName = TypeScript.switchToForwardSlashes(fileName);
+    fileName = switchToForwardSlashes(fileName);
     var emitOutput = new EmitOutput();
 
     var emitOptions = new EmitOptions(this, resolvePath);
@@ -530,7 +530,7 @@ export class TypeScriptCompiler {
     fileName: string,
     resolvePath: (path: string) => string
   ): EmitOutput {
-    fileName = TypeScript.switchToForwardSlashes(fileName);
+    fileName = switchToForwardSlashes(fileName);
     var emitOutput = new EmitOutput();
 
     var emitOptions = new EmitOptions(this, resolvePath);
@@ -577,7 +577,7 @@ export class TypeScriptCompiler {
   //
 
   public getSyntacticDiagnostics(fileName: string): Diagnostic[] {
-    fileName = TypeScript.switchToForwardSlashes(fileName);
+    fileName = switchToForwardSlashes(fileName);
     return this.getDocument(fileName).diagnostics();
   }
 
@@ -622,14 +622,14 @@ export class TypeScriptCompiler {
   }
 
   public getSoundSemanticDiagnostics(fileName: string) {
-    fileName = TypeScript.switchToForwardSlashes(fileName);
+    fileName = switchToForwardSlashes(fileName);
     if (!this.compilationSettings().shouldInstrument(fileName)) {
       return [];
     }
     var document = this.getDocument(fileName);
     //console.log("Checking script " + fileName);
     var startTime = new Date().getTime();
-    var errors = TypeScript.SoundTypeChecker.check(
+    var errors = SoundTypeChecker.check(
       this.compilationSettings(),
       this.semanticInfoChain,
       document
@@ -641,7 +641,7 @@ export class TypeScriptCompiler {
   }
 
   public getSemanticDiagnostics(fileName: string) {
-    fileName = TypeScript.switchToForwardSlashes(fileName);
+    fileName = switchToForwardSlashes(fileName);
     var document = this.getDocument(fileName);
     var startTime = new Date().getTime();
     PullTypeResolver.typeCheck(
@@ -656,7 +656,7 @@ export class TypeScriptCompiler {
   }
 
   public buildSignature(fileName: string) {
-    return TypeScript.SoundTypeChecker.buildSignature(
+    return SoundTypeChecker.buildSignature(
       this.compilationSettings(),
       this.semanticInfoChain,
       this.getDocument(fileName)
@@ -1027,10 +1027,7 @@ export class TypeScriptCompiler {
         case SyntaxKind.ObjectType:
           // ObjectType are just like Object Literals are bound when needed, ensure we have a decl, by forcing it to be
           // resolved before descending into it.
-          if (
-            propagateContextualTypes &&
-            TypeScript.isTypesOnlyLocation(current)
-          ) {
+          if (propagateContextualTypes && isTypesOnlyLocation(current)) {
             resolver.resolveAST(
               current,
               /*inContextuallyTypedAssignment*/ false,

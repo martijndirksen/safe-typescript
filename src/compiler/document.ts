@@ -1,3 +1,5 @@
+import { fromScriptSnapshot } from './text/textFactory';
+
 export class Document {
   private _diagnostics: Diagnostic[] = null;
   private _bloomFilter: BloomFilter = null;
@@ -44,7 +46,7 @@ export class Document {
     // map so they don't have to be recomputed.
     var start = new Date().getTime();
     this._diagnostics = syntaxTree.diagnostics();
-    TypeScript.syntaxDiagnosticsTime += new Date().getTime() - start;
+    syntaxDiagnosticsTime += new Date().getTime() - start;
 
     this._lineMap = syntaxTree.lineMap();
 
@@ -156,7 +158,7 @@ export class Document {
         this._compiler.compilationSettings(),
         false
       ); ///*incrementalAST:*/ this.isOpen);
-      TypeScript.astTranslationTime += new Date().getTime() - start;
+      astTranslationTime += new Date().getTime() - start;
 
       // If we're not open, then we can throw away our syntax tree.  We don't need it from
       // now on.
@@ -218,12 +220,12 @@ export class Document {
 
       result = Parser.parse(
         this.fileName,
-        SimpleText.fromScriptSnapshot(this._scriptSnapshot),
-        TypeScript.isDTSFile(this.fileName),
+        fromScriptSnapshot(this._scriptSnapshot),
+        isDTSFile(this.fileName),
         getParseOptions(this._compiler.compilationSettings())
       );
 
-      TypeScript.syntaxTreeParseTime += new Date().getTime() - start;
+      syntaxTreeParseTime += new Date().getTime() - start;
 
       // If the document is open, store the syntax tree for fast incremental updates.
       // Or, if we don't have a script, then store the syntax tree around so we won't
@@ -240,17 +242,17 @@ export class Document {
   public bloomFilter(): BloomFilter {
     if (!this._bloomFilter) {
       var identifiers = createIntrinsicsObject<boolean>();
-      var pre = function (cur: TypeScript.AST) {
+      var pre = function (cur: AST) {
         if (isValidAstNode(cur)) {
           if (cur.kind() === SyntaxKind.IdentifierName) {
-            var nodeText = (<TypeScript.Identifier>cur).valueText();
+            var nodeText = (<Identifier>cur).valueText();
 
             identifiers[nodeText] = true;
           }
         }
       };
 
-      TypeScript.getAstWalkerFactory().simpleWalk(
+      getAstWalkerFactory().simpleWalk(
         this.sourceUnit(),
         pre,
         null,
@@ -299,7 +301,7 @@ export class Document {
       var oldText = this._scriptSnapshot;
       var newText = scriptSnapshot;
 
-      TypeScript.Debug.assert(
+      Debug.assert(
         oldText.getLength() -
           textChangeRange.span().length() +
           textChangeRange.newLength() ===
@@ -309,7 +311,7 @@ export class Document {
       if (Debug.shouldAssert(AssertionLevel.VeryAggressive)) {
         var oldTextPrefix = oldText.getText(0, textChangeRange.span().start());
         var newTextPrefix = newText.getText(0, textChangeRange.span().start());
-        TypeScript.Debug.assert(oldTextPrefix === newTextPrefix);
+        Debug.assert(oldTextPrefix === newTextPrefix);
 
         var oldTextSuffix = oldText.getText(
           textChangeRange.span().end(),
@@ -319,27 +321,23 @@ export class Document {
           textChangeRange.newSpan().end(),
           newText.getLength()
         );
-        TypeScript.Debug.assert(oldTextSuffix === newTextSuffix);
+        Debug.assert(oldTextSuffix === newTextSuffix);
       }
     }
 
-    var text = SimpleText.fromScriptSnapshot(scriptSnapshot);
+    var text = fromScriptSnapshot(scriptSnapshot);
 
     // If we don't have a text change, or we don't have an old syntax tree, then do a full
     // parse.  Otherwise, do an incremental parse.
     var newSyntaxTree =
       textChangeRange === null || oldSyntaxTree === null
-        ? TypeScript.Parser.parse(
+        ? Parser.parse(
             this.fileName,
             text,
-            TypeScript.isDTSFile(this.fileName),
+            isDTSFile(this.fileName),
             getParseOptions(this._compiler.compilationSettings())
           )
-        : TypeScript.Parser.incrementalParse(
-            oldSyntaxTree,
-            textChangeRange,
-            text
-          );
+        : Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
     return new Document(
       this._compiler,

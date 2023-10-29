@@ -1,6 +1,6 @@
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,105 +13,113 @@
 // limitations under the License.
 //
 
-/// <reference path="formatting.ts"/>
+import { ILogger, timeFunction } from '../../compiler/diagnostics';
+import { compareDataObjects } from '../../compiler/typescript';
+import { FormatCodeOptions } from '../languageService';
 
-module TypeScript.Services.Formatting {
-    export class RulesProvider {
-        private globalRules: Rules;
-        private options: TypeScript.Services.FormatCodeOptions;
-        private activeRules: Rule[];
-        private rulesMap: RulesMap;
+export class RulesProvider {
+  private globalRules: Rules;
+  private options: FormatCodeOptions;
+  private activeRules: Rule[];
+  private rulesMap: RulesMap;
 
-        constructor(private logger: TypeScript.ILogger) {
-            this.globalRules = new Rules();
+  constructor(private logger: ILogger) {
+    this.globalRules = new Rules();
+  }
+
+  public getRuleName(rule: Rule): string {
+    return this.globalRules.getRuleName(rule);
+  }
+
+  public getRuleByName(name: string): Rule {
+    return this.globalRules[name];
+  }
+
+  public getRulesMap() {
+    return this.rulesMap;
+  }
+
+  public ensureUpToDate(options: FormatCodeOptions) {
+    if (this.options == null || !compareDataObjects(this.options, options)) {
+      var activeRules: Rule[] = timeFunction(
+        this.logger,
+        'RulesProvider: createActiveRules()',
+        () => {
+          return this.createActiveRules(options);
         }
-
-        public getRuleName(rule: Rule): string {
-            return this.globalRules.getRuleName(rule);
+      );
+      var rulesMap: RulesMap = timeFunction(
+        this.logger,
+        'RulesProvider: RulesMap.create()',
+        () => {
+          return RulesMap.create(activeRules);
         }
+      );
 
-        public getRuleByName(name: string): Rule {
-            return this.globalRules[name];
-        }
-
-        public getRulesMap() {
-            return this.rulesMap;
-        }
-
-        public ensureUpToDate(options: TypeScript.Services.FormatCodeOptions) {
-            if (this.options == null || !TypeScript.compareDataObjects(this.options, options)) {
-                var activeRules: Rule[] = TypeScript.timeFunction(this.logger, "RulesProvider: createActiveRules()", () => { return this.createActiveRules(options); });
-                var rulesMap: RulesMap = TypeScript.timeFunction(this.logger, "RulesProvider: RulesMap.create()", () => { return RulesMap.create(activeRules); });
-
-                this.activeRules = activeRules;
-                this.rulesMap = rulesMap;
-                this.options = TypeScript.Services.FormatCodeOptions.clone(options);
-            }
-        }
-
-        private createActiveRules(options: TypeScript.Services.FormatCodeOptions): Rule[] {
-            var rules = this.globalRules.HighPriorityCommonRules.slice(0);
-
-            if (options.InsertSpaceAfterCommaDelimiter) {
-                rules.push(this.globalRules.SpaceAfterComma);
-            }
-            else {
-                rules.push(this.globalRules.NoSpaceAfterComma);
-            }
-
-            if (options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions) {
-                rules.push(this.globalRules.SpaceAfterAnonymousFunctionKeyword);
-            }
-            else {
-                rules.push(this.globalRules.NoSpaceAfterAnonymousFunctionKeyword);
-            }
-
-            if (options.InsertSpaceAfterKeywordsInControlFlowStatements) {
-                rules.push(this.globalRules.SpaceAfterKeywordInControl);
-            }
-            else {
-                rules.push(this.globalRules.NoSpaceAfterKeywordInControl);
-            }
-
-            if (options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis) {
-                rules.push(this.globalRules.SpaceAfterOpenParen);
-                rules.push(this.globalRules.SpaceBeforeCloseParen);
-                rules.push(this.globalRules.NoSpaceBetweenParens);
-            }
-            else {
-                rules.push(this.globalRules.NoSpaceAfterOpenParen);
-                rules.push(this.globalRules.NoSpaceBeforeCloseParen);
-                rules.push(this.globalRules.NoSpaceBetweenParens);
-            }
-
-            if (options.InsertSpaceAfterSemicolonInForStatements) {
-                rules.push(this.globalRules.SpaceAfterSemicolonInFor);
-            }
-            else {
-                rules.push(this.globalRules.NoSpaceAfterSemicolonInFor);
-            }
-
-            if (options.InsertSpaceBeforeAndAfterBinaryOperators) {
-                rules.push(this.globalRules.SpaceBeforeBinaryOperator);
-                rules.push(this.globalRules.SpaceAfterBinaryOperator);
-            }
-            else {
-                rules.push(this.globalRules.NoSpaceBeforeBinaryOperator);
-                rules.push(this.globalRules.NoSpaceAfterBinaryOperator);
-            }
-
-            if (options.PlaceOpenBraceOnNewLineForControlBlocks) {
-                rules.push(this.globalRules.NewLineBeforeOpenBraceInControl);
-            }
-
-            if (options.PlaceOpenBraceOnNewLineForFunctions) {
-                rules.push(this.globalRules.NewLineBeforeOpenBraceInFunction);
-                rules.push(this.globalRules.NewLineBeforeOpenBraceInTypeScriptDeclWithBlock);
-            }
-
-            rules = rules.concat(this.globalRules.LowPriorityCommonRules);
-
-            return rules;
-        }
+      this.activeRules = activeRules;
+      this.rulesMap = rulesMap;
+      this.options = FormatCodeOptions.clone(options);
     }
+  }
+
+  private createActiveRules(options: FormatCodeOptions): Rule[] {
+    var rules = this.globalRules.HighPriorityCommonRules.slice(0);
+
+    if (options.InsertSpaceAfterCommaDelimiter) {
+      rules.push(this.globalRules.SpaceAfterComma);
+    } else {
+      rules.push(this.globalRules.NoSpaceAfterComma);
+    }
+
+    if (options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions) {
+      rules.push(this.globalRules.SpaceAfterAnonymousFunctionKeyword);
+    } else {
+      rules.push(this.globalRules.NoSpaceAfterAnonymousFunctionKeyword);
+    }
+
+    if (options.InsertSpaceAfterKeywordsInControlFlowStatements) {
+      rules.push(this.globalRules.SpaceAfterKeywordInControl);
+    } else {
+      rules.push(this.globalRules.NoSpaceAfterKeywordInControl);
+    }
+
+    if (options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis) {
+      rules.push(this.globalRules.SpaceAfterOpenParen);
+      rules.push(this.globalRules.SpaceBeforeCloseParen);
+      rules.push(this.globalRules.NoSpaceBetweenParens);
+    } else {
+      rules.push(this.globalRules.NoSpaceAfterOpenParen);
+      rules.push(this.globalRules.NoSpaceBeforeCloseParen);
+      rules.push(this.globalRules.NoSpaceBetweenParens);
+    }
+
+    if (options.InsertSpaceAfterSemicolonInForStatements) {
+      rules.push(this.globalRules.SpaceAfterSemicolonInFor);
+    } else {
+      rules.push(this.globalRules.NoSpaceAfterSemicolonInFor);
+    }
+
+    if (options.InsertSpaceBeforeAndAfterBinaryOperators) {
+      rules.push(this.globalRules.SpaceBeforeBinaryOperator);
+      rules.push(this.globalRules.SpaceAfterBinaryOperator);
+    } else {
+      rules.push(this.globalRules.NoSpaceBeforeBinaryOperator);
+      rules.push(this.globalRules.NoSpaceAfterBinaryOperator);
+    }
+
+    if (options.PlaceOpenBraceOnNewLineForControlBlocks) {
+      rules.push(this.globalRules.NewLineBeforeOpenBraceInControl);
+    }
+
+    if (options.PlaceOpenBraceOnNewLineForFunctions) {
+      rules.push(this.globalRules.NewLineBeforeOpenBraceInFunction);
+      rules.push(
+        this.globalRules.NewLineBeforeOpenBraceInTypeScriptDeclWithBlock
+      );
+    }
+
+    rules = rules.concat(this.globalRules.LowPriorityCommonRules);
+
+    return rules;
+  }
 }

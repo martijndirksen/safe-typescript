@@ -472,7 +472,7 @@ export class Identifier extends AST implements IASTToken {
       if (text === '__proto__') {
         this._valueText = '#__proto__';
       } else {
-        this._valueText = Syntax.massageEscapes(text);
+        this._valueText = massageEscapes(text);
       }
     }
 

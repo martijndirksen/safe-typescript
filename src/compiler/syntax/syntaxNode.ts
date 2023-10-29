@@ -89,12 +89,12 @@
 
     public leadingTrivia(): ISyntaxTriviaList {
       var firstToken = this.firstToken();
-      return firstToken ? firstToken.leadingTrivia() : Syntax.emptyTriviaList;
+      return firstToken ? firstToken.leadingTrivia() : emptyTriviaList;
     }
 
     public trailingTrivia(): ISyntaxTriviaList {
       var lastToken = this.lastToken();
-      return lastToken ? lastToken.trailingTrivia() : Syntax.emptyTriviaList;
+      return lastToken ? lastToken.trailingTrivia() : emptyTriviaList;
     }
 
     public toJSON(key: any): any {
@@ -274,7 +274,7 @@
 
       if (includeSkippedTokens) {
         return (
-          Syntax.findSkippedTokenInPositionedToken(positionedToken, position) ||
+          findSkippedTokenInPositionedToken(positionedToken, position) ||
           positionedToken
         );
       }
@@ -345,7 +345,7 @@
 
       if (includeSkippedTokens) {
         positionedToken =
-          Syntax.findSkippedTokenOnLeft(positionedToken, position) ||
+          findSkippedTokenOnLeft(positionedToken, position) ||
           positionedToken;
       }
 
@@ -378,7 +378,7 @@
 
       if (includeSkippedTokens) {
         positionedToken =
-          Syntax.findSkippedTokenOnLeft(positionedToken, position) ||
+          findSkippedTokenOnLeft(positionedToken, position) ||
           positionedToken;
       }
 

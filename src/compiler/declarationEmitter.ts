@@ -152,8 +152,7 @@ export class DeclarationEmitter {
         var start = new Date().getTime();
         var declSymbol = this.semanticInfoChain.getSymbolForAST(declAST);
         var result = declSymbol && declSymbol.isExternallyVisible();
-        TypeScript.declarationEmitIsExternallyVisibleTime +=
-          new Date().getTime() - start;
+        declarationEmitIsExternallyVisibleTime += new Date().getTime() - start;
 
         return result;
       }
@@ -286,7 +285,7 @@ export class DeclarationEmitter {
     );
 
     var declarationPullSymbol = declarationContainerDecl.getSymbol();
-    TypeScript.declarationEmitTypeSignatureTime += new Date().getTime() - start;
+    declarationEmitTypeSignatureTime += new Date().getTime() - start;
 
     var typeNameMembers = type.getScopedNameEx(declarationPullSymbol);
     this.emitTypeNamesMember(typeNameMembers);
@@ -353,8 +352,7 @@ export class DeclarationEmitter {
     var start = new Date().getTime();
     var decl = this.semanticInfoChain.getDeclForAST(boundDecl);
     var pullSymbol = decl.getSymbol();
-    TypeScript.declarationEmitGetBoundDeclTypeTime +=
-      new Date().getTime() - start;
+    declarationEmitGetBoundDeclTypeTime += new Date().getTime() - start;
 
     var type = pullSymbol.type;
     Debug.assert(type);
@@ -487,7 +485,7 @@ export class DeclarationEmitter {
     var start = new Date().getTime();
     var functionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
     var funcSymbol = functionDecl.getSymbol();
-    TypeScript.declarationEmitIsOverloadedCallSignatureTime +=
+    declarationEmitIsOverloadedCallSignatureTime +=
       new Date().getTime() - start;
 
     var funcTypeSymbol = funcSymbol.type;
@@ -503,7 +501,7 @@ export class DeclarationEmitter {
     var start = new Date().getTime();
     var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
 
-    TypeScript.declarationEmitFunctionDeclarationGetSymbolTime +=
+    declarationEmitFunctionDeclarationGetSymbolTime +=
       new Date().getTime() - start;
 
     var funcTypeSymbol = funcSymbol.type;
@@ -583,7 +581,7 @@ export class DeclarationEmitter {
     var start = new Date().getTime();
     var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
 
-    TypeScript.declarationEmitFunctionDeclarationGetSymbolTime +=
+    declarationEmitFunctionDeclarationGetSymbolTime +=
       new Date().getTime() - start;
 
     var funcTypeSymbol = funcSymbol.type;
@@ -675,7 +673,7 @@ export class DeclarationEmitter {
     var start = new Date().getTime();
     var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
 
-    TypeScript.declarationEmitFunctionDeclarationGetSymbolTime +=
+    declarationEmitFunctionDeclarationGetSymbolTime +=
       new Date().getTime() - start;
 
     this.emitDeclarationComments(funcDecl);
@@ -713,7 +711,7 @@ export class DeclarationEmitter {
     var start = new Date().getTime();
     var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
 
-    TypeScript.declarationEmitFunctionDeclarationGetSymbolTime +=
+    declarationEmitFunctionDeclarationGetSymbolTime +=
       new Date().getTime() - start;
 
     this.emitDeclarationComments(funcDecl);
@@ -756,7 +754,7 @@ export class DeclarationEmitter {
     var start = new Date().getTime();
     var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
 
-    TypeScript.declarationEmitFunctionDeclarationGetSymbolTime +=
+    declarationEmitFunctionDeclarationGetSymbolTime +=
       new Date().getTime() - start;
 
     if (funcDecl.block) {
@@ -906,7 +904,7 @@ export class DeclarationEmitter {
       funcDecl,
       this.semanticInfoChain
     );
-    TypeScript.declarationEmitGetAccessorFunctionTime += new Date().getTime();
+    declarationEmitGetAccessorFunctionTime += new Date().getTime();
 
     if (
       funcDecl.kind() === SyntaxKind.SetAccessor &&
@@ -1035,8 +1033,7 @@ export class DeclarationEmitter {
     var start = new Date().getTime();
     var containerDecl = this.semanticInfoChain.getDeclForAST(containerAst);
     var containerSymbol = <PullTypeSymbol>containerDecl.getSymbol();
-    TypeScript.declarationEmitGetTypeParameterSymbolTime +=
-      new Date().getTime() - start;
+    declarationEmitGetTypeParameterSymbolTime += new Date().getTime() - start;
 
     var typars: CheckedArray<PullTypeSymbol>; //NS: Could benefit from CheckedArray type here
     if (funcSignature) {

@@ -1,4 +1,23 @@
-import type { CheckedArray } from '../../runtime/rt';
+import { RT, type CheckedArray } from '../../runtime/rt';
+import { ArrayUtilities } from '../core/arrayUtilities';
+import { Diagnostic } from '../core/diagnosticCore';
+import { Errors } from '../core/errors';
+import { StringUtilities } from '../core/stringUtilities';
+import { DiagnosticCode } from '../resources/diagnosticCode.generated';
+import { CharacterCodes } from '../text/characterCodes';
+import { ISimpleText } from '../text/text';
+import { TextSpan } from '../text/textSpan';
+import { CharacterInfo } from './characterInfo';
+import { SyntaxConstants } from './constants';
+import { LanguageVersion } from './languageVersion';
+import { ScannerUtilities } from './scannerUtilities.generated';
+import { ISlidingWindowSource, SlidingWindow } from './slidingWindow';
+import { SyntaxKind } from './syntaxKind';
+import { ISyntaxToken, realizeToken, massageEscapes } from './syntaxToken';
+import { FixedWidthTokenWithNoTrivia, FixedWidthTokenWithTrailingTrivia, FixedWidthTokenWithLeadingTrivia, FixedWidthTokenWithLeadingAndTrailingTrivia, VariableWidthTokenWithNoTrivia, VariableWidthTokenWithTrailingTrivia, VariableWidthTokenWithLeadingTrivia, VariableWidthTokenWithLeadingAndTrailingTrivia } from './syntaxToken.generated';
+import { ISyntaxTrivia, deferredTrivia, trivia } from './syntaxTrivia';
+import { ISyntaxTriviaList, triviaList } from './syntaxTriviaList';
+import { Unicode } from './unicode';
 
 
   var isKeywordStartCharacter: boolean[] = ArrayUtilities.createArray<boolean>(
@@ -173,7 +192,7 @@ import type { CheckedArray } from '../../runtime/rt';
       // If we produced any diagnostics while creating this token, then realize the token so
       // it won't be reused in incremental scenarios.
       return diagnosticsLength !== diagnostics.length
-        ? Syntax.realizeToken(token)
+        ? realizeToken(token)
         : token;
     }
 
@@ -189,9 +208,9 @@ import type { CheckedArray } from '../../runtime/rt';
       if (!isVariableWidthKeyword && kind >= SyntaxKind.FirstFixedWidth) {
         if (leadingTriviaInfo === 0) {
           if (trailingTriviaInfo === 0) {
-            return new Syntax.FixedWidthTokenWithNoTrivia(kind);
+            return new FixedWidthTokenWithNoTrivia(kind);
           } else {
-            return new Syntax.FixedWidthTokenWithTrailingTrivia(
+            return new FixedWidthTokenWithTrailingTrivia(
               this.text,
               fullStart,
               kind,
@@ -199,14 +218,14 @@ import type { CheckedArray } from '../../runtime/rt';
             );
           }
         } else if (trailingTriviaInfo === 0) {
-          return new Syntax.FixedWidthTokenWithLeadingTrivia(
+          return new FixedWidthTokenWithLeadingTrivia(
             this.text,
             fullStart,
             kind,
             leadingTriviaInfo
           );
         } else {
-          return new Syntax.FixedWidthTokenWithLeadingAndTrailingTrivia(
+          return new FixedWidthTokenWithLeadingAndTrailingTrivia(
             this.text,
             fullStart,
             kind,
@@ -218,14 +237,14 @@ import type { CheckedArray } from '../../runtime/rt';
         var width = end - start;
         if (leadingTriviaInfo === 0) {
           if (trailingTriviaInfo === 0) {
-            return new Syntax.VariableWidthTokenWithNoTrivia(
+            return new VariableWidthTokenWithNoTrivia(
               this.text,
               fullStart,
               kind,
               width
             );
           } else {
-            return new Syntax.VariableWidthTokenWithTrailingTrivia(
+            return new VariableWidthTokenWithTrailingTrivia(
               this.text,
               fullStart,
               kind,
@@ -234,7 +253,7 @@ import type { CheckedArray } from '../../runtime/rt';
             );
           }
         } else if (trailingTriviaInfo === 0) {
-          return new Syntax.VariableWidthTokenWithLeadingTrivia(
+          return new VariableWidthTokenWithLeadingTrivia(
             this.text,
             fullStart,
             kind,
@@ -242,7 +261,7 @@ import type { CheckedArray } from '../../runtime/rt';
             width
           );
         } else {
-          return new Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia(
+          return new VariableWidthTokenWithLeadingAndTrailingTrivia(
             this.text,
             fullStart,
             kind,
@@ -369,7 +388,7 @@ import type { CheckedArray } from '../../runtime/rt';
         }
 
         // Debug.assert(trivia.length > 0);
-        return Syntax.triviaList(trivia);
+        return triviaList(trivia);
       }
     }
 
@@ -509,7 +528,7 @@ import type { CheckedArray } from '../../runtime/rt';
         break;
       }
 
-      return Syntax.deferredTrivia(
+      return deferredTrivia(
         SyntaxKind.WhitespaceTrivia,
         underlyingText,
         underlyingTextStart + absoluteStartIndex,
@@ -524,7 +543,7 @@ import type { CheckedArray } from '../../runtime/rt';
       var absoluteStartIndex = this.slidingWindow.absoluteIndex();
       var width = this.scanSingleLineCommentTriviaLength();
 
-      return Syntax.deferredTrivia(
+      return deferredTrivia(
         SyntaxKind.SingleLineCommentTrivia,
         underlyingText,
         underlyingTextStart + absoluteStartIndex,
@@ -558,7 +577,7 @@ import type { CheckedArray } from '../../runtime/rt';
       var absoluteStartIndex = this.absoluteIndex();
       var width = this.scanMultiLineCommentTriviaLength(null);
 
-      return Syntax.deferredTrivia(
+      return deferredTrivia(
         SyntaxKind.MultiLineCommentTrivia,
         underlyingText,
         underlyingTextStart + absoluteStartIndex,
@@ -619,7 +638,7 @@ import type { CheckedArray } from '../../runtime/rt';
       );
       this.slidingWindow.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
 
-      return Syntax.trivia(SyntaxKind.NewLineTrivia, text);
+      return trivia(SyntaxKind.NewLineTrivia, text);
     }
 
     private scanLineTerminatorSequenceLength(ch: number): number {
@@ -854,7 +873,7 @@ import type { CheckedArray } from '../../runtime/rt';
       // i.e. "\u0076ar" is the keyword 'var'.  Check for that here.
       var length = this.slidingWindow.absoluteIndex() - startIndex;
       var text = this.text.substr(startIndex, length, /*intern:*/ false);
-      var valueText = Syntax.massageEscapes(text);
+      var valueText = massageEscapes(text);
 
       var keywordKind = SyntaxFacts.getTokenKind(valueText);
       if (

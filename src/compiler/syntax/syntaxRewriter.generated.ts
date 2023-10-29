@@ -34,7 +34,7 @@
       }
 
       // Debug.assert(newItems === null || newItems.length === list.childCount());
-      return newItems === null ? list : Syntax.list(newItems);
+      return newItems === null ? list : list(newItems);
     }
 
     public visitSeparatedList(
@@ -61,7 +61,7 @@
       }
 
       // Debug.assert(newItems === null || newItems.length === list.childCount());
-      return newItems === null ? list : Syntax.separatedList(newItems);
+      return newItems === null ? list : separatedList(newItems);
     }
 
     public visitSourceUnit(node: SourceUnitSyntax): any {

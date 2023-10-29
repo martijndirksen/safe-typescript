@@ -57,7 +57,7 @@
     }
 
     public childIndex(child: ISyntaxElement) {
-      return Syntax.childIndex(this.element(), child);
+      return childIndex(this.element(), child);
     }
 
     public childCount(): number {
@@ -65,7 +65,7 @@
     }
 
     public childAt(index: number): PositionedElement {
-      var offset = Syntax.childOffsetAt(this.element(), index);
+      var offset = childOffsetAt(this.element(), index);
       return PositionedElement.create(
         this,
         this.element().childAt(index),
@@ -74,25 +74,25 @@
     }
 
     public childStart(child: ISyntaxElement): number {
-      var offset = Syntax.childOffset(this.element(), child);
+      var offset = childOffset(this.element(), child);
       return this.fullStart() + offset + child.leadingTriviaWidth();
     }
 
     public childEnd(child: ISyntaxElement): number {
-      var offset = Syntax.childOffset(this.element(), child);
+      var offset = childOffset(this.element(), child);
       return (
         this.fullStart() + offset + child.leadingTriviaWidth() + child.width()
       );
     }
 
     public childStartAt(index: number): number {
-      var offset = Syntax.childOffsetAt(this.element(), index);
+      var offset = childOffsetAt(this.element(), index);
       var child = this.element().childAt(index);
       return this.fullStart() + offset + child.leadingTriviaWidth();
     }
 
     public childEndAt(index: number): number {
-      var offset = Syntax.childOffsetAt(this.element(), index);
+      var offset = childOffsetAt(this.element(), index);
       var child = this.element().childAt(index);
       return (
         this.fullStart() + offset + child.leadingTriviaWidth() + child.width()
@@ -100,7 +100,7 @@
     }
 
     public getPositionedChild(child: ISyntaxElement) {
-      var offset = Syntax.childOffset(this.element(), child);
+      var offset = childOffset(this.element(), child);
       return PositionedElement.create(this, child, this.fullStart() + offset);
     }
 
@@ -302,7 +302,7 @@
           // This skipped token was on the right of positioned token, the skipped token found before it in the
           // trailing trivia, if the search for a previous skipped token in the same trivia list return it,
           // else return the parent token as the previous token
-          previousToken = Syntax.findSkippedTokenInTrailingTriviaList(
+          previousToken = findSkippedTokenInTrailingTriviaList(
             this.parentToken(),
             start - 1
           );
@@ -313,7 +313,7 @@
 
           return this.parentToken();
         } else {
-          previousToken = Syntax.findSkippedTokenInLeadingTriviaList(
+          previousToken = findSkippedTokenInLeadingTriviaList(
             this.parentToken(),
             start - 1
           );
@@ -347,7 +347,7 @@
           // This skipped token was on the left of positioned token, the skipped token found after it in the
           // leading trivia, if the search for a next skipped token in the same trivia list return it,
           // else return the parent token as the next token
-          nextToken = Syntax.findSkippedTokenInLeadingTriviaList(
+          nextToken = findSkippedTokenInLeadingTriviaList(
             this.parentToken(),
             end
           );
@@ -358,7 +358,7 @@
 
           return this.parentToken();
         } else {
-          nextToken = Syntax.findSkippedTokenInTrailingTriviaList(
+          nextToken = findSkippedTokenInTrailingTriviaList(
             this.parentToken(),
             end
           );

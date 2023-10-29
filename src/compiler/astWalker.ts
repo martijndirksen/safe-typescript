@@ -827,7 +827,7 @@ childrenWalkers[SyntaxKind.WithStatement] = walkWithStatementChildren;
 // Verify the code is up to date with the enum
 for (var e in SyntaxKind) {
   if (SyntaxKind.hasOwnProperty(e) && StringUtilities.isString(SyntaxKind[e])) {
-    TypeScript.Debug.assert(
+    Debug.assert(
       childrenWalkers[e] !== undefined,
       'Fix initWalkers: ' + SyntaxKind[e]
     );
