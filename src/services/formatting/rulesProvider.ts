@@ -16,6 +16,9 @@
 import { ILogger, timeFunction } from '../../compiler/diagnostics';
 import { compareDataObjects } from '../../compiler/typescript';
 import { FormatCodeOptions } from '../languageService';
+import { Rule } from './rule';
+import { Rules } from './rules';
+import { RulesMap } from './rulesMap';
 
 export class RulesProvider {
   private globalRules: Rules;

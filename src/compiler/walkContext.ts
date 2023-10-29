@@ -1,5 +1,3 @@
-///<reference path='typescript.ts' />
-
 export interface IWalkContext {
   goChildren: boolean;
   goNextSibling: boolean;

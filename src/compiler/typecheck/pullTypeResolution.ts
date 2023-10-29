@@ -166,6 +166,8 @@ import {
   ArgumentInferenceContext,
   PullContextualTypeContext,
 } from './pullTypeResolutionContext';
+import { name } from 'assert';
+import { SyntaxFacts } from '../syntax/syntaxFacts';
 
 export interface IPullTypeCollection {
   getLength: () => number;

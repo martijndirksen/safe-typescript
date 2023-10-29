@@ -1,3 +1,22 @@
+import { Errors } from '../core/errors';
+import { ISimpleText } from '../text/text';
+import { SyntaxConstants } from './constants';
+import { PositionedElement, PositionedToken } from './positionedElement';
+import { Scanner } from './scanner';
+import { ISyntaxElement } from './syntaxElement';
+import { SyntaxFacts } from './syntaxFacts';
+import { SyntaxKind } from './syntaxKind';
+import {
+  ISyntaxToken,
+  value,
+  valueText,
+  tokenToJSON,
+  realizeToken,
+  isExpression,
+} from './syntaxToken';
+import { ISyntaxTriviaList, emptyTriviaList } from './syntaxTriviaList';
+import { ISyntaxVisitor } from './syntaxVisitor.generated';
+
 export class VariableWidthTokenWithNoTrivia implements ISyntaxToken {
   private _sourceText: ISimpleText;
   private _fullStart: number;

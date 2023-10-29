@@ -1,3 +1,79 @@
+import { ArrayUtilities } from '../core/arrayUtilities';
+import { Debug } from '../core/debug';
+import { Diagnostic, getLocalizedText } from '../core/diagnosticCore';
+import { LineMap } from '../core/lineMap';
+import { DiagnosticCode } from '../resources/diagnosticCode.generated';
+import { LanguageVersion } from './languageVersion';
+import { ParseOptions } from './parseOptions';
+import { PositionTrackingWalker } from './positionTrackingWalker';
+import { ISeparatedSyntaxList } from './separatedSyntaxList';
+import { childOffset } from './syntax';
+import {
+  ISyntaxElement,
+  ISyntaxNode,
+  IModuleElementSyntax,
+  IClassElementSyntax,
+  INameSyntax,
+  IStatementSyntax,
+} from './syntaxElement';
+import { SyntaxFacts } from './syntaxFacts';
+import { SyntaxKind } from './syntaxKind';
+import { ISyntaxList } from './syntaxList';
+import { SyntaxNode } from './syntaxNode';
+import {
+  SourceUnitSyntax,
+  ConstructorDeclarationSyntax,
+  CatchClauseSyntax,
+  ParameterListSyntax,
+  ParameterSyntax,
+  HeritageClauseSyntax,
+  ArgumentListSyntax,
+  VariableDeclarationSyntax,
+  TypeArgumentListSyntax,
+  TypeParameterListSyntax,
+  IndexSignatureSyntax,
+  ClassDeclarationSyntax,
+  FunctionDeclarationSyntax,
+  MemberFunctionDeclarationSyntax,
+  QualifiedNameSyntax,
+  InterfaceDeclarationSyntax,
+  MemberVariableDeclarationSyntax,
+  IndexMemberDeclarationSyntax,
+  ObjectLiteralExpressionSyntax,
+  GetAccessorSyntax,
+  SetAccessorSyntax,
+  EnumDeclarationSyntax,
+  EnumElementSyntax,
+  InvocationExpressionSyntax,
+  ModuleDeclarationSyntax,
+  ImportDeclarationSyntax,
+  BlockSyntax,
+  BreakStatementSyntax,
+  ContinueStatementSyntax,
+  DebuggerStatementSyntax,
+  DoStatementSyntax,
+  EmptyStatementSyntax,
+  ExpressionStatementSyntax,
+  ForInStatementSyntax,
+  ForStatementSyntax,
+  IfStatementSyntax,
+  LabeledStatementSyntax,
+  ReturnStatementSyntax,
+  SwitchStatementSyntax,
+  ThrowStatementSyntax,
+  TryStatementSyntax,
+  WhileStatementSyntax,
+  WithStatementSyntax,
+  VariableStatementSyntax,
+  ObjectTypeSyntax,
+  ArrayTypeSyntax,
+  FunctionTypeSyntax,
+  ConstructorTypeSyntax,
+  VariableDeclaratorSyntax,
+} from './syntaxNodes.generated';
+import { ISyntaxToken } from './syntaxToken';
+import { SyntaxUtilities } from './syntaxUtilities';
+
 export class SyntaxTree {
   private _sourceUnit: SourceUnitSyntax;
   private _isDeclaration: boolean;

@@ -1,5 +1,27 @@
 /// <reference path='ast.ts' />
 
+import { Comment, SourceUnit, AST, ASTSpan, IASTSpan, ISyntaxList2, ISeparatedSyntaxList2, Identifier, IASTToken, BuiltInType, ThisExpression, SuperExpression, LiteralExpression, StringLiteral, RegularExpressionLiteral, NumericLiteral, ExternalModuleReference, ModuleNameModuleReference, ClassDeclaration, InterfaceDeclaration, HeritageClause, ModuleDeclaration, FunctionDeclaration, EnumDeclaration, EnumElement, ImportDeclaration, ExportAssignment, VariableStatement, VariableDeclaration, VariableDeclarator, EqualsValueClause, PrefixUnaryExpression, ArrayLiteralExpression, OmittedExpression, ParenthesizedExpression, SimpleArrowFunctionExpression, ParenthesizedArrowFunctionExpression, TypeQuery, QualifiedName, TypeArgumentList, ConstructorType, FunctionType, ObjectType, ArrayType, TupleType, GenericType, TypeAnnotation, Block, Parameter, MemberAccessExpression, PostfixUnaryExpression, ElementAccessExpression, InvocationExpression, ArgumentList, BinaryExpression, ConditionalExpression, ConstructSignature, MethodSignature, IndexSignature, PropertySignature, ParameterList, CallSignature, TypeParameterList, TypeParameter, Constraint, IfStatement, ElseClause, ExpressionStatement, ConstructorDeclaration, IndexMemberDeclaration, MemberFunctionDeclaration, GetAccessor, SetAccessor, MemberVariableDeclaration, ThrowStatement, ReturnStatement, ObjectCreationExpression, SwitchStatement, CaseSwitchClause, DefaultSwitchClause, BreakStatement, ContinueStatement, ForStatement, ForInStatement, WhileStatement, WithStatement, CastExpression, ObjectLiteralExpression, SimplePropertyAssignment, FunctionPropertyAssignment, FunctionExpression, EmptyStatement, TryStatement, CatchClause, FinallyClause, LabeledStatement, DoStatement, TypeOfExpression, DeleteExpression, VoidExpression, DebuggerStatement } from "./ast";
+import { getAstWalkerFactory } from "./astWalker";
+import { Debug } from "./core/debug";
+import { Errors } from "./core/errors";
+import { LineMap } from "./core/lineMap";
+import { ImmutableCompilationSettings } from "./settings";
+import { ISeparatedSyntaxList } from "./syntax/separatedSyntaxList";
+import { childOffset } from "./syntax/syntax";
+import { ISyntaxElement, ITypeSyntax } from "./syntax/syntaxElement";
+import { SyntaxKind } from "./syntax/syntaxKind";
+import { ISyntaxList } from "./syntax/syntaxList";
+import { SyntaxNode } from "./syntax/syntaxNode";
+import { ISyntaxNodeOrToken } from "./syntax/syntaxNodeOrToken";
+import { SourceUnitSyntax, ExternalModuleReferenceSyntax, ModuleNameModuleReferenceSyntax, ClassDeclarationSyntax, InterfaceDeclarationSyntax, HeritageClauseSyntax, ModuleDeclarationSyntax, FunctionDeclarationSyntax, EnumDeclarationSyntax, EnumElementSyntax, ImportDeclarationSyntax, ExportAssignmentSyntax, VariableStatementSyntax, VariableDeclarationSyntax, VariableDeclaratorSyntax, EqualsValueClauseSyntax, PrefixUnaryExpressionSyntax, ArrayLiteralExpressionSyntax, OmittedExpressionSyntax, ParenthesizedExpressionSyntax, SimpleArrowFunctionExpressionSyntax, ParenthesizedArrowFunctionExpressionSyntax, TypeQuerySyntax, QualifiedNameSyntax, TypeArgumentListSyntax, ConstructorTypeSyntax, FunctionTypeSyntax, ObjectTypeSyntax, ArrayTypeSyntax, GenericTypeSyntax, TypeAnnotationSyntax, BlockSyntax, ParameterSyntax, MemberAccessExpressionSyntax, PostfixUnaryExpressionSyntax, ElementAccessExpressionSyntax, InvocationExpressionSyntax, ArgumentListSyntax, BinaryExpressionSyntax, ConditionalExpressionSyntax, ConstructSignatureSyntax, MethodSignatureSyntax, IndexSignatureSyntax, PropertySignatureSyntax, ParameterListSyntax, CallSignatureSyntax, TypeParameterListSyntax, TypeParameterSyntax, ConstraintSyntax, IfStatementSyntax, ElseClauseSyntax, ExpressionStatementSyntax, ConstructorDeclarationSyntax, IndexMemberDeclarationSyntax, MemberFunctionDeclarationSyntax, GetAccessorSyntax, SetAccessorSyntax, MemberVariableDeclarationSyntax, ThrowStatementSyntax, ReturnStatementSyntax, ObjectCreationExpressionSyntax, SwitchStatementSyntax, CaseSwitchClauseSyntax, DefaultSwitchClauseSyntax, BreakStatementSyntax, ContinueStatementSyntax, ForStatementSyntax, ForInStatementSyntax, WhileStatementSyntax, WithStatementSyntax, CastExpressionSyntax, ObjectLiteralExpressionSyntax, SimplePropertyAssignmentSyntax, FunctionPropertyAssignmentSyntax, FunctionExpressionSyntax, EmptyStatementSyntax, TryStatementSyntax, CatchClauseSyntax, FinallyClauseSyntax, LabeledStatementSyntax, DoStatementSyntax, TypeOfExpressionSyntax, DeleteExpressionSyntax, VoidExpressionSyntax, DebuggerStatementSyntax } from "./syntax/syntaxNodes.generated";
+import { ISyntaxToken } from "./syntax/syntaxToken";
+import { SyntaxTree } from "./syntax/syntaxTree";
+import { ISyntaxTrivia } from "./syntax/syntaxTrivia";
+import { ISyntaxTriviaList } from "./syntax/syntaxTriviaList";
+import { SyntaxUtilities } from "./syntax/syntaxUtilities";
+import { ISyntaxVisitor } from "./syntax/syntaxVisitor.generated";
+import { PullElementFlags } from "./typecheck/pullFlags";
+
 
   export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
     public position = 0;

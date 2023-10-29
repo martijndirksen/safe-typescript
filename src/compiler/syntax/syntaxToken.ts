@@ -1,5 +1,6 @@
 import { Debug } from '../core/debug';
 import { Errors } from '../core/errors';
+import { isHexInteger } from '../core/integerUtilities';
 import { StringUtilities } from '../core/stringUtilities';
 import { CharacterCodes } from '../text/characterCodes';
 import { CharacterInfo } from './characterInfo';
@@ -9,10 +10,15 @@ import {
   IPrimaryExpressionSyntax,
   ISyntaxElement,
 } from './syntaxElement';
+import { SyntaxFacts } from './syntaxFacts';
 import { SyntaxKind } from './syntaxKind';
 import { ISyntaxNodeOrToken } from './syntaxNodeOrToken';
 import { ISyntaxTrivia } from './syntaxTrivia';
-import { ISyntaxTriviaList } from './syntaxTriviaList';
+import {
+  ISyntaxTriviaList,
+  emptyTriviaList,
+  triviaList,
+} from './syntaxTriviaList';
 import { ISyntaxVisitor } from './syntaxVisitor.generated';
 
 export interface ISyntaxToken
@@ -303,7 +309,7 @@ function value1(kind: SyntaxKind, text: string): any {
   }
 
   if (kind === SyntaxKind.NumericLiteral) {
-    return IntegerUtilities.isHexInteger(text)
+    return isHexInteger(text)
       ? parseInt(text, /*radix:*/ 16)
       : parseFloat(text);
   } else if (kind === SyntaxKind.StringLiteral) {

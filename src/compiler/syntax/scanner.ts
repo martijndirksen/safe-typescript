@@ -2,6 +2,7 @@ import { RT, type CheckedArray } from '../../runtime/rt';
 import { ArrayUtilities } from '../core/arrayUtilities';
 import { Diagnostic } from '../core/diagnosticCore';
 import { Errors } from '../core/errors';
+import { DefaultStringTable } from '../core/stringTable';
 import { StringUtilities } from '../core/stringUtilities';
 import { DiagnosticCode } from '../resources/diagnosticCode.generated';
 import { CharacterCodes } from '../text/characterCodes';
@@ -12,6 +13,7 @@ import { SyntaxConstants } from './constants';
 import { LanguageVersion } from './languageVersion';
 import { ScannerUtilities } from './scannerUtilities.generated';
 import { ISlidingWindowSource, SlidingWindow } from './slidingWindow';
+import { SyntaxFacts } from './syntaxFacts';
 import { SyntaxKind } from './syntaxKind';
 import { ISyntaxToken, realizeToken, massageEscapes } from './syntaxToken';
 import { FixedWidthTokenWithNoTrivia, FixedWidthTokenWithTrailingTrivia, FixedWidthTokenWithLeadingTrivia, FixedWidthTokenWithLeadingAndTrailingTrivia, VariableWidthTokenWithNoTrivia, VariableWidthTokenWithTrailingTrivia, VariableWidthTokenWithLeadingTrivia, VariableWidthTokenWithLeadingAndTrailingTrivia } from './syntaxToken.generated';
@@ -1488,7 +1490,7 @@ import { Unicode } from './unicode';
         this.slidingWindow.window
       );
       if (intern) {
-        return Collections.DefaultStringTable.addCharArray(
+        return DefaultStringTable.addCharArray(
           window,
           offset,
           length

@@ -13,6 +13,15 @@
 // limitations under the License.
 //
 
+import {
+  PositionedToken,
+  PositionedElement,
+} from '../compiler/syntax/positionedElement';
+import { SyntaxKind } from '../compiler/syntax/syntaxKind';
+import { SyntaxTree } from '../compiler/syntax/syntaxTree';
+import { SyntaxUtilities } from '../compiler/syntax/syntaxUtilities';
+import { TextSpan } from '../compiler/text/textSpan';
+
 export class BraceMatcher {
   // Given a script name and position in the script, return a pair of text range if the
   // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)

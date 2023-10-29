@@ -3,13 +3,15 @@ import { Debug } from '../core/debug';
 import { Errors } from '../core/errors';
 import { LineAndCharacter } from '../core/lineAndCharacter';
 import { LineMap } from '../core/lineMap';
+import { DefaultStringTable } from '../core/stringTable';
 import { StringUtilities } from '../core/stringUtilities';
 import { CharacterCodes } from './characterCodes';
+import { fromSimpleText } from './lineMap';
 import { IScriptSnapshot } from './scriptSnapshot';
 import { IText, ISimpleText } from './text';
 import { ITextLine } from './textLine';
 import { TextSpan } from './textSpan';
-import { isAnyLineBreakCharacter } from './textUtilities';
+import { isAnyLineBreakCharacter, parseLineStarts } from './textUtilities';
 
 /**
  * Return startLineBreak = index-1, lengthLineBreak = 2   if there is a \r\n at index-1
@@ -359,7 +361,7 @@ class SubText extends TextBase {
 
   public _lineStarts(): number[] {
     if (!this._lazyLineStarts) {
-      this._lazyLineStarts = TextUtilities.parseLineStarts({
+      this._lazyLineStarts = parseLineStarts({
         charCodeAt(index) {
           return this.charCodeAt(index);
         },
@@ -456,9 +458,7 @@ class StringText extends TextBase {
 
   public _lineStarts(): number[] {
     if (this._lazyLineStarts === null) {
-      this._lazyLineStarts = TextUtilities.parseLineStarts(
-        new String(this.source)
-      );
+      this._lazyLineStarts = parseLineStarts(new String(this.source));
     }
 
     return this._lazyLineStarts;
@@ -558,7 +558,7 @@ class SimpleSubText implements ISimpleText {
   }
 
   public lineMap(): LineMap {
-    return LineMap1.fromSimpleText(this);
+    return fromSimpleText(this);
   }
 }
 
@@ -599,7 +599,7 @@ class SimpleStringText implements ISimpleText {
           ? SimpleStringText.charArray
           : ArrayUtilities.createArray<number>(length, /*defaultValue:*/ 0);
       this.copyTo(start, array, 0, length);
-      return Collections.DefaultStringTable.addCharArray(array, 0, length);
+      return DefaultStringTable.addCharArray(array, 0, length);
     }
 
     return this.value.substr(start, length);
@@ -615,7 +615,7 @@ class SimpleStringText implements ISimpleText {
 
   public lineMap(): LineMap {
     if (!this._lineMap) {
-      this._lineMap = LineMap1.fromString(this.value);
+      this._lineMap = fromSimpleText(this.value);
     }
 
     return this._lineMap;

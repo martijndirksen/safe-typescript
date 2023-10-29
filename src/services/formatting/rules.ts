@@ -13,6 +13,20 @@
 // limitations under the License.
 //
 
+import { getDiagnosticMessage } from '../../compiler/core/diagnosticCore';
+import { DiagnosticCode } from '../../compiler/resources/diagnosticCode.generated';
+import { SyntaxKind } from '../../compiler/syntax/syntaxKind';
+import { FormattingContext } from './formattingContext';
+import { FormattingRequestKind } from './formattingRequestKind';
+import { IndentationNodeContext } from './indentationNodeContext';
+import { Rule } from './rule';
+import { RuleAction } from './ruleAction';
+import { RuleDescriptor } from './ruleDescriptor';
+import { RuleFlags } from './ruleFlag';
+import { RuleOperation } from './ruleOperation';
+import { RuleOperationContext } from './ruleOperationContext';
+import { TokenRange } from './tokenRange';
+
 export class Rules {
   public getRuleName(rule: Rule) {
     var o = <any>this;
@@ -169,17 +183,17 @@ export class Rules {
 
   // Open Brace braces after function
   //TypeScript: Function can have return types, which can be made of tons of different token kinds
-  public FunctionOpenBraceLeftTokenRange: Shared.TokenRange;
+  public FunctionOpenBraceLeftTokenRange: TokenRange;
   public SpaceBeforeOpenBraceInFunction: Rule;
   public NewLineBeforeOpenBraceInFunction: Rule;
 
   // Open Brace braces after TypeScript module/class/interface
-  public TypeScriptOpenBraceLeftTokenRange: Shared.TokenRange;
+  public TypeScriptOpenBraceLeftTokenRange: TokenRange;
   public SpaceBeforeOpenBraceInTypeScriptDeclWithBlock: Rule;
   public NewLineBeforeOpenBraceInTypeScriptDeclWithBlock: Rule;
 
   // Open Brace braces after control block
-  public ControlOpenBraceLeftTokenRange: Shared.TokenRange;
+  public ControlOpenBraceLeftTokenRange: TokenRange;
   public SpaceBeforeOpenBraceInControl: Rule;
   public NewLineBeforeOpenBraceInControl: Rule;
 
@@ -205,27 +219,27 @@ export class Rules {
 
     // Leave comments alone
     this.IgnoreBeforeComment = new Rule(
-      RuleDescriptor.create4(Shared.TokenRange.Any, Shared.TokenRange.Comments),
+      RuleDescriptor.create4(TokenRange.Any, TokenRange.Comments),
       RuleOperation.create1(RuleAction.Ignore)
     );
     this.IgnoreAfterLineComment = new Rule(
       RuleDescriptor.create3(
         SyntaxKind.SingleLineCommentTrivia,
-        Shared.TokenRange.Any
+        TokenRange.Any
       ),
       RuleOperation.create1(RuleAction.Ignore)
     );
 
     // Space after keyword but not before ; or : or ?
     this.NoSpaceBeforeSemicolon = new Rule(
-      RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.SemicolonToken),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.SemicolonToken),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Delete
       )
     );
     this.NoSpaceBeforeColon = new Rule(
-      RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.ColonToken),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.ColonToken),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -235,7 +249,7 @@ export class Rules {
       )
     );
     this.NoSpaceBeforeQMark = new Rule(
-      RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.QuestionToken),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.QuestionToken),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -245,7 +259,7 @@ export class Rules {
       )
     );
     this.SpaceAfterColon = new Rule(
-      RuleDescriptor.create3(SyntaxKind.ColonToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.ColonToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -255,7 +269,7 @@ export class Rules {
       )
     );
     this.SpaceAfterQMark = new Rule(
-      RuleDescriptor.create3(SyntaxKind.QuestionToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.QuestionToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -265,7 +279,7 @@ export class Rules {
       )
     );
     this.SpaceAfterSemicolon = new Rule(
-      RuleDescriptor.create3(SyntaxKind.SemicolonToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.SemicolonToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Space
@@ -274,7 +288,7 @@ export class Rules {
 
     // Space after }.
     this.SpaceAfterCloseBrace = new Rule(
-      RuleDescriptor.create3(SyntaxKind.CloseBraceToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.CloseBraceToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -308,7 +322,7 @@ export class Rules {
     this.NoSpaceAfterCloseBrace = new Rule(
       RuleDescriptor.create3(
         SyntaxKind.CloseBraceToken,
-        Shared.TokenRange.FromTokens([
+        TokenRange.FromTokens([
           SyntaxKind.CloseParenToken,
           SyntaxKind.CloseBracketToken,
           SyntaxKind.CommaToken,
@@ -323,54 +337,42 @@ export class Rules {
 
     // No space for indexer and dot
     this.NoSpaceBeforeDot = new Rule(
-      RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.DotToken),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.DotToken),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Delete
       )
     );
     this.NoSpaceAfterDot = new Rule(
-      RuleDescriptor.create3(SyntaxKind.DotToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.DotToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Delete
       )
     );
     this.NoSpaceBeforeOpenBracket = new Rule(
-      RuleDescriptor.create2(
-        Shared.TokenRange.Any,
-        SyntaxKind.OpenBracketToken
-      ),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.OpenBracketToken),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Delete
       )
     );
     this.NoSpaceAfterOpenBracket = new Rule(
-      RuleDescriptor.create3(
-        SyntaxKind.OpenBracketToken,
-        Shared.TokenRange.Any
-      ),
+      RuleDescriptor.create3(SyntaxKind.OpenBracketToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Delete
       )
     );
     this.NoSpaceBeforeCloseBracket = new Rule(
-      RuleDescriptor.create2(
-        Shared.TokenRange.Any,
-        SyntaxKind.CloseBracketToken
-      ),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.CloseBracketToken),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Delete
       )
     );
     this.NoSpaceAfterCloseBracket = new Rule(
-      RuleDescriptor.create3(
-        SyntaxKind.CloseBracketToken,
-        Shared.TokenRange.Any
-      ),
+      RuleDescriptor.create3(SyntaxKind.CloseBracketToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Delete
@@ -379,7 +381,7 @@ export class Rules {
 
     // Place a space before open brace in a function declaration
     this.FunctionOpenBraceLeftTokenRange =
-      Shared.TokenRange.AnyIncludingMultilineComments;
+      TokenRange.AnyIncludingMultilineComments;
     this.SpaceBeforeOpenBraceInFunction = new Rule(
       RuleDescriptor.create2(
         this.FunctionOpenBraceLeftTokenRange,
@@ -397,7 +399,7 @@ export class Rules {
     );
 
     // Place a space before open brace in a TypeScript declaration that has braces as children (class, module, enum, etc)
-    this.TypeScriptOpenBraceLeftTokenRange = Shared.TokenRange.FromTokens([
+    this.TypeScriptOpenBraceLeftTokenRange = TokenRange.FromTokens([
       SyntaxKind.IdentifierName,
       SyntaxKind.MultiLineCommentTrivia,
     ]);
@@ -418,7 +420,7 @@ export class Rules {
     );
 
     // Place a space before open brace in a control flow construct
-    this.ControlOpenBraceLeftTokenRange = Shared.TokenRange.FromTokens([
+    this.ControlOpenBraceLeftTokenRange = TokenRange.FromTokens([
       SyntaxKind.CloseParenToken,
       SyntaxKind.MultiLineCommentTrivia,
       SyntaxKind.DoKeyword,
@@ -444,14 +446,14 @@ export class Rules {
 
     // Insert a space after { and before } in single-line contexts, but remove space from empty object literals {}.
     this.SpaceAfterOpenBrace = new Rule(
-      RuleDescriptor.create3(SyntaxKind.OpenBraceToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.OpenBraceToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSingleLineBlockContext),
         RuleAction.Space
       )
     );
     this.SpaceBeforeCloseBrace = new Rule(
-      RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CloseBraceToken),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.CloseBraceToken),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSingleLineBlockContext),
         RuleAction.Space
@@ -473,7 +475,7 @@ export class Rules {
 
     // Insert new line after { and before } in multi-line contexts.
     this.NewLineAfterOpenBraceInBlockContext = new Rule(
-      RuleDescriptor.create3(SyntaxKind.OpenBraceToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.OpenBraceToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsMultilineBlockContext),
         RuleAction.NewLine
@@ -483,7 +485,7 @@ export class Rules {
     // For functions and control block place } on a new line    [multi-line rule]
     this.NewLineBeforeCloseBraceInBlockContext = new Rule(
       RuleDescriptor.create2(
-        Shared.TokenRange.AnyIncludingMultilineComments,
+        TokenRange.AnyIncludingMultilineComments,
         SyntaxKind.CloseBraceToken
       ),
       RuleOperation.create2(
@@ -497,8 +499,8 @@ export class Rules {
     // them and their target unary expression.
     this.NoSpaceAfterUnaryPrefixOperator = new Rule(
       RuleDescriptor.create4(
-        Shared.TokenRange.UnaryPrefixOperators,
-        Shared.TokenRange.UnaryPrefixExpressions
+        TokenRange.UnaryPrefixOperators,
+        TokenRange.UnaryPrefixExpressions
       ),
       RuleOperation.create2(
         new RuleOperationContext(
@@ -511,7 +513,7 @@ export class Rules {
     this.NoSpaceAfterUnaryPreincrementOperator = new Rule(
       RuleDescriptor.create3(
         SyntaxKind.PlusPlusToken,
-        Shared.TokenRange.UnaryPreincrementExpressions
+        TokenRange.UnaryPreincrementExpressions
       ),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
@@ -521,7 +523,7 @@ export class Rules {
     this.NoSpaceAfterUnaryPredecrementOperator = new Rule(
       RuleDescriptor.create3(
         SyntaxKind.MinusMinusToken,
-        Shared.TokenRange.UnaryPredecrementExpressions
+        TokenRange.UnaryPredecrementExpressions
       ),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
@@ -530,7 +532,7 @@ export class Rules {
     );
     this.NoSpaceBeforeUnaryPostincrementOperator = new Rule(
       RuleDescriptor.create2(
-        Shared.TokenRange.UnaryPostincrementExpressions,
+        TokenRange.UnaryPostincrementExpressions,
         SyntaxKind.PlusPlusToken
       ),
       RuleOperation.create2(
@@ -540,7 +542,7 @@ export class Rules {
     );
     this.NoSpaceBeforeUnaryPostdecrementOperator = new Rule(
       RuleDescriptor.create2(
-        Shared.TokenRange.UnaryPostdecrementExpressions,
+        TokenRange.UnaryPostdecrementExpressions,
         SyntaxKind.MinusMinusToken
       ),
       RuleOperation.create2(
@@ -616,7 +618,7 @@ export class Rules {
     );
 
     this.NoSpaceBeforeComma = new Rule(
-      RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CommaToken),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.CommaToken),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Delete
@@ -625,7 +627,7 @@ export class Rules {
 
     this.SpaceAfterCertainKeywords = new Rule(
       RuleDescriptor.create4(
-        Shared.TokenRange.FromTokens([
+        TokenRange.FromTokens([
           SyntaxKind.VarKeyword,
           SyntaxKind.ThrowKeyword,
           SyntaxKind.NewKeyword,
@@ -633,7 +635,7 @@ export class Rules {
           SyntaxKind.ReturnKeyword,
           SyntaxKind.TypeOfKeyword,
         ]),
-        Shared.TokenRange.Any
+        TokenRange.Any
       ),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
@@ -641,7 +643,7 @@ export class Rules {
       )
     );
     this.NoSpaceBeforeOpenParenInFuncCall = new Rule(
-      RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.OpenParenToken),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.OpenParenToken),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -651,14 +653,14 @@ export class Rules {
       )
     );
     this.SpaceAfterFunctionInFuncDecl = new Rule(
-      RuleDescriptor.create3(SyntaxKind.FunctionKeyword, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.FunctionKeyword, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsFunctionDeclContext),
         RuleAction.Space
       )
     );
     this.NoSpaceBeforeOpenParenInFuncDecl = new Rule(
-      RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.OpenParenToken),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.OpenParenToken),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -668,7 +670,7 @@ export class Rules {
       )
     );
     this.SpaceAfterVoidOperator = new Rule(
-      RuleDescriptor.create3(SyntaxKind.VoidKeyword, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.VoidKeyword, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -693,13 +695,13 @@ export class Rules {
     // So, we have a rule to add a space for [),Any], [do,Any], [else,Any], and [case,Any]
     this.SpaceBetweenStatements = new Rule(
       RuleDescriptor.create4(
-        Shared.TokenRange.FromTokens([
+        TokenRange.FromTokens([
           SyntaxKind.CloseParenToken,
           SyntaxKind.DoKeyword,
           SyntaxKind.ElseKeyword,
           SyntaxKind.CaseKeyword,
         ]),
-        Shared.TokenRange.Any
+        TokenRange.Any
       ),
       RuleOperation.create2(
         new RuleOperationContext(
@@ -713,7 +715,7 @@ export class Rules {
     // This low-pri rule takes care of "try {" and "finally {" in case the rule SpaceBeforeOpenBraceInControl didn't execute on FormatOnEnter.
     this.SpaceAfterTryFinally = new Rule(
       RuleDescriptor.create2(
-        Shared.TokenRange.FromTokens([
+        TokenRange.FromTokens([
           SyntaxKind.TryKeyword,
           SyntaxKind.FinallyKeyword,
         ]),
@@ -729,10 +731,7 @@ export class Rules {
     //      set x(val) {}
     this.SpaceAfterGetSetInMember = new Rule(
       RuleDescriptor.create2(
-        Shared.TokenRange.FromTokens([
-          SyntaxKind.GetKeyword,
-          SyntaxKind.SetKeyword,
-        ]),
+        TokenRange.FromTokens([SyntaxKind.GetKeyword, SyntaxKind.SetKeyword]),
         SyntaxKind.IdentifierName
       ),
       RuleOperation.create2(
@@ -743,10 +742,7 @@ export class Rules {
 
     // Special case for binary operators (that are keywords). For these we have to add a space and shouldn't follow any user options.
     this.SpaceBeforeBinaryKeywordOperator = new Rule(
-      RuleDescriptor.create4(
-        Shared.TokenRange.Any,
-        Shared.TokenRange.BinaryKeywordOperators
-      ),
+      RuleDescriptor.create4(TokenRange.Any, TokenRange.BinaryKeywordOperators),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -756,10 +752,7 @@ export class Rules {
       )
     );
     this.SpaceAfterBinaryKeywordOperator = new Rule(
-      RuleDescriptor.create4(
-        Shared.TokenRange.BinaryKeywordOperators,
-        Shared.TokenRange.Any
-      ),
+      RuleDescriptor.create4(TokenRange.BinaryKeywordOperators, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -786,7 +779,7 @@ export class Rules {
     // Use of module as a function call. e.g.: import m2 = module("m2");
     this.NoSpaceAfterModuleImport = new Rule(
       RuleDescriptor.create2(
-        Shared.TokenRange.FromTokens([
+        TokenRange.FromTokens([
           SyntaxKind.ModuleKeyword,
           SyntaxKind.RequireKeyword,
         ]),
@@ -801,7 +794,7 @@ export class Rules {
     // Add a space around certain TypeScript keywords
     this.SpaceAfterCertainTypeScriptKeywords = new Rule(
       RuleDescriptor.create4(
-        Shared.TokenRange.FromTokens([
+        TokenRange.FromTokens([
           SyntaxKind.ClassKeyword,
           SyntaxKind.DeclareKeyword,
           SyntaxKind.EnumKeyword,
@@ -817,7 +810,7 @@ export class Rules {
           SyntaxKind.SetKeyword,
           SyntaxKind.StaticKeyword,
         ]),
-        Shared.TokenRange.Any
+        TokenRange.Any
       ),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
@@ -826,8 +819,8 @@ export class Rules {
     );
     this.SpaceBeforeCertainTypeScriptKeywords = new Rule(
       RuleDescriptor.create4(
-        Shared.TokenRange.Any,
-        Shared.TokenRange.FromTokens([
+        TokenRange.Any,
+        TokenRange.FromTokens([
           SyntaxKind.ExtendsKeyword,
           SyntaxKind.ImplementsKeyword,
         ])
@@ -852,10 +845,7 @@ export class Rules {
 
     // Lambda expressions
     this.SpaceAfterArrow = new Rule(
-      RuleDescriptor.create3(
-        SyntaxKind.EqualsGreaterThanToken,
-        Shared.TokenRange.Any
-      ),
+      RuleDescriptor.create3(SyntaxKind.EqualsGreaterThanToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Space
@@ -876,7 +866,7 @@ export class Rules {
     this.NoSpaceAfterOptionalParameters = new Rule(
       RuleDescriptor.create3(
         SyntaxKind.QuestionToken,
-        Shared.TokenRange.FromTokens([
+        TokenRange.FromTokens([
           SyntaxKind.CloseParenToken,
           SyntaxKind.CommaToken,
         ])
@@ -892,10 +882,7 @@ export class Rules {
 
     // generics
     this.NoSpaceBeforeOpenAngularBracket = new Rule(
-      RuleDescriptor.create2(
-        Shared.TokenRange.TypeNames,
-        SyntaxKind.LessThanToken
-      ),
+      RuleDescriptor.create2(TokenRange.TypeNames, SyntaxKind.LessThanToken),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -918,10 +905,7 @@ export class Rules {
       )
     );
     this.NoSpaceAfterOpenAngularBracket = new Rule(
-      RuleDescriptor.create3(
-        SyntaxKind.LessThanToken,
-        Shared.TokenRange.TypeNames
-      ),
+      RuleDescriptor.create3(SyntaxKind.LessThanToken, TokenRange.TypeNames),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -931,10 +915,7 @@ export class Rules {
       )
     );
     this.NoSpaceBeforeCloseAngularBracket = new Rule(
-      RuleDescriptor.create2(
-        Shared.TokenRange.Any,
-        SyntaxKind.GreaterThanToken
-      ),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.GreaterThanToken),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -946,7 +927,7 @@ export class Rules {
     this.NoSpaceAfterCloseAngularBracket = new Rule(
       RuleDescriptor.create3(
         SyntaxKind.GreaterThanToken,
-        Shared.TokenRange.FromTokens([
+        TokenRange.FromTokens([
           SyntaxKind.OpenParenToken,
           SyntaxKind.OpenBracketToken,
           SyntaxKind.GreaterThanToken,
@@ -1056,14 +1037,14 @@ export class Rules {
 
     // Insert space after comma delimiter
     this.SpaceAfterComma = new Rule(
-      RuleDescriptor.create3(SyntaxKind.CommaToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.CommaToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Space
       )
     );
     this.NoSpaceAfterComma = new Rule(
-      RuleDescriptor.create3(SyntaxKind.CommaToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.CommaToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Delete
@@ -1072,10 +1053,7 @@ export class Rules {
 
     // Insert space before and after binary operators
     this.SpaceBeforeBinaryOperator = new Rule(
-      RuleDescriptor.create4(
-        Shared.TokenRange.Any,
-        Shared.TokenRange.BinaryOperators
-      ),
+      RuleDescriptor.create4(TokenRange.Any, TokenRange.BinaryOperators),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -1085,10 +1063,7 @@ export class Rules {
       )
     );
     this.SpaceAfterBinaryOperator = new Rule(
-      RuleDescriptor.create4(
-        Shared.TokenRange.BinaryOperators,
-        Shared.TokenRange.Any
-      ),
+      RuleDescriptor.create4(TokenRange.BinaryOperators, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -1098,10 +1073,7 @@ export class Rules {
       )
     );
     this.NoSpaceBeforeBinaryOperator = new Rule(
-      RuleDescriptor.create4(
-        Shared.TokenRange.Any,
-        Shared.TokenRange.BinaryOperators
-      ),
+      RuleDescriptor.create4(TokenRange.Any, TokenRange.BinaryOperators),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -1111,10 +1083,7 @@ export class Rules {
       )
     );
     this.NoSpaceAfterBinaryOperator = new Rule(
-      RuleDescriptor.create4(
-        Shared.TokenRange.BinaryOperators,
-        Shared.TokenRange.Any
-      ),
+      RuleDescriptor.create4(TokenRange.BinaryOperators, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -1126,20 +1095,14 @@ export class Rules {
 
     // Insert space after keywords in control flow statements
     this.SpaceAfterKeywordInControl = new Rule(
-      RuleDescriptor.create2(
-        Shared.TokenRange.Keywords,
-        SyntaxKind.OpenParenToken
-      ),
+      RuleDescriptor.create2(TokenRange.Keywords, SyntaxKind.OpenParenToken),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsControlDeclContext),
         RuleAction.Space
       )
     );
     this.NoSpaceAfterKeywordInControl = new Rule(
-      RuleDescriptor.create2(
-        Shared.TokenRange.Keywords,
-        SyntaxKind.OpenParenToken
-      ),
+      RuleDescriptor.create2(TokenRange.Keywords, SyntaxKind.OpenParenToken),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsControlDeclContext),
         RuleAction.Delete
@@ -1197,7 +1160,7 @@ export class Rules {
 
     // Insert space after semicolon in for statement
     this.SpaceAfterSemicolonInFor = new Rule(
-      RuleDescriptor.create3(SyntaxKind.SemicolonToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.SemicolonToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -1207,7 +1170,7 @@ export class Rules {
       )
     );
     this.NoSpaceAfterSemicolonInFor = new Rule(
-      RuleDescriptor.create3(SyntaxKind.SemicolonToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.SemicolonToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(
           Rules.IsSameLineTokenContext,
@@ -1219,14 +1182,14 @@ export class Rules {
 
     // Insert space after opening and before closing nonempty parenthesis
     this.SpaceAfterOpenParen = new Rule(
-      RuleDescriptor.create3(SyntaxKind.OpenParenToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.OpenParenToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Space
       )
     );
     this.SpaceBeforeCloseParen = new Rule(
-      RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CloseParenToken),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.CloseParenToken),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Space
@@ -1243,14 +1206,14 @@ export class Rules {
       )
     );
     this.NoSpaceAfterOpenParen = new Rule(
-      RuleDescriptor.create3(SyntaxKind.OpenParenToken, Shared.TokenRange.Any),
+      RuleDescriptor.create3(SyntaxKind.OpenParenToken, TokenRange.Any),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Delete
       )
     );
     this.NoSpaceBeforeCloseParen = new Rule(
-      RuleDescriptor.create2(Shared.TokenRange.Any, SyntaxKind.CloseParenToken),
+      RuleDescriptor.create2(TokenRange.Any, SyntaxKind.CloseParenToken),
       RuleOperation.create2(
         new RuleOperationContext(Rules.IsSameLineTokenContext),
         RuleAction.Delete

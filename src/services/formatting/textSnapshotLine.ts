@@ -13,75 +13,76 @@
 // limitations under the License.
 //
 
-  export interface ITextSnapshotLine {
-    snapshot(): ITextSnapshot;
+import { TextSpan } from '../../compiler/text/textSpan';
+import { SnapshotPoint } from './snapshotPoint';
+import { ITextSnapshot } from './textSnapshot';
 
-    start(): SnapshotPoint;
-    startPosition(): number;
+export interface ITextSnapshotLine {
+  snapshot(): ITextSnapshot;
 
-    end(): SnapshotPoint;
-    endPosition(): number;
+  start(): SnapshotPoint;
+  startPosition(): number;
 
-    endIncludingLineBreak(): SnapshotPoint;
-    endIncludingLineBreakPosition(): number;
+  end(): SnapshotPoint;
+  endPosition(): number;
 
-    length(): number;
-    lineNumber(): number;
-    getText(): string;
+  endIncludingLineBreak(): SnapshotPoint;
+  endIncludingLineBreakPosition(): number;
+
+  length(): number;
+  lineNumber(): number;
+  getText(): string;
+}
+
+export class TextSnapshotLine implements ITextSnapshotLine {
+  constructor(
+    private _snapshot: ITextSnapshot,
+    private _lineNumber: number,
+    private _start: number,
+    private _end: number,
+    private _lineBreak: string
+  ) {}
+
+  public snapshot() {
+    return this._snapshot;
   }
 
-  export class TextSnapshotLine implements ITextSnapshotLine {
-    constructor(
-      private _snapshot: ITextSnapshot,
-      private _lineNumber: number,
-      private _start: number,
-      private _end: number,
-      private _lineBreak: string
-    ) {}
+  public start() {
+    return new SnapshotPoint(this._snapshot, this._start);
+  }
 
-    public snapshot() {
-      return this._snapshot;
-    }
+  public startPosition() {
+    return this._start;
+  }
 
-    public start() {
-      return new SnapshotPoint(this._snapshot, this._start);
-    }
+  public end() {
+    return new SnapshotPoint(this._snapshot, this._end);
+  }
 
-    public startPosition() {
-      return this._start;
-    }
+  public endPosition() {
+    return this._end;
+  }
 
-    public end() {
-      return new SnapshotPoint(this._snapshot, this._end);
-    }
+  public endIncludingLineBreak() {
+    return new SnapshotPoint(
+      this._snapshot,
+      this._end + this._lineBreak.length
+    );
+  }
 
-    public endPosition() {
-      return this._end;
-    }
+  public endIncludingLineBreakPosition() {
+    return this._end + this._lineBreak.length;
+  }
 
-    public endIncludingLineBreak() {
-      return new SnapshotPoint(
-        this._snapshot,
-        this._end + this._lineBreak.length
-      );
-    }
+  public length() {
+    return this._end - this._start;
+  }
 
-    public endIncludingLineBreakPosition() {
-      return this._end + this._lineBreak.length;
-    }
+  public lineNumber() {
+    return this._lineNumber;
+  }
 
-    public length() {
-      return this._end - this._start;
-    }
-
-    public lineNumber() {
-      return this._lineNumber;
-    }
-
-    public getText(): string {
-      return this._snapshot.getText(
-        TextSpan.fromBounds(this._start, this._end)
-      );
-    }
+  public getText(): string {
+    return this._snapshot.getText(TextSpan.fromBounds(this._start, this._end));
   }
 }

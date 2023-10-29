@@ -1,3 +1,11 @@
+import { Debug } from '../core/debug';
+import { Errors } from '../core/errors';
+import { StringUtilities } from '../core/stringUtilities';
+import { CharacterCodes } from '../text/characterCodes';
+import { ISimpleText } from '../text/text';
+import { SyntaxKind } from './syntaxKind';
+import { ISyntaxToken } from './syntaxToken';
+
 export interface ISyntaxTrivia {
   kind(): SyntaxKind;
 

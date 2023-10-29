@@ -41,6 +41,7 @@ import {
   normalModeFactory,
   strictModeFactory,
 } from './syntaxFactory.generated';
+import { SyntaxFacts } from './syntaxFacts';
 import { SyntaxKind } from './syntaxKind';
 import { ISyntaxList, emptyList, list } from './syntaxList';
 import { SyntaxNode } from './syntaxNode';

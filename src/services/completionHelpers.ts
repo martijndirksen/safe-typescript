@@ -16,6 +16,7 @@ import {
 import { SyntaxKind } from '../compiler/syntax/syntaxKind';
 import { SourceUnitSyntax } from '../compiler/syntax/syntaxNodes.generated';
 import { CharacterCodes } from '../compiler/text/characterCodes';
+import { fromString } from '../compiler/text/textFactory';
 import { PullSymbol } from '../compiler/typecheck/pullSymbols';
 import { PullVisibleSymbolsInfo } from '../compiler/typescript';
 

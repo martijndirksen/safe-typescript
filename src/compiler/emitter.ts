@@ -108,6 +108,7 @@ import { tripleSlashReferenceRegExp } from './precompile';
 import { DiagnosticCode } from './resources/diagnosticCode.generated';
 import { ImmutableCompilationSettings } from './settings';
 import { SourceMapper, SourceMapping } from './sourceMapping';
+import { SyntaxFacts } from './syntax/syntaxFacts';
 import { SyntaxKind } from './syntax/syntaxKind';
 import { getModuleNames } from './typecheck/pullDeclCollection';
 import { PullDecl, PullEnumElementDecl } from './typecheck/pullDecls';

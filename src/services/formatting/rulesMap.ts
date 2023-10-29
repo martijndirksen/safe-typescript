@@ -13,6 +13,12 @@
 // limitations under the License.
 //
 
+import { Debug } from '../../compiler/core/debug';
+import { SyntaxKind } from '../../compiler/syntax/syntaxKind';
+import { FormattingContext } from './formattingContext';
+import { Rule } from './rule';
+import { RuleAction } from './ruleAction';
+
 export class RulesMap {
   public map: RulesBucket[];
   public mapRowLength: number;

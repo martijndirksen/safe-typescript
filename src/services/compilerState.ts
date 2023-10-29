@@ -13,6 +13,27 @@
 // limitations under the License.
 //
 
+import { AST } from '../compiler/ast';
+import { Debug, AssertionLevel } from '../compiler/core/debug';
+import { Diagnostic } from '../compiler/core/diagnosticCore';
+import { ByteOrderMark } from '../compiler/core/environment';
+import { ILogger, timeFunction } from '../compiler/diagnostics';
+import { Document } from '../compiler/document';
+import { StringHashTable } from '../compiler/hashTable';
+import { switchToForwardSlashes, isDTSFile } from '../compiler/pathUtils';
+import { getParseOptions } from '../compiler/precompile';
+import {
+  ImmutableCompilationSettings,
+  CompilationSettings,
+} from '../compiler/settings';
+import { LanguageVersion } from '../compiler/syntax/languageVersion';
+import { SyntaxTree } from '../compiler/syntax/syntaxTree';
+import { IScriptSnapshot } from '../compiler/text/scriptSnapshot';
+import { TextChangeRange } from '../compiler/text/textChangeRange';
+import { PullDecl } from '../compiler/typecheck/pullDecls';
+import { TypeScriptCompiler, EmitOutput } from '../compiler/typescript';
+import { ILanguageServiceHost } from './languageService';
+
 // Information about a specific host file.
 class HostFileInformation {
   private _sourceText: IScriptSnapshot;

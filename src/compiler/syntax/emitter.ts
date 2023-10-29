@@ -6,6 +6,19 @@ import {
   IFormattingOptions,
   createFormattingOptions,
 } from './formattingOptions';
+import {
+  columnForStartOfToken as columnForStartOfTokenFn,
+  columnForEndOfToken as columnForEndOfTokenFn,
+} from './indentation';
+import { separatedList } from './separatedSyntaxList';
+import {
+  assignmentExpression,
+  stringLiteralExpression,
+  identifierName,
+  isSuperInvocationExpressionStatement,
+  trueExpression,
+  numericLiteralExpression,
+} from './syntax';
 import { SyntaxDedenter } from './syntaxDedenter';
 import {
   ISyntaxNode,
@@ -16,10 +29,12 @@ import {
   IStatementSyntax,
   IClassElementSyntax,
 } from './syntaxElement';
+import { IFactory, normalModeFactory } from './syntaxFactory.generated';
+import { SyntaxFacts } from './syntaxFacts';
 import { SyntaxIndenter } from './syntaxIndenter';
 import { SyntaxInformationMap } from './syntaxInformationMap';
 import { SyntaxKind } from './syntaxKind';
-import { ISyntaxList } from './syntaxList';
+import { ISyntaxList, list } from './syntaxList';
 import { SyntaxNode } from './syntaxNode';
 import { SyntaxNodeInvariantsChecker } from './syntaxNodeInvariantsChecker';
 import { ISyntaxNodeOrToken } from './syntaxNodeOrToken';
@@ -61,8 +76,13 @@ import {
   VariableStatementSyntax,
 } from './syntaxNodes.generated';
 import { SyntaxRewriter } from './syntaxRewriter.generated';
-import { ISyntaxToken } from './syntaxToken';
-import { ISyntaxTriviaList } from './syntaxTriviaList';
+import { ISyntaxToken, identifier, token } from './syntaxToken';
+import { carriageReturnLineFeedTrivia } from './syntaxTrivia';
+import {
+  ISyntaxTriviaList,
+  spaceTriviaList,
+  triviaList as triviaListFn,
+} from './syntaxTriviaList';
 
 function callSignature(parameter: ParameterSyntax): CallSignatureSyntax {
   return CallSignatureSyntax.create1().withParameterList(
@@ -107,11 +127,11 @@ class EmitterImpl extends SyntaxRewriter {
 
     // TODO: use proper new line based on options.
     this.space = spaceTriviaList;
-    this.newLine = triviaList([Syntax.carriageReturnLineFeedTrivia]);
+    this.newLine = triviaListFn([carriageReturnLineFeedTrivia]);
   }
 
   private columnForStartOfToken(token: ISyntaxToken): number {
-    return Indentation.columnForStartOfToken(
+    return columnForStartOfTokenFn(
       token,
       this.syntaxInformationMap,
       this.options
@@ -119,7 +139,7 @@ class EmitterImpl extends SyntaxRewriter {
   }
 
   private columnForEndOfToken(token: ISyntaxToken): number {
-    return Indentation.columnForEndOfToken(
+    return columnForEndOfTokenFn(
       token,
       this.syntaxInformationMap,
       this.options
@@ -131,7 +151,7 @@ class EmitterImpl extends SyntaxRewriter {
       column === 0
         ? null
         : [Indentation.indentationTrivia(column, this.options)];
-    return triviaList(triviaArray);
+    return triviaListFn(triviaArray);
   }
 
   private indentationTriviaForStartOfNode(

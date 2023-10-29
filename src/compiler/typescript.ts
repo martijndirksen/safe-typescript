@@ -1,3 +1,54 @@
+import { RT } from '../runtime/rt';
+import {
+  AST,
+  SourceUnit,
+  MemberVariableDeclaration,
+  VariableDeclarator,
+  ArgumentList,
+  ObjectCreationExpression,
+  InvocationExpression,
+  ObjectLiteralExpression,
+  BinaryExpression,
+  ReturnStatement,
+  MemberAccessExpression,
+  QualifiedName,
+} from './ast';
+import { getType } from './astHelpers';
+import { ArrayUtilities } from './core/arrayUtilities';
+import { Debug } from './core/debug';
+import { Diagnostic } from './core/diagnosticCore';
+import { ByteOrderMark, Environment } from './core/environment';
+import { DeclarationEmitter, TextWriter } from './declarationEmitter';
+import { ILogger, NullLogger } from './diagnostics';
+import { Document } from './document';
+import { EmitOptions, Emitter } from './emitter';
+import { switchToForwardSlashes, getDeclareFilePath } from './pathUtils';
+import { diagnosticInformationMap } from './resources/diagnosticInformationMap.generated';
+import { ImmutableCompilationSettings } from './settings';
+import { SourceMapEntry, SourceMapper } from './sourceMapping';
+import { SyntaxKind } from './syntax/syntaxKind';
+import { SyntaxTree } from './syntax/syntaxTree';
+import { IScriptSnapshot } from './text/scriptSnapshot';
+import { TextChangeRange } from './text/textChangeRange';
+import { PullDecl } from './typecheck/pullDecls';
+import { PullElementKind } from './typecheck/pullFlags';
+import { SemanticInfoChain } from './typecheck/pullSemanticInfo';
+import {
+  PullSymbol,
+  PullTypeAliasSymbol,
+  PullSignatureSymbol,
+  PullTypeSymbol,
+} from './typecheck/pullSymbols';
+import { PullTypeReferenceSymbol } from './typecheck/pullTypeInstantiation';
+import {
+  PullTypeResolver,
+  PullAdditionalCallResolutionData,
+  PullAdditionalObjectLiteralResolutionData,
+  isTypesOnlyLocation,
+} from './typecheck/pullTypeResolution';
+import { PullTypeResolutionContext } from './typecheck/pullTypeResolutionContext';
+import { SoundTypeChecker } from './typecheck/sound/tc';
+
 if (Error) Error.stackTraceLimit = 1000;
 
 export interface PullSymbolInfo {
@@ -105,8 +156,6 @@ export class TypeScriptCompiler {
     referencedFiles: string[] = []
   ): void {
     fileName = switchToForwardSlashes(fileName);
-
-    sourceCharactersCompiled += scriptSnapshot.getLength();
 
     var document = Document.create(
       this,

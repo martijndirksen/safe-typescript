@@ -15,6 +15,7 @@ import { ImmutableCompilationSettings } from './settings';
 import { LanguageVersion } from './syntax/languageVersion';
 import { ParseOptions } from './syntax/parseOptions';
 import { Scanner } from './syntax/scanner';
+import { SyntaxFacts } from './syntax/syntaxFacts';
 import { SyntaxKind } from './syntax/syntaxKind';
 import { ISyntaxToken } from './syntax/syntaxToken';
 import { IScriptSnapshot } from './text/scriptSnapshot';

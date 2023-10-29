@@ -18,10 +18,12 @@ import { ILogger } from '../compiler/diagnostics';
 import { DiagnosticCode } from '../compiler/resources/diagnosticCode.generated';
 import { LanguageVersion } from '../compiler/syntax/languageVersion';
 import { Scanner } from '../compiler/syntax/scanner';
+import { SyntaxFacts } from '../compiler/syntax/syntaxFacts';
 import { SyntaxKind } from '../compiler/syntax/syntaxKind';
 import { ISyntaxToken } from '../compiler/syntax/syntaxToken';
 import { ISyntaxTriviaList } from '../compiler/syntax/syntaxTriviaList';
 import { CharacterCodes } from '../compiler/text/characterCodes';
+import { fromString } from '../compiler/text/textFactory';
 
 //
 export enum EndOfLineState {
@@ -93,7 +95,7 @@ export class Classifier {
     var result = new ClassificationResult();
     this.scanner = new Scanner(
       '',
-      SimpleText.fromString(text),
+      fromString(text),
       LanguageVersion.EcmaScript5,
       this.characterWindow
     );

@@ -1,9 +1,7 @@
-///<reference path='..\core\references.ts' />
-///<reference path='..\core\environment.ts' />
-///<reference path='syntaxFacts.ts' />
-///<reference path='syntaxKind.ts' />
-
 import { ArrayUtilities } from '../core/arrayUtilities';
+import { SyntaxFacts } from './syntaxFacts';
+import { SyntaxKind } from './syntaxKind';
+import { Environment } from '../core/environment';
 
 // Adds argument checking to the generated nodes.  Argument checking appears to slow things down
 // parsing about 7%.  If we want to get that perf back, we can always remove this.
