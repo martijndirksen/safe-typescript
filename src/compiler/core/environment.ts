@@ -25,7 +25,7 @@ export class FileInformation {
 
 export interface IEnvironment {
   supportsCodePage(): boolean;
-  readFile(path: string, codepage: number): FileInformation;
+  readFile(path: string): FileInformation;
   writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
   deleteFile(path: string): void;
   fileExists(path: string): boolean;
@@ -55,15 +55,7 @@ export const Environment: IEnvironment = {
     return false;
   },
 
-  readFile(file: string, codepage: number): FileInformation {
-    if (codepage !== null) {
-      throw new Error(
-        getDiagnosticMessage(
-          DiagnosticCode.codepage_option_not_supported_on_current_platform
-        )
-      );
-    }
-
+  readFile(file: string): FileInformation {
     var buffer = fs.readFileSync(file);
     switch (buffer[0]) {
       case 0xfe:

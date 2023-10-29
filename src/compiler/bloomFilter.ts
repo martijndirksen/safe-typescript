@@ -1,4 +1,6 @@
-///<reference path='core\integerUtilities.ts' />
+import { RT } from '../runtime/rt';
+import { Hash } from './core/hash';
+import { IIndexable } from './hashTable';
 
 export class BloomFilter implements RT.Virtual {
   private bitArray: boolean[];

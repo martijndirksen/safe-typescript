@@ -159,14 +159,12 @@ import {
   PullInstantiatedTypeReferenceSymbol,
   PullTypeReferenceSymbol,
   GenerativeTypeClassification,
-  nSpecializedSignaturesCreated,
 } from './pullTypeInstantiation';
 import {
   PullTypeResolutionContext,
   ArgumentInferenceContext,
   PullContextualTypeContext,
 } from './pullTypeResolutionContext';
-import { name } from 'assert';
 import { SyntaxFacts } from '../syntax/syntaxFacts';
 
 export interface IPullTypeCollection {
@@ -225,6 +223,7 @@ enum CompilerReservedNames {
 function getCompilerReservedName(name: IASTToken) {
   // If this array changes, update the order accordingly in CompilerReservedNames
   var nameText = name.valueText();
+  // @ts-ignore MD ?
   var index = <CompilerReservedNames>CompilerReservedNames[nameText];
   return CompilerReservedNames[index] ? index : undefined;
 }
@@ -4905,6 +4904,7 @@ export class PullTypeResolver {
           context,
           new TypeComparisonInfo()
         );
+        // @ts-ignore MD ?
         var returnType = bestCommonReturnType;
         var returnExpression =
           returnExpressions[returnExpressionSymbols.indexOf(returnType)];
@@ -5824,7 +5824,6 @@ export class PullTypeResolver {
             (hasFlag(parentDeclFlags, PullElementFlags.Ambient) &&
               !hasFlag(funcDecl.flags, PullElementFlags.Private)))
         ) {
-          var funcDeclASTName = name;
           context.postDiagnostic(
             this.semanticInfoChain.diagnosticFromAST(
               funcDeclAST,
@@ -13874,6 +13873,7 @@ export class PullTypeResolver {
 
   // Assignment Compatibility and Subtyping
 
+  // @ts-ignore MD ?
   private substituteUpperBoundForType(type: PullTypeSymbol) {
     if (!type || !type.isTypeParameter()) {
       return type;
@@ -19564,8 +19564,6 @@ export class PullTypeResolver {
     }
 
     var typeArguments: PullTypeSymbol[] = [];
-
-    nSpecializedSignaturesCreated++;
 
     var instantiatedSignature = new PullSignatureSymbol(signature.kind);
     instantiatedSignature.setRootSymbol(signature);

@@ -1,7 +1,7 @@
 // Modified by N.Swamy, A.Rastogi (2014)
 
-module RT {
-  type Virtual = {};
+export module RT {
+  export type Virtual = {};
 
   ////////////////////////////////////////////////////////////////////////////
   // Some utilities

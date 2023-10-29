@@ -5,20 +5,28 @@
 // many algorithms.  For this reason, when generating trees, it is important that nodes that are
 // reused are cloned before insertion.
 
-  export class SyntaxNodeInvariantsChecker extends SyntaxWalker {
-    private tokenTable = Collections.createHashTable(
-      Collections.DefaultHashTableCapacity,
-      Collections.identityHashCode
-    );
+import {
+  createHashTable,
+  defaultHashTableCapacity,
+  identityHashCode,
+} from '../core/hashTable';
+import { SyntaxNode } from './syntaxNode';
+import { ISyntaxToken } from './syntaxToken';
+import { SyntaxWalker } from './syntaxWalker.generated';
 
-    public static checkInvariants(node: SyntaxNode): void {
-      node.accept(new SyntaxNodeInvariantsChecker());
-    }
+export class SyntaxNodeInvariantsChecker extends SyntaxWalker {
+  private tokenTable = createHashTable(
+    defaultHashTableCapacity,
+    identityHashCode
+  );
 
-    public visitToken(token: ISyntaxToken): void {
-      // We're calling 'add', so the table will throw if we try to put the same token in multiple
-      // times.
-      this.tokenTable.add(token, token);
-    }
+  public static checkInvariants(node: SyntaxNode): void {
+    node.accept(new SyntaxNodeInvariantsChecker());
+  }
+
+  public visitToken(token: ISyntaxToken): void {
+    // We're calling 'add', so the table will throw if we try to put the same token in multiple
+    // times.
+    this.tokenTable.add(token, token);
   }
 }

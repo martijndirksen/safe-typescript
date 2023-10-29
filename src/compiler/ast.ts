@@ -2,6 +2,7 @@ import { ArrayUtilities } from './core/arrayUtilities';
 import { Diagnostic } from './core/diagnosticCore';
 import { Errors } from './core/errors';
 import { SyntaxKind } from './syntax/syntaxKind';
+import { massageEscapes } from './syntax/syntaxToken';
 import { ISyntaxTrivia } from './syntax/syntaxTrivia';
 import { PullDecl } from './typecheck/pullDecls';
 import { PullElementFlags } from './typecheck/pullFlags';

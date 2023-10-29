@@ -1,4 +1,5 @@
 import { Errors } from '../core/errors';
+import { isInteger, isHexInteger } from '../core/integerUtilities';
 import {
   PositionedToken,
   PositionedNodeOrToken,
@@ -226,7 +227,7 @@ export function triviaListStructuralEquals(
 
   for (var i = 0, n = triviaList1.count(); i < n; i++) {
     if (
-      !Syntax.triviaStructuralEquals(
+      !triviaStructuralEquals(
         triviaList1.syntaxTriviaAt(i),
         triviaList2.syntaxTriviaAt(i)
       )
@@ -261,7 +262,7 @@ export function listStructuralEquals(
     var child1 = list1.childAt(i);
     var child2 = list2.childAt(i);
 
-    if (!Syntax.nodeOrTokenStructuralEquals(<any>child1, <any>child2)) {
+    if (!nodeOrTokenStructuralEquals(<any>child1, <any>child2)) {
       return false;
     }
   }
@@ -280,7 +281,7 @@ export function separatedListStructuralEquals(
   for (var i = 0, n = list1.childCount(); i < n; i++) {
     var element1 = list1.childAt(i);
     var element2 = list2.childAt(i);
-    if (!Syntax.nodeOrTokenStructuralEquals(<any>element1, <any>element2)) {
+    if (!nodeOrTokenStructuralEquals(<any>element1, <any>element2)) {
       return false;
     }
   }
@@ -696,18 +697,14 @@ export function isIntegerLiteral(expression: IExpressionSyntax): boolean {
         // *literal*.
         expression = (<PrefixUnaryExpressionSyntax>expression).operand;
         return (
-          expression.isToken() &&
-          IntegerUtilities.isInteger((<ISyntaxToken>expression).text())
+          expression.isToken() && isInteger((<ISyntaxToken>expression).text())
         );
 
       case SyntaxKind.NumericLiteral:
         // If it doesn't have a + or -, then either an integer literal or a hex literal
         // is acceptable.
         var text = (<ISyntaxToken>expression).text();
-        return (
-          IntegerUtilities.isInteger(text) ||
-          IntegerUtilities.isHexInteger(text)
-        );
+        return isInteger(text) || isHexInteger(text);
     }
   }
 

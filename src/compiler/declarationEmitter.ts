@@ -1,5 +1,87 @@
 import { EOL } from 'os';
 import type { CheckedArray } from '../runtime/rt';
+import {
+  SourceUnit,
+  ISyntaxList2,
+  ISeparatedSyntaxList2,
+  AST,
+  VariableStatement,
+  PropertySignature,
+  VariableDeclarator,
+  MemberVariableDeclaration,
+  ConstructorDeclaration,
+  GetAccessor,
+  SetAccessor,
+  IndexMemberDeclaration,
+  IndexSignature,
+  CallSignature,
+  ConstructSignature,
+  MethodSignature,
+  FunctionDeclaration,
+  MemberFunctionDeclaration,
+  ClassDeclaration,
+  InterfaceDeclaration,
+  ImportDeclaration,
+  ModuleDeclaration,
+  EnumDeclaration,
+  ExportAssignment,
+  Comment,
+  VariableDeclaration,
+  Identifier,
+  ParameterList,
+  IASTToken,
+  Parameter,
+  HeritageClause,
+  TypeParameterList,
+  ExternalModuleReference,
+  ModuleNameModuleReference,
+  QualifiedName,
+  EnumElement,
+} from './ast';
+import {
+  isAnyNameOfModule,
+  docComments,
+  getVariableDeclaratorModifiers,
+  Parameters,
+  IParameters,
+} from './astHelpers';
+import { ArrayUtilities } from './core/arrayUtilities';
+import { Debug } from './core/debug';
+import { ByteOrderMark } from './core/environment';
+import { Document } from './document';
+import {
+  Indenter,
+  EmitOptions,
+  getTrimmedTextLines,
+  lastParameterIsRest,
+  getLastConstructor,
+} from './emitter';
+import { hasFlag } from './flags';
+import {
+  isRooted,
+  convertToDirectoryPath,
+  switchToForwardSlashes,
+  getRootFilePath,
+  getRelativePathToFixedPath,
+} from './pathUtils';
+import { SyntaxKind } from './syntax/syntaxKind';
+import { getModuleNames } from './typecheck/pullDeclCollection';
+import { PullDecl, PullEnumElementDecl } from './typecheck/pullDecls';
+import {
+  PullElementFlags,
+  hasModifier,
+  PullElementKind,
+} from './typecheck/pullFlags';
+import { PullHelpers } from './typecheck/pullHelpers';
+import { SemanticInfoChain } from './typecheck/pullSemanticInfo';
+import {
+  PullTypeSymbol,
+  PullSignatureSymbol,
+  PullTypeAliasSymbol,
+  PullContainerSymbol,
+} from './typecheck/pullSymbols';
+import { MemberName, MemberNameString, MemberNameArray } from './types';
+import { OutputFileType, OutputFile, TypeScriptCompiler } from './typescript';
 
 export class TextWriter {
   private contents = '';
@@ -149,10 +231,8 @@ export class DeclarationEmitter {
     ) {
       var pullDecl = this.semanticInfoChain.getDeclForAST(declAST);
       if (!hasFlag(pullDecl.flags, PullElementFlags.Exported)) {
-        var start = new Date().getTime();
         var declSymbol = this.semanticInfoChain.getSymbolForAST(declAST);
         var result = declSymbol && declSymbol.isExternallyVisible();
-        declarationEmitIsExternallyVisibleTime += new Date().getTime() - start;
 
         return result;
       }
@@ -279,13 +359,11 @@ export class DeclarationEmitter {
   private emitTypeSignature(ast: AST, type: PullTypeSymbol) {
     var declarationContainerAst = this.getEnclosingContainer(ast);
 
-    var start = new Date().getTime();
     var declarationContainerDecl = this.semanticInfoChain.getDeclForAST(
       declarationContainerAst
     );
 
     var declarationPullSymbol = declarationContainerDecl.getSymbol();
-    declarationEmitTypeSignatureTime += new Date().getTime() - start;
 
     var typeNameMembers = type.getScopedNameEx(declarationPullSymbol);
     this.emitTypeNamesMember(typeNameMembers);
@@ -349,10 +427,8 @@ export class DeclarationEmitter {
   }
 
   private emitTypeOfVariableDeclaratorOrParameter(boundDecl: AST) {
-    var start = new Date().getTime();
     var decl = this.semanticInfoChain.getDeclForAST(boundDecl);
     var pullSymbol = decl.getSymbol();
-    declarationEmitGetBoundDeclTypeTime += new Date().getTime() - start;
 
     var type = pullSymbol.type;
     Debug.assert(type);
@@ -482,12 +558,8 @@ export class DeclarationEmitter {
   }
 
   private isOverloadedCallSignature(funcDecl: AST) {
-    var start = new Date().getTime();
     var functionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
     var funcSymbol = functionDecl.getSymbol();
-    declarationEmitIsOverloadedCallSignatureTime +=
-      new Date().getTime() - start;
-
     var funcTypeSymbol = funcSymbol.type;
     var signatures = funcTypeSymbol.getCallSignatures();
     var result = signatures && signatures.length > 1;
@@ -498,12 +570,7 @@ export class DeclarationEmitter {
   private emitDeclarationsForConstructorDeclaration(
     funcDecl: ConstructorDeclaration
   ) {
-    var start = new Date().getTime();
     var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
-
-    declarationEmitFunctionDeclarationGetSymbolTime +=
-      new Date().getTime() - start;
-
     var funcTypeSymbol = funcSymbol.type;
     if (funcDecl.block) {
       var constructSignatures = funcTypeSymbol.getConstructSignatures();
@@ -578,12 +645,7 @@ export class DeclarationEmitter {
   }
 
   private emitMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration) {
-    var start = new Date().getTime();
     var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
-
-    declarationEmitFunctionDeclarationGetSymbolTime +=
-      new Date().getTime() - start;
-
     var funcTypeSymbol = funcSymbol.type;
     if (funcDecl.block) {
       var constructSignatures = funcTypeSymbol.getConstructSignatures();
@@ -670,12 +732,6 @@ export class DeclarationEmitter {
   private emitConstructSignature(funcDecl: ConstructSignature) {
     var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
 
-    var start = new Date().getTime();
-    var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
-
-    declarationEmitFunctionDeclarationGetSymbolTime +=
-      new Date().getTime() - start;
-
     this.emitDeclarationComments(funcDecl);
 
     this.emitIndent();
@@ -707,12 +763,6 @@ export class DeclarationEmitter {
 
   private emitMethodSignature(funcDecl: MethodSignature) {
     var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
-
-    var start = new Date().getTime();
-    var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
-
-    declarationEmitFunctionDeclarationGetSymbolTime +=
-      new Date().getTime() - start;
 
     this.emitDeclarationComments(funcDecl);
 
@@ -750,12 +800,7 @@ export class DeclarationEmitter {
     funcDecl: FunctionDeclaration
   ) {
     var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
-
-    var start = new Date().getTime();
     var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
-
-    declarationEmitFunctionDeclarationGetSymbolTime +=
-      new Date().getTime() - start;
 
     if (funcDecl.block) {
       var funcTypeSymbol = funcSymbol.type;
@@ -899,12 +944,10 @@ export class DeclarationEmitter {
     modifiers: PullElementFlags[],
     name: IASTToken
   ) {
-    var start = new Date().getTime();
     var accessorSymbol = PullHelpers.getAccessorSymbol(
       funcDecl,
       this.semanticInfoChain
     );
-    declarationEmitGetAccessorFunctionTime += new Date().getTime();
 
     if (
       funcDecl.kind() === SyntaxKind.SetAccessor &&
@@ -1030,10 +1073,8 @@ export class DeclarationEmitter {
     this.declFile.Write('<');
     var containerAst = this.getEnclosingContainer(typeParams);
 
-    var start = new Date().getTime();
     var containerDecl = this.semanticInfoChain.getDeclForAST(containerAst);
     var containerSymbol = <PullTypeSymbol>containerDecl.getSymbol();
-    declarationEmitGetTypeParameterSymbolTime += new Date().getTime() - start;
 
     var typars: CheckedArray<PullTypeSymbol>; //NS: Could benefit from CheckedArray type here
     if (funcSignature) {

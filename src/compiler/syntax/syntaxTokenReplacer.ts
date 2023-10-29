@@ -1,3 +1,9 @@
+import { ISeparatedSyntaxList } from './separatedSyntaxList';
+import { ISyntaxList } from './syntaxList';
+import { SyntaxNode } from './syntaxNode';
+import { SyntaxRewriter } from './syntaxRewriter.generated';
+import { ISyntaxToken } from './syntaxToken';
+
 export class SyntaxTokenReplacer extends SyntaxRewriter {
   constructor(
     private token1: ISyntaxToken,

@@ -1,4 +1,4 @@
-import { RT } from '../../../runtime/rt';
+import { RT } from './rt';
 import {
   SoundType,
   AST,
@@ -360,7 +360,11 @@ export class TcEnv implements RT.Virtual {
     t.fullName = x.fullName;
     return res;
   }
-  public withLocalTypes<A>(ts: Pair<string, SoundType>[], f: () => A, i = 0) {
+  public withLocalTypes<A>(
+    ts: Pair<string, SoundType>[],
+    f: () => A,
+    i = 0
+  ): A {
     if (i < ts.length) {
       return this.withLocalType<A>({ dottedName: ts[i].fst }, ts[i].snd, () =>
         this.withLocalTypes(ts, f, i + 1)

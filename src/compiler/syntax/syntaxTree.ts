@@ -7,7 +7,7 @@ import { LanguageVersion } from './languageVersion';
 import { ParseOptions } from './parseOptions';
 import { PositionTrackingWalker } from './positionTrackingWalker';
 import { ISeparatedSyntaxList } from './separatedSyntaxList';
-import { childOffset } from './syntax';
+import { childOffset, isIntegerLiteral } from './syntax';
 import {
   ISyntaxElement,
   ISyntaxNode,
@@ -1414,7 +1414,7 @@ class GrammarCheckerWalker extends PositionTrackingWalker {
 
         if (enumElement.equalsValueClause) {
           var value = enumElement.equalsValueClause.value;
-          if (!Syntax.isIntegerLiteral(value)) {
+          if (!isIntegerLiteral(value)) {
             seenComputedValue = true;
           }
         }
@@ -1429,7 +1429,7 @@ class GrammarCheckerWalker extends PositionTrackingWalker {
   public visitEnumElement(node: EnumElementSyntax): void {
     if (this.inAmbientDeclaration && node.equalsValueClause) {
       var expression = node.equalsValueClause.value;
-      if (!Syntax.isIntegerLiteral(expression)) {
+      if (!isIntegerLiteral(expression)) {
         this.pushDiagnostic1(
           this.childFullStart(node, node.equalsValueClause),
           node.equalsValueClause.firstToken(),

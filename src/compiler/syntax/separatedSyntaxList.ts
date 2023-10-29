@@ -1,5 +1,6 @@
 import { RT } from '../../runtime/rt';
 import { Errors } from '../core/errors';
+import { integerDivide } from '../core/integerUtilities';
 import { SyntaxConstants } from './constants';
 import {
   PositionedElement,
@@ -309,10 +310,10 @@ class NormalSeparatedSyntaxList implements ISeparatedSyntaxList {
     return this.elements.length;
   }
   public nonSeparatorCount() {
-    return IntegerUtilities.integerDivide(this.elements.length + 1, 2);
+    return integerDivide(this.elements.length + 1, 2);
   }
   public separatorCount() {
-    return IntegerUtilities.integerDivide(this.elements.length, 2);
+    return integerDivide(this.elements.length, 2);
   }
 
   public toArray(): ISyntaxNodeOrToken[] {

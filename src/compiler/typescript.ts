@@ -352,7 +352,6 @@ export class TypeScriptCompiler {
   public emitAllDeclarations(
     resolvePath: (path: string) => string
   ): EmitOutput {
-    var start = new Date().getTime();
     var emitOutput = new EmitOutput();
 
     var emitOptions = new EmitOptions(this, resolvePath);
@@ -365,8 +364,6 @@ export class TypeScriptCompiler {
     var fileNames = this.fileNames();
 
     for (var i = 0, n = fileNames.length; i < n; i++) {
-      var fileName = fileNames[i];
-
       var document = this.getDocument(fileNames[i]);
 
       sharedEmitter = this._emitDocumentDeclarations(
@@ -382,8 +379,6 @@ export class TypeScriptCompiler {
     if (sharedEmitter) {
       emitOutput.outputFiles.push(sharedEmitter.getOutputFile());
     }
-
-    declarationEmitTime += new Date().getTime() - start;
 
     return emitOutput;
   }
@@ -532,7 +527,6 @@ export class TypeScriptCompiler {
 
   // Will not throw exceptions.
   public emitAll(resolvePath: (path: string) => string): EmitOutput {
-    var start = new Date().getTime();
     var emitOutput = new EmitOutput();
 
     var emitOptions = new EmitOptions(this, resolvePath);
@@ -569,7 +563,6 @@ export class TypeScriptCompiler {
       //emitOutput.outputFiles.push.apply(emitOutput.outputFiles, sharedEmitter.getOutputFiles());
     }
 
-    emitTime += new Date().getTime() - start;
     return emitOutput;
   }
 
@@ -617,7 +610,7 @@ export class TypeScriptCompiler {
   public compile(
     resolvePath: (path: string) => string,
     continueOnDiagnostics = false
-  ): Iterator<CompileResult> {
+  ): ICompilerIterator {
     return new CompilerIterator(this, resolvePath, continueOnDiagnostics);
   }
 
@@ -676,14 +669,11 @@ export class TypeScriptCompiler {
       return [];
     }
     var document = this.getDocument(fileName);
-    //console.log("Checking script " + fileName);
-    var startTime = new Date().getTime();
     var errors = SoundTypeChecker.check(
       this.compilationSettings(),
       this.semanticInfoChain,
       document
     );
-    soundTypeCheckTime += new Date().getTime() - startTime;
     errors = this.processDiagnostics(errors);
     errors.forEach((d: Diagnostic) => this.semanticInfoChain.addDiagnostic(d));
     return errors;
@@ -692,14 +682,11 @@ export class TypeScriptCompiler {
   public getSemanticDiagnostics(fileName: string) {
     fileName = switchToForwardSlashes(fileName);
     var document = this.getDocument(fileName);
-    var startTime = new Date().getTime();
     PullTypeResolver.typeCheck(
       this.compilationSettings(),
       this.semanticInfoChain,
       document
     );
-    var endTime = new Date().getTime();
-    typeCheckTime += endTime - startTime;
     var diags = this.semanticInfoChain.getDiagnostics(fileName);
     return this.processDiagnostics(diags);
   }
@@ -1416,7 +1403,12 @@ enum CompilerPhase {
   DeclarationEmit,
 }
 
-class CompilerIterator implements Iterator<CompileResult> {
+export interface ICompilerIterator {
+  current(): CompileResult;
+  next(): boolean;
+}
+
+class CompilerIterator {
   private compilerPhase: CompilerPhase;
   private index: number = -1;
   private fileNames: string[] = null;
@@ -1442,7 +1434,7 @@ class CompilerIterator implements Iterator<CompileResult> {
     return this._current;
   }
 
-  public moveNext(): boolean {
+  public next(): boolean {
     this._current = null;
 
     // Attempt to move the iterator 'one step' forward.  Note: this may produce no result

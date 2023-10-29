@@ -19,7 +19,10 @@ import {
   splitMultiLineCommentTriviaIntoMultipleLines,
   whitespace,
 } from './syntaxTrivia';
-import { ISyntaxTriviaList } from './syntaxTriviaList';
+import {
+  ISyntaxTriviaList,
+  triviaList as triviaListFn,
+} from './syntaxTriviaList';
 
 export class SyntaxIndenter extends SyntaxRewriter {
   private lastTriviaWasNewLine: boolean;
@@ -97,7 +100,7 @@ export class SyntaxIndenter extends SyntaxRewriter {
       result.push(this.indentationTrivia);
     }
 
-    return triviaList(result);
+    return triviaListFn(result);
   }
 
   private indentSegment(segment: string): string {

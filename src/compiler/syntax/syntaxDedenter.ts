@@ -1,7 +1,11 @@
 import { Debug } from '../core/debug';
 import { CharacterInfo } from './characterInfo';
 import { IFormattingOptions } from './formattingOptions';
-import { indentString } from './indentation';
+import {
+  columnForPositionInString,
+  firstNonWhitespacePosition,
+  indentString,
+} from './indentation';
 import { ISyntaxNode } from './syntaxElement';
 import { SyntaxKind } from './syntaxKind';
 import { SyntaxRewriter } from './syntaxRewriter.generated';
@@ -12,7 +16,10 @@ import {
   splitMultiLineCommentTriviaIntoMultipleLines,
   multiLineComment,
 } from './syntaxTrivia';
-import { ISyntaxTriviaList } from './syntaxTriviaList';
+import {
+  ISyntaxTriviaList,
+  triviaList as triviaListFn,
+} from './syntaxTriviaList';
 
 export class SyntaxDedenter extends SyntaxRewriter {
   private lastTriviaWasNewLine: boolean;
@@ -122,7 +129,7 @@ export class SyntaxDedenter extends SyntaxRewriter {
       return triviaList;
     }
 
-    return triviaList(result);
+    return triviaListFn(result);
   }
 
   private dedentSegment(
@@ -130,31 +137,28 @@ export class SyntaxDedenter extends SyntaxRewriter {
     hasFollowingNewLineTrivia: boolean
   ): string {
     // Find the position of the first non whitespace character in the segment.
-    var firstNonWhitespacePosition =
-      Indentation.firstNonWhitespacePosition(segment);
+    var firstNonWhitespacePos = firstNonWhitespacePosition(segment);
 
-    if (firstNonWhitespacePosition === segment.length) {
+    if (firstNonWhitespacePos === segment.length) {
       if (hasFollowingNewLineTrivia) {
         // It was entirely whitespace trivia, with a newline after it.  Just trim this down
         // to an empty string.
         return '';
       }
     } else if (
-      CharacterInfo.isLineTerminator(
-        segment.charCodeAt(firstNonWhitespacePosition)
-      )
+      CharacterInfo.isLineTerminator(segment.charCodeAt(firstNonWhitespacePos))
     ) {
       // It was entirely whitespace, with a newline after it.  Just trim this down to
       // the newline
-      return segment.substring(firstNonWhitespacePosition);
+      return segment.substring(firstNonWhitespacePos);
     }
 
     // It was whitespace without a newline following it.  We need to try to dedent this a bit.
 
     // Convert that position to a column.
-    var firstNonWhitespaceColumn = Indentation.columnForPositionInString(
+    var firstNonWhitespaceColumn = columnForPositionInString(
       segment,
-      firstNonWhitespacePosition,
+      firstNonWhitespacePos,
       this.options
     );
 
@@ -189,7 +193,7 @@ export class SyntaxDedenter extends SyntaxRewriter {
     );
 
     // Join the new indentation and the original string without its indentation.
-    return indentationStr + segment.substring(firstNonWhitespacePosition);
+    return indentationStr + segment.substring(firstNonWhitespacePos);
   }
 
   private dedentWhitespace(

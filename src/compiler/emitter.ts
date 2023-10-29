@@ -110,6 +110,7 @@ import { ImmutableCompilationSettings } from './settings';
 import { SourceMapper, SourceMapping } from './sourceMapping';
 import { SyntaxFacts } from './syntax/syntaxFacts';
 import { SyntaxKind } from './syntax/syntaxKind';
+import { parseLineStarts } from './text/textUtilities';
 import { getModuleNames } from './typecheck/pullDeclCollection';
 import { PullDecl, PullEnumElementDecl } from './typecheck/pullDecls';
 import {
@@ -580,7 +581,7 @@ export class Emitter {
   }
 
   private updateLineAndColumn(s: string) {
-    var lineNumbers = TextUtilities.parseLineStarts(new String(s));
+    var lineNumbers = parseLineStarts(new String(s));
     if (lineNumbers.length > 1) {
       // There are new lines in the string, update the line and column number accordingly
       this.emitState.line += lineNumbers.length - 1;
@@ -3536,7 +3537,7 @@ export class Emitter {
 
   private canEmitDottedNameMemberAccessExpression(
     expression: MemberAccessExpression
-  ) {
+  ): boolean {
     var memberExpressionNodeType = expression.expression.kind();
 
     // If the memberAccess is of Name or another member access, we could potentially emit the symbol using the this memberAccessSymol

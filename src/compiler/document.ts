@@ -1,4 +1,32 @@
+import { SourceUnit, AST, Identifier } from './ast';
+import { isValidAstNode } from './astHelpers';
+import { getAstWalkerFactory } from './astWalker';
+import { BloomFilter } from './bloomFilter';
+import { Debug, AssertionLevel } from './core/debug';
+import { Diagnostic } from './core/diagnosticCore';
+import { ByteOrderMark } from './core/environment';
+import { LineMap } from './core/lineMap';
+import { createIntrinsicsObject } from './hashTable';
+import { isDTSFile } from './pathUtils';
+import { getParseOptions } from './precompile';
+import { incrementalParse, parse } from './syntax/parser';
+import { SyntaxKind } from './syntax/syntaxKind';
+import { SyntaxNode } from './syntax/syntaxNode';
+import {
+  SourceUnitSyntax,
+  ImportDeclarationSyntax,
+} from './syntax/syntaxNodes.generated';
+import { ISyntaxToken } from './syntax/syntaxToken';
+import { SyntaxTree } from './syntax/syntaxTree';
+import { ISyntaxTrivia } from './syntax/syntaxTrivia';
+import { SyntaxTreeToAstVisitor } from './syntaxTreeToAstVisitor';
+import { IScriptSnapshot } from './text/scriptSnapshot';
+import { TextChangeRange } from './text/textChangeRange';
 import { fromScriptSnapshot } from './text/textFactory';
+import { DeclarationCreator } from './typecheck/pullDeclCollection';
+import { PullDecl } from './typecheck/pullDecls';
+import { SemanticInfoChain } from './typecheck/pullSemanticInfo';
+import { TypeScriptCompiler } from './typescript';
 
 export class Document {
   private _diagnostics: Diagnostic[] = null;
@@ -44,10 +72,7 @@ export class Document {
   private cacheSyntaxTreeInfo(syntaxTree: SyntaxTree): void {
     // If we're not keeping around the syntax tree, store the diagnostics and line
     // map so they don't have to be recomputed.
-    var start = new Date().getTime();
     this._diagnostics = syntaxTree.diagnostics();
-    syntaxDiagnosticsTime += new Date().getTime() - start;
-
     this._lineMap = syntaxTree.lineMap();
 
     var sourceUnit = syntaxTree.sourceUnit();
@@ -150,7 +175,6 @@ export class Document {
   public sourceUnit(): SourceUnit {
     // If we don't have a script, create one from our parse tree.
     if (!this._sourceUnit) {
-      var start = new Date().getTime();
       var syntaxTree = this.syntaxTree();
       this._sourceUnit = SyntaxTreeToAstVisitor.visit(
         syntaxTree,
@@ -158,7 +182,6 @@ export class Document {
         this._compiler.compilationSettings(),
         false
       ); ///*incrementalAST:*/ this.isOpen);
-      astTranslationTime += new Date().getTime() - start;
 
       // If we're not open, then we can throw away our syntax tree.  We don't need it from
       // now on.
@@ -216,16 +239,12 @@ export class Document {
   public syntaxTree(): SyntaxTree {
     var result = this._syntaxTree;
     if (!result) {
-      var start = new Date().getTime();
-
-      result = Parser.parse(
+      result = parse(
         this.fileName,
         fromScriptSnapshot(this._scriptSnapshot),
         isDTSFile(this.fileName),
         getParseOptions(this._compiler.compilationSettings())
       );
-
-      syntaxTreeParseTime += new Date().getTime() - start;
 
       // If the document is open, store the syntax tree for fast incremental updates.
       // Or, if we don't have a script, then store the syntax tree around so we won't
@@ -331,13 +350,13 @@ export class Document {
     // parse.  Otherwise, do an incremental parse.
     var newSyntaxTree =
       textChangeRange === null || oldSyntaxTree === null
-        ? Parser.parse(
+        ? parse(
             this.fileName,
             text,
             isDTSFile(this.fileName),
             getParseOptions(this._compiler.compilationSettings())
           )
-        : Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
+        : incrementalParse(oldSyntaxTree, textChangeRange, text);
 
     return new Document(
       this._compiler,

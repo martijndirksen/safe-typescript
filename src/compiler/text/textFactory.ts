@@ -6,7 +6,7 @@ import { LineMap } from '../core/lineMap';
 import { DefaultStringTable } from '../core/stringTable';
 import { StringUtilities } from '../core/stringUtilities';
 import { CharacterCodes } from './characterCodes';
-import { fromSimpleText } from './lineMap';
+import { fromSimpleText, fromString as fromStringToLineMap } from './lineMap';
 import { IScriptSnapshot } from './scriptSnapshot';
 import { IText, ISimpleText } from './text';
 import { ITextLine } from './textLine';
@@ -615,7 +615,7 @@ class SimpleStringText implements ISimpleText {
 
   public lineMap(): LineMap {
     if (!this._lineMap) {
-      this._lineMap = fromSimpleText(this.value);
+      this._lineMap = fromStringToLineMap(this.value);
     }
 
     return this._lineMap;

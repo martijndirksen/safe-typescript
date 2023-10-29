@@ -84,6 +84,7 @@ import {
   WhileStatement,
   WithStatement,
 } from './ast';
+import { Debug } from './core/debug';
 import { StringUtilities } from './core/stringUtilities';
 import { SyntaxKind } from './syntax/syntaxKind';
 

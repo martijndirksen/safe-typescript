@@ -1856,6 +1856,7 @@ function generateIsMethod(definition: ITypeDefinition): string {
           ifaces.push(current);
         }
 
+        // @ts-expect-error weird stuff here
         current = interfaces[current];
       }
     }

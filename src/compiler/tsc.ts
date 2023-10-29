@@ -7,7 +7,11 @@ import {
 } from './core/environment';
 import { RT } from '../runtime/rt';
 import { DiagnosticCategory } from './core/diagnosticCategory';
-import { Diagnostic, getLocalizedText } from './core/diagnosticCore';
+import {
+  Diagnostic,
+  getLocalizedText,
+  setLocalizedDiagnosticMessages,
+} from './core/diagnosticCore';
 import { ILogger, CompilerDiagnostics, NullLogger } from './diagnostics';
 import { ModuleGenTarget } from './flags';
 import { StringHashTable, createIntrinsicsObject } from './hashTable';
@@ -79,12 +83,10 @@ export class BatchCompiler implements IReferenceResolverHost {
 
   // Begin batch compilation
   public batchCompile() {
-    var start = new Date().getTime();
-
     this.ioHost.stdout.WriteLine('Safe TypeScript');
     CompilerDiagnostics.diagnosticWriter = {
-      Alert(s: string) {
-        this.ioHost.printLine(s);
+      Alert: (s: string) => {
+        this.ioHost.stdout.WriteLine(s);
       },
     };
 
@@ -114,8 +116,6 @@ export class BatchCompiler implements IReferenceResolverHost {
     // Resolve file dependencies, if requested
     var includeDefaultLibrary = !this.compilationSettings.noLib();
     var resolvedFiles: IResolvedFile[] = [];
-
-    var start = new Date().getTime();
 
     if (!this.compilationSettings.noResolve()) {
       // Resolve references
@@ -194,7 +194,7 @@ export class BatchCompiler implements IReferenceResolverHost {
 
     for (
       var it = compiler.compile((path: string) => this.resolvePath(path));
-      it.moveNext();
+      it.next();
 
     ) {
       var result = it.current();
@@ -332,7 +332,7 @@ export class BatchCompiler implements IReferenceResolverHost {
       },
       set: (str) => {
         mutableSettings.addKnownWarnings(
-          parseKnownWarnings(this.ioHost.readFile(str, null).contents)
+          parseKnownWarnings(this.ioHost.readFile(str).contents)
         );
       },
     });
@@ -710,11 +710,8 @@ export class BatchCompiler implements IReferenceResolverHost {
       return false;
     }
 
-    var fileContents = this.ioHost.readFile(
-      filePath,
-      this.compilationSettings.codepage()
-    );
-    LocalizedDiagnosticMessages = JSON.parse(fileContents.contents);
+    var fileContents = this.ioHost.readFile(filePath);
+    setLocalizedDiagnosticMessages(JSON.parse(fileContents.contents));
     return true;
   }
 
@@ -839,10 +836,7 @@ export class BatchCompiler implements IReferenceResolverHost {
       var fileInformation: FileInformation;
 
       try {
-        fileInformation = this.ioHost.readFile(
-          fileName,
-          this.compilationSettings.codepage()
-        );
+        fileInformation = this.ioHost.readFile(fileName);
       } catch (e) {
         this.addDiagnostic(
           new Diagnostic(
@@ -851,7 +845,7 @@ export class BatchCompiler implements IReferenceResolverHost {
             0,
             0,
             DiagnosticCode.Cannot_read_file_0_1,
-            [fileName, '' + e.message]
+            [fileName, '' + (e as any).message]
           )
         );
         fileInformation = new FileInformation('', ByteOrderMark.None);
@@ -915,10 +909,7 @@ export class BatchCompiler implements IReferenceResolverHost {
   }
 
   getParentDirectory(path: string): string {
-    var start = new Date().getTime();
     var result = this.ioHost.dirName(path);
-    compilerDirectoryNameTime += new Date().getTime() - start;
-
     return result;
   }
   private static errFileMap: {
@@ -1039,7 +1030,7 @@ export class BatchCompiler implements IReferenceResolverHost {
             0,
             0,
             DiagnosticCode.Emit_Error_0,
-            ['' + e.message]
+            ['' + (e as any).message]
           )
         );
         return false;

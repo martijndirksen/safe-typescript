@@ -44,6 +44,7 @@ import {
   NumericLiteral,
 } from './ast';
 import { IAstWalker, getAstWalkerFactory } from './astWalker';
+import { isInteger, isHexInteger } from './core/integerUtilities';
 import { lastParameterIsRest } from './emitter';
 import { hasFlag, ModuleGenTarget } from './flags';
 import { isDTSFile } from './pathUtils';
@@ -685,17 +686,14 @@ export function isIntegerLiteralAST(expression: AST): boolean {
         expression = (<PrefixUnaryExpression>expression).operand;
         return (
           expression.kind() === SyntaxKind.NumericLiteral &&
-          IntegerUtilities.isInteger((<NumericLiteral>expression).text())
+          isInteger((<NumericLiteral>expression).text())
         );
 
       case SyntaxKind.NumericLiteral:
         // If it doesn't have a + or -, then either an integer literal or a hex literal
         // is acceptable.
         var text = (<NumericLiteral>expression).text();
-        return (
-          IntegerUtilities.isInteger(text) ||
-          IntegerUtilities.isHexInteger(text)
-        );
+        return isInteger(text) || isHexInteger(text);
     }
   }
 

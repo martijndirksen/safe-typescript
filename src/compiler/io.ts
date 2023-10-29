@@ -1,8 +1,7 @@
 import { RT } from '../runtime/rt';
 import { getDiagnosticMessage } from './core/diagnosticCore';
-import { FileInformation } from './core/environment';
+import { Environment, FileInformation } from './core/environment';
 import { DiagnosticCode } from './resources/diagnosticCode.generated';
-import { ioHostResolvePathTime } from './typescript';
 
 export interface IFindFileResult extends RT.Virtual {
   fileInformation: FileInformation;
@@ -10,11 +9,12 @@ export interface IFindFileResult extends RT.Virtual {
 }
 
 export interface IFileWatcher extends RT.Virtual {
+  fileName: string;
   close(): void;
 }
 
 export interface IIO extends RT.Virtual {
-  readFile(path: string, codepage: number): FileInformation;
+  readFile(path: string): FileInformation;
   writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
   deleteFile(path: string): void;
   dir(path: string, re?: RegExp, options?: { recursive?: boolean }): string[];
@@ -27,8 +27,8 @@ export interface IIO extends RT.Virtual {
   print(str: string): void;
   printLine(str: string): void;
   arguments: string[];
-  stderr: ITextWriter;
-  stdout: ITextWriter;
+  stderr: IOUtils.ITextWriter;
+  stdout: IOUtils.ITextWriter;
   watchFile: (fileName: string, callback: (x: string) => void) => IFileWatcher;
   run(source: string, fileName: string): void;
   getExecutingFilePath(): string;
@@ -56,21 +56,10 @@ export module IOUtils {
     contents: string,
     writeByteOrderMark: boolean
   ): void {
-    var start = new Date().getTime();
     var path = ioHost.resolvePath(fileName);
-    ioHostResolvePathTime += new Date().getTime() - start;
-
-    var start = new Date().getTime();
     var dirName = ioHost.dirName(path);
-    ioHostDirectoryNameTime += new Date().getTime() - start;
-
-    var start = new Date().getTime();
     createDirectoryStructure(ioHost, dirName);
-    ioHostCreateDirectoryStructureTime += new Date().getTime() - start;
-
-    var start = new Date().getTime();
     ioHost.writeFile(path, contents, writeByteOrderMark);
-    ioHostWriteFileTime += new Date().getTime() - start;
   }
 
   export function throwIOError(message: string, error: Error) {
@@ -125,8 +114,8 @@ export var IO = (function () {
     var _module = require('module');
 
     return {
-      readFile(file: string, codepage: number = 0): FileInformation {
-        return Environment.readFile(file, codepage);
+      readFile(file: string): FileInformation {
+        return Environment.readFile(file);
       },
 
       writeFile(path: string, contents: string, writeByteOrderMark: boolean) {
@@ -141,7 +130,7 @@ export var IO = (function () {
             getDiagnosticMessage(DiagnosticCode.Could_not_delete_file_0, [
               path,
             ]),
-            e
+            e as any
           );
         }
       },
@@ -186,7 +175,7 @@ export var IO = (function () {
             getDiagnosticMessage(DiagnosticCode.Could_not_create_directory_0, [
               path,
             ]),
-            e
+            e as any
           );
         }
       },
@@ -293,13 +282,15 @@ export var IO = (function () {
         };
       },
       run(source, fileName) {
-        require.main.fileName = fileName;
+        require.main.filename = fileName;
         require.main.paths = _module._nodeModulePaths(
           _path.dirname(_fs.realpathSync(fileName))
         );
+        // TODO: MD, what is this?
         require.main._compile(source, fileName);
       },
       getExecutingFilePath() {
+        // TODO: MD, what is this?
         return process.mainModule.filename;
       },
       quit(code?: number) {

@@ -1,7 +1,12 @@
+import { CheckedArray } from '../../runtime/rt';
 import { ArrayUtilities } from '../core/arrayUtilities';
 import { Debug } from '../core/debug';
 import { Errors } from '../core/errors';
-import { createHashTable, defaultHashTableCapacity } from '../core/hashTable';
+import {
+  createHashTable,
+  defaultHashTableCapacity,
+  identityHashCode,
+} from '../core/hashTable';
 import {
   IFormattingOptions,
   createFormattingOptions,
@@ -9,6 +14,8 @@ import {
 import {
   columnForStartOfToken as columnForStartOfTokenFn,
   columnForEndOfToken as columnForEndOfTokenFn,
+  indentTrivia,
+  columnForStartOfFirstTokenInLineContainingToken,
 } from './indentation';
 import { separatedList } from './separatedSyntaxList';
 import {
@@ -18,6 +25,9 @@ import {
   isSuperInvocationExpressionStatement,
   trueExpression,
   numericLiteralExpression,
+  isSuperMemberAccessExpression,
+  isSuperInvocationExpression,
+  isSuperMemberAccessInvocationExpression,
 } from './syntax';
 import { SyntaxDedenter } from './syntaxDedenter';
 import {
@@ -34,7 +44,7 @@ import { SyntaxFacts } from './syntaxFacts';
 import { SyntaxIndenter } from './syntaxIndenter';
 import { SyntaxInformationMap } from './syntaxInformationMap';
 import { SyntaxKind } from './syntaxKind';
-import { ISyntaxList, list } from './syntaxList';
+import { ISyntaxList, emptyList, list } from './syntaxList';
 import { SyntaxNode } from './syntaxNode';
 import { SyntaxNodeInvariantsChecker } from './syntaxNodeInvariantsChecker';
 import { ISyntaxNodeOrToken } from './syntaxNodeOrToken';
@@ -80,6 +90,7 @@ import { ISyntaxToken, identifier, token } from './syntaxToken';
 import { carriageReturnLineFeedTrivia } from './syntaxTrivia';
 import {
   ISyntaxTriviaList,
+  emptyTriviaList,
   spaceTriviaList,
   triviaList as triviaListFn,
 } from './syntaxTriviaList';
@@ -94,7 +105,7 @@ function callSignature(parameter: ParameterSyntax): CallSignatureSyntax {
 class EnsureTokenUniquenessRewriter extends SyntaxRewriter {
   private tokenTable = createHashTable(
     defaultHashTableCapacity,
-    Collections.identityHashCode
+    identityHashCode
   );
 
   public visitToken(token: ISyntaxToken): ISyntaxToken {
@@ -148,9 +159,7 @@ class EmitterImpl extends SyntaxRewriter {
 
   private indentationTrivia(column: number): ISyntaxTriviaList {
     var triviaArray =
-      column === 0
-        ? null
-        : [Indentation.indentationTrivia(column, this.options)];
+      column === 0 ? null : [indentTrivia(column, this.options)];
     return triviaListFn(triviaArray);
   }
 
@@ -189,8 +198,8 @@ class EmitterImpl extends SyntaxRewriter {
 
   private withNoTrivia(token: ISyntaxToken): ISyntaxToken {
     return token
-      .withLeadingTrivia(Syntax.emptyTriviaList)
-      .withTrailingTrivia(Syntax.emptyTriviaList);
+      .withLeadingTrivia(emptyTriviaList)
+      .withTrailingTrivia(emptyTriviaList);
   }
 
   public visitSourceUnit(node: SourceUnitSyntax): SourceUnitSyntax {
@@ -208,7 +217,9 @@ class EmitterImpl extends SyntaxRewriter {
       var converted = this.visitNode(<SyntaxNode>moduleElement);
       if (converted !== null) {
         if (ArrayUtilities.isArray(converted)) {
-          moduleElements.push.apply(moduleElements, converted);
+          moduleElements.push(
+            ...(converted as unknown as IModuleElementSyntax[])
+          );
         } else {
           moduleElements.push(<IModuleElementSyntax>converted);
         }
@@ -273,7 +284,7 @@ class EmitterImpl extends SyntaxRewriter {
         SyntaxKind.AssignmentExpression,
         MemberAccessExpressionSyntax.create1(
           this.withNoTrivia(moduleIdentifier),
-          elementIdentifier.withTrailingTrivia(Syntax.spaceTriviaList)
+          elementIdentifier.withTrailingTrivia(spaceTriviaList)
         ),
         token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
         elementIdentifier
@@ -433,8 +444,8 @@ class EmitterImpl extends SyntaxRewriter {
     outermost: boolean
   ): IModuleElementSyntax[] {
     moduleName = moduleName
-      .withLeadingTrivia(Syntax.emptyTriviaList)
-      .withTrailingTrivia(Syntax.emptyTriviaList);
+      .withLeadingTrivia(emptyTriviaList)
+      .withTrailingTrivia(emptyTriviaList);
     var moduleIdentifier = moduleName;
 
     var moduleIndentation =
@@ -503,7 +514,7 @@ class EmitterImpl extends SyntaxRewriter {
 
         // Now, wrap the function expression in parens to make it legal in javascript.
         var parenthesizedExpression = ParenthesizedExpressionSyntax.create1(
-          functionExpression.withLeadingTrivia(Syntax.emptyTriviaList)
+          functionExpression.withLeadingTrivia(emptyTriviaList)
         ).withLeadingTrivia(functionExpression.leadingTrivia());
 
         return rewritten.withExpression(parenthesizedExpression);
@@ -633,7 +644,7 @@ class EmitterImpl extends SyntaxRewriter {
     // Now wrap the return statement in a block.
     var block = this.factory.block(
       token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
-      list([returnStatement]),
+      list([returnStatement] as CheckedArray<ReturnStatementSyntax>),
       token(SyntaxKind.CloseBraceToken)
     );
 
@@ -661,7 +672,7 @@ class EmitterImpl extends SyntaxRewriter {
       this.changeIndentation(
         block,
         /*indentFirstToken:*/ false,
-        Indentation.columnForStartOfFirstTokenInLineContainingToken(
+        columnForStartOfFirstTokenInLineContainingToken(
           arrowFunction.firstToken(),
           this.syntaxInformationMap,
           this.options
@@ -703,7 +714,7 @@ class EmitterImpl extends SyntaxRewriter {
       assignmentExpression(
         MemberAccessExpressionSyntax.create1(
           token(SyntaxKind.ThisKeyword),
-          identifier.withTrailingTrivia(Syntax.spaceTriviaList)
+          identifier.withTrailingTrivia(spaceTriviaList)
         ),
         token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
         identifier
@@ -741,7 +752,7 @@ class EmitterImpl extends SyntaxRewriter {
     var block = this.factory
       .block(
         token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.space),
-        list([assignmentStatement]),
+        list([assignmentStatement] as CheckedArray<ExpressionStatementSyntax>),
         token(SyntaxKind.CloseBraceToken)
       )
       .withTrailingTrivia(this.newLine);
@@ -795,12 +806,14 @@ class EmitterImpl extends SyntaxRewriter {
       statements.push.apply(statements, rewritten.block.statements.toArray());
 
       rewritten = rewritten.withBlock(
-        rewritten.block.withStatements(Syntax.list(statements))
+        rewritten.block.withStatements(
+          list(statements as CheckedArray<ISyntaxNodeOrToken>)
+        )
       );
     }
 
     return rewritten
-      .withModifiers(Syntax.emptyList)
+      .withModifiers(emptyList)
       .withLeadingTrivia(rewritten.leadingTrivia());
   }
 
@@ -832,7 +845,7 @@ class EmitterImpl extends SyntaxRewriter {
         ? <IExpressionSyntax>this.withNoTrivia(classDeclaration.identifier)
         : token(SyntaxKind.ThisKeyword),
       this.withNoTrivia(declarator.propertyName)
-    ).withTrailingTrivia(Syntax.spaceTriviaList);
+    ).withTrailingTrivia(spaceTriviaList);
 
     return ExpressionStatementSyntax.create1(
       assignmentExpression(
@@ -840,7 +853,7 @@ class EmitterImpl extends SyntaxRewriter {
         token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
         declarator.equalsValueClause.value
           .accept(this)
-          .withTrailingTrivia(Syntax.emptyTriviaList)
+          .withTrailingTrivia(emptyTriviaList)
       )
     )
       .withLeadingTrivia(memberDeclaration.leadingTrivia())
@@ -932,7 +945,7 @@ class EmitterImpl extends SyntaxRewriter {
       .withBlock(
         this.factory.block(
           token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
-          list(statements),
+          list(statements as CheckedArray<IStatementSyntax>),
           token(SyntaxKind.CloseBraceToken).withLeadingTrivia(indentationTrivia)
         )
       )
@@ -985,7 +998,7 @@ class EmitterImpl extends SyntaxRewriter {
     var normalStatements: IStatementSyntax[] = ArrayUtilities.select<any, any>(
       ArrayUtilities.where(
         allStatements,
-        (s) => !Syntax.isSuperInvocationExpressionStatement(s)
+        (s) => !isSuperInvocationExpressionStatement(s)
       ),
       (s) => s.accept(this)
     );
@@ -1076,7 +1089,11 @@ class EmitterImpl extends SyntaxRewriter {
       identifier,
       CallSignatureSyntax.create(parameterList)
     )
-      .withBlock(block.withStatements(Syntax.list(normalStatements)))
+      .withBlock(
+        block.withStatements(
+          list(normalStatements as CheckedArray<ISyntaxNodeOrToken>)
+        )
+      )
       .withLeadingTrivia(constructorDeclaration.leadingTrivia());
   }
 
@@ -1110,13 +1127,13 @@ class EmitterImpl extends SyntaxRewriter {
 
     receiver = MemberAccessExpressionSyntax.create1(
       receiver,
-      functionIdentifier.withTrailingTrivia(Syntax.spaceTriviaList)
+      functionIdentifier.withTrailingTrivia(spaceTriviaList)
     );
 
     var block: BlockSyntax = functionDeclaration.block.accept(this);
     var blockTrailingTrivia = block.trailingTrivia();
 
-    block = block.withTrailingTrivia(Syntax.emptyTriviaList);
+    block = block.withTrailingTrivia(emptyTriviaList);
 
     var defaultValueAssignments = <IStatementSyntax[]>(
       ArrayUtilities.select(
@@ -1147,7 +1164,7 @@ class EmitterImpl extends SyntaxRewriter {
     );
     if (!callSignatureParameterList.hasTrailingTrivia()) {
       callSignatureParameterList = <ParameterListSyntax>(
-        callSignatureParameterList.withTrailingTrivia(Syntax.spaceTriviaList)
+        callSignatureParameterList.withTrailingTrivia(spaceTriviaList)
       );
     }
 
@@ -1160,7 +1177,7 @@ class EmitterImpl extends SyntaxRewriter {
           .withCallSignature(
             CallSignatureSyntax.create(callSignatureParameterList)
           )
-          .withBlock(block.withStatements(Syntax.list(blockStatements)))
+          .withBlock(block.withStatements(list(blockStatements)))
       )
     ).withTrailingTrivia(blockTrailingTrivia);
   }
@@ -1175,7 +1192,7 @@ class EmitterImpl extends SyntaxRewriter {
       (<any>memberAccessor).parameterList.accept(this)
     );
     if (!parameterList.hasTrailingTrivia()) {
-      parameterList = parameterList.withTrailingTrivia(Syntax.spaceTriviaList);
+      parameterList = parameterList.withTrailingTrivia(spaceTriviaList);
     }
 
     return this.factory
@@ -1187,7 +1204,7 @@ class EmitterImpl extends SyntaxRewriter {
           CallSignatureSyntax.create(parameterList),
           (<any>memberAccessor).block
             .accept(this)
-            .withTrailingTrivia(Syntax.emptyTriviaList)
+            .withTrailingTrivia(emptyTriviaList)
         )
       )
       .withLeadingTrivia(this.indentationTriviaForStartOfNode(memberAccessor));
@@ -1435,8 +1452,8 @@ class EmitterImpl extends SyntaxRewriter {
         invocationParameters.push(
           heritageClause.typeNames
             .nonSeparatorAt(0)
-            .withLeadingTrivia(Syntax.emptyTriviaList)
-            .withTrailingTrivia(Syntax.emptyTriviaList)
+            .withLeadingTrivia(emptyTriviaList)
+            .withTrailingTrivia(emptyTriviaList)
         );
       }
     }
@@ -1455,7 +1472,7 @@ class EmitterImpl extends SyntaxRewriter {
 
     // C = (function(_super) { ... })(BaseType)
     var variableDeclarator = VariableDeclaratorSyntax.create(
-      identifier.withTrailingTrivia(Syntax.spaceTriviaList)
+      identifier.withTrailingTrivia(spaceTriviaList)
     ).withEqualsValueClause(
       this.factory.equalsValueClause(
         token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
@@ -1542,7 +1559,7 @@ class EmitterImpl extends SyntaxRewriter {
       // Use the value if one is provided.
       return enumElement.equalsValueClause.value
         .accept(this)
-        .withTrailingTrivia(Syntax.emptyTriviaList);
+        .withTrailingTrivia(emptyTriviaList);
     }
 
     // Didn't have a value.  Synthesize one if we're doing that, or use the previous item's value
@@ -1575,7 +1592,7 @@ class EmitterImpl extends SyntaxRewriter {
 
     return this.factory.binaryExpression(
       SyntaxKind.PlusExpression,
-      receiver.withTrailingTrivia(Syntax.spaceTriviaList),
+      receiver.withTrailingTrivia(spaceTriviaList),
       token(SyntaxKind.PlusToken).withTrailingTrivia(this.space),
       numericLiteralExpression('1')
     );
@@ -1655,7 +1672,7 @@ class EmitterImpl extends SyntaxRewriter {
 
     var block = this.factory.block(
       token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
-      list(statements),
+      list(statements as CheckedArray<IStatementSyntax>),
       token(SyntaxKind.CloseBraceToken).withLeadingTrivia(
         this.indentationTrivia(enumColumn)
       )
@@ -1722,12 +1739,12 @@ class EmitterImpl extends SyntaxRewriter {
       );
     }
 
-    argumentList.unshift(Syntax.token(SyntaxKind.ThisKeyword));
+    argumentList.unshift(token(SyntaxKind.ThisKeyword));
 
     return result
       .withExpression(expression)
       .withArgumentList(
-        result.argumentList.withArguments(Syntax.separatedList(argumentList))
+        result.argumentList.withArguments(separatedList(argumentList))
       )
       .withLeadingTrivia(result.leadingTrivia());
   }
@@ -1747,7 +1764,7 @@ class EmitterImpl extends SyntaxRewriter {
       );
     }
 
-    argumentList.unshift(Syntax.token(SyntaxKind.ThisKeyword));
+    argumentList.unshift(token(SyntaxKind.ThisKeyword));
 
     var expression = MemberAccessExpressionSyntax.create1(
       result.expression,
@@ -1756,16 +1773,16 @@ class EmitterImpl extends SyntaxRewriter {
     return result
       .withExpression(expression)
       .withArgumentList(
-        result.argumentList.withArguments(Syntax.separatedList(argumentList))
+        result.argumentList.withArguments(separatedList(argumentList))
       );
   }
 
   public visitInvocationExpression(
     node: InvocationExpressionSyntax
   ): InvocationExpressionSyntax {
-    if (Syntax.isSuperInvocationExpression(node)) {
+    if (isSuperInvocationExpression(node)) {
       return this.convertSuperInvocationExpression(node);
-    } else if (Syntax.isSuperMemberAccessInvocationExpression(node)) {
+    } else if (isSuperMemberAccessInvocationExpression(node)) {
       return this.convertSuperMemberAccessInvocationExpression(node);
     }
 
@@ -1778,7 +1795,7 @@ class EmitterImpl extends SyntaxRewriter {
     var result: VariableStatementSyntax = super.visitVariableStatement(node);
 
     return result
-      .withModifiers(Syntax.emptyList)
+      .withModifiers(emptyList)
       .withLeadingTrivia(result.leadingTrivia());
   }
 
@@ -1788,7 +1805,7 @@ class EmitterImpl extends SyntaxRewriter {
     var result: MemberAccessExpressionSyntax =
       super.visitMemberAccessExpression(node);
 
-    if (Syntax.isSuperMemberAccessExpression(result)) {
+    if (isSuperMemberAccessExpression(result)) {
       return MemberAccessExpressionSyntax.create1(
         MemberAccessExpressionSyntax.create1(
           identifierName('_super'),

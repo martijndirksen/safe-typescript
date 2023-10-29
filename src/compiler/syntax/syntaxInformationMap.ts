@@ -1,132 +1,138 @@
+import { ArrayUtilities } from '../core/arrayUtilities';
+import {
+  createHashTable,
+  defaultHashTableCapacity,
+  identityHashCode,
+} from '../core/hashTable';
+import { ISyntaxElement } from './syntaxElement';
+import { SyntaxNode } from './syntaxNode';
+import { ISyntaxToken } from './syntaxToken';
+import { SyntaxWalker } from './syntaxWalker.generated';
 
-  export interface ITokenInformation {
-    previousToken: ISyntaxToken;
-    nextToken: ISyntaxToken;
+export interface ITokenInformation {
+  previousToken: ISyntaxToken;
+  nextToken: ISyntaxToken;
+}
+
+export class SyntaxInformationMap extends SyntaxWalker {
+  private tokenToInformation = createHashTable<any, any>(
+    defaultHashTableCapacity,
+    identityHashCode
+  );
+  private elementToPosition = createHashTable<any, any>(
+    defaultHashTableCapacity,
+    identityHashCode
+  );
+
+  private _previousToken: ISyntaxToken = null;
+  private _previousTokenInformation: ITokenInformation = null;
+  private _currentPosition = 0;
+  private _elementToParent = createHashTable<any, any>(
+    defaultHashTableCapacity,
+    identityHashCode
+  );
+
+  private _parentStack: SyntaxNode[] = [];
+
+  constructor(
+    private trackParents: boolean,
+    private trackPreviousToken: boolean
+  ) {
+    super();
+    this._parentStack.push(null);
   }
 
-  export class SyntaxInformationMap extends SyntaxWalker {
-    private tokenToInformation = Collections.createHashTable<any, any>(
-      Collections.DefaultHashTableCapacity,
-      Collections.identityHashCode
-    );
-    private elementToPosition = Collections.createHashTable<any, any>(
-      Collections.DefaultHashTableCapacity,
-      Collections.identityHashCode
-    );
+  public static create(
+    node: SyntaxNode,
+    trackParents: boolean,
+    trackPreviousToken: boolean
+  ): SyntaxInformationMap {
+    var map = new SyntaxInformationMap(trackParents, trackPreviousToken);
+    map.visitNode(node);
+    return map;
+  }
 
-    private _previousToken: ISyntaxToken = null;
-    private _previousTokenInformation: ITokenInformation = null;
-    private _currentPosition = 0;
-    private _elementToParent = Collections.createHashTable<any, any>(
-      Collections.DefaultHashTableCapacity,
-      Collections.identityHashCode
-    );
+  public visitNode(node: SyntaxNode): void {
+    this.trackParents &&
+      this._elementToParent.add(node, ArrayUtilities.last(this._parentStack));
+    this.elementToPosition.add(node, this._currentPosition);
 
-    private _parentStack: SyntaxNode[] = [];
+    this.trackParents && this._parentStack.push(node);
+    super.visitNode(node);
+    this.trackParents && this._parentStack.pop();
+  }
 
-    constructor(
-      private trackParents: boolean,
-      private trackPreviousToken: boolean
-    ) {
-      super();
-      this._parentStack.push(null);
-    }
+  public visitToken(token: ISyntaxToken): void {
+    this.trackParents &&
+      this._elementToParent.add(token, ArrayUtilities.last(this._parentStack));
 
-    public static create(
-      node: SyntaxNode,
-      trackParents: boolean,
-      trackPreviousToken: boolean
-    ): SyntaxInformationMap {
-      var map = new SyntaxInformationMap(trackParents, trackPreviousToken);
-      map.visitNode(node);
-      return map;
-    }
+    if (this.trackPreviousToken) {
+      var tokenInformation: ITokenInformation = {
+        previousToken: this._previousToken,
+        nextToken: <ISyntaxToken>null,
+      };
 
-    public visitNode(node: SyntaxNode): void {
-      this.trackParents &&
-        this._elementToParent.add(node, ArrayUtilities.last(this._parentStack));
-      this.elementToPosition.add(node, this._currentPosition);
-
-      this.trackParents && this._parentStack.push(node);
-      super.visitNode(node);
-      this.trackParents && this._parentStack.pop();
-    }
-
-    public visitToken(token: ISyntaxToken): void {
-      this.trackParents &&
-        this._elementToParent.add(
-          token,
-          ArrayUtilities.last(this._parentStack)
-        );
-
-      if (this.trackPreviousToken) {
-        var tokenInformation: ITokenInformation = {
-          previousToken: this._previousToken,
-          nextToken: <ISyntaxToken>null,
-        };
-
-        if (this._previousTokenInformation !== null) {
-          this._previousTokenInformation.nextToken = token;
-        }
-
-        this._previousToken = token;
-        this._previousTokenInformation = tokenInformation;
-
-        this.tokenToInformation.add(token, tokenInformation);
+      if (this._previousTokenInformation !== null) {
+        this._previousTokenInformation.nextToken = token;
       }
 
-      this.elementToPosition.add(token, this._currentPosition);
-      this._currentPosition += token.fullWidth();
+      this._previousToken = token;
+      this._previousTokenInformation = tokenInformation;
+
+      this.tokenToInformation.add(token, tokenInformation);
     }
 
-    public parent(element: ISyntaxElement): SyntaxNode {
-      return this._elementToParent.get(element);
-    }
+    this.elementToPosition.add(token, this._currentPosition);
+    this._currentPosition += token.fullWidth();
+  }
 
-    public fullStart(element: ISyntaxElement): number {
-      return this.elementToPosition.get(element);
-    }
+  public parent(element: ISyntaxElement): SyntaxNode {
+    return this._elementToParent.get(element);
+  }
 
-    public start(element: ISyntaxElement): number {
-      return this.fullStart(element) + element.leadingTriviaWidth();
-    }
+  public fullStart(element: ISyntaxElement): number {
+    return this.elementToPosition.get(element);
+  }
 
-    public end(element: ISyntaxElement): number {
-      return this.start(element) + element.width();
-    }
+  public start(element: ISyntaxElement): number {
+    return this.fullStart(element) + element.leadingTriviaWidth();
+  }
 
-    public previousToken(token: ISyntaxToken): ISyntaxToken {
-      return this.tokenInformation(token).previousToken;
-    }
+  public end(element: ISyntaxElement): number {
+    return this.start(element) + element.width();
+  }
 
-    public tokenInformation(token: ISyntaxToken): ITokenInformation {
-      return this.tokenToInformation.get(token);
-    }
+  public previousToken(token: ISyntaxToken): ISyntaxToken {
+    return this.tokenInformation(token).previousToken;
+  }
 
-    public firstTokenInLineContainingToken(token: ISyntaxToken): ISyntaxToken {
-      var current = token;
-      while (true) {
-        var information = this.tokenInformation(current);
-        if (this.isFirstTokenInLineWorker(information)) {
-          break;
-        }
+  public tokenInformation(token: ISyntaxToken): ITokenInformation {
+    return this.tokenToInformation.get(token);
+  }
 
-        current = information.previousToken;
+  public firstTokenInLineContainingToken(token: ISyntaxToken): ISyntaxToken {
+    var current = token;
+    while (true) {
+      var information = this.tokenInformation(current);
+      if (this.isFirstTokenInLineWorker(information)) {
+        break;
       }
 
-      return current;
+      current = information.previousToken;
     }
 
-    public isFirstTokenInLine(token: ISyntaxToken): boolean {
-      var information = this.tokenInformation(token);
-      return this.isFirstTokenInLineWorker(information);
-    }
+    return current;
+  }
 
-    private isFirstTokenInLineWorker(information: ITokenInformation): boolean {
-      return (
-        information.previousToken === null ||
-        information.previousToken.hasTrailingNewLine()
-      );
-    }
+  public isFirstTokenInLine(token: ISyntaxToken): boolean {
+    var information = this.tokenInformation(token);
+    return this.isFirstTokenInLineWorker(information);
+  }
+
+  private isFirstTokenInLineWorker(information: ITokenInformation): boolean {
+    return (
+      information.previousToken === null ||
+      information.previousToken.hasTrailingNewLine()
+    );
   }
 }
