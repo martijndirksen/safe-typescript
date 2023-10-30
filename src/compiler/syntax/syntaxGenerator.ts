@@ -2,6 +2,7 @@ import { ArrayUtilities } from '../core/arrayUtilities';
 import { SyntaxFacts } from './syntaxFacts';
 import { SyntaxKind } from './syntaxKind';
 import { Environment } from '../core/environment';
+import { EOL } from 'os';
 
 // Adds argument checking to the generated nodes.  Argument checking appears to slow things down
 // parsing about 7%.  If we want to get that perf back, we can always remove this.
@@ -3264,11 +3265,12 @@ function generateKeywordCondition(
 }
 
 function generateScannerUtilities(): string {
-  var result =
-    "///<reference path='references.ts' />\r\n" +
-    '\r\n' +
-    '\r\n' +
-    '    export class ScannerUtilities {\r\n';
+  const lines: string[] = [
+    "import { CharacterCodes } from '../text/characterCodes';",
+    "import { SyntaxKind } from './syntaxKind';",
+    '',
+    'export class ScannerUtilities {',
+  ];
 
   var i: number;
   var keywords: { text: string; kind: SyntaxKind }[] = [];
@@ -3277,12 +3279,13 @@ function generateScannerUtilities(): string {
     keywords.push({ kind: i, text: SyntaxFacts.getText(i) });
   }
 
-  result +=
-    '        public static identifierKind(array: number[], startIndex: number, length: number): SyntaxKind {\r\n';
+  lines.push(
+    '        public static identifierKind(array: number[], startIndex: number, length: number): SyntaxKind {'
+  );
 
   var minTokenLength = ArrayUtilities.min(keywords, (k) => k.text.length);
   var maxTokenLength = ArrayUtilities.max(keywords, (k) => k.text.length);
-  result += '            switch (length) {\r\n';
+  lines.push('            switch (length) {');
 
   for (i = minTokenLength; i <= maxTokenLength; i++) {
     var keywordsOfLengthI = ArrayUtilities.where(
@@ -3290,27 +3293,25 @@ function generateScannerUtilities(): string {
       (k) => k.text.length === i
     );
     if (keywordsOfLengthI.length > 0) {
-      result += '            case ' + i + ':\r\n';
-      result +=
+      lines.push(
+        '            case ' + i + ':',
         '                // ' +
-        ArrayUtilities.select(keywordsOfLengthI, (k) => k.text).join(', ') +
-        '\r\n';
-
-      result += generateKeywordCondition(keywordsOfLengthI, 0, '            ');
-
-      // result += "            return SyntaxKind.None;\r\n\r\n";
+          ArrayUtilities.select(keywordsOfLengthI, (k) => k.text).join(', '),
+        generateKeywordCondition(keywordsOfLengthI, 0, '            ')
+      );
     }
   }
 
-  result += '            default:\r\n';
-  result += '                return SyntaxKind.IdentifierName;\r\n';
-  result += '            }\r\n';
-  result += '        }\r\n';
+  lines.push(
+    '            default:',
+    '                return SyntaxKind.IdentifierName;',
+    '            }',
+    '        }',
+    '    }',
+    ''
+  );
 
-  result += '    }\r\n';
-  result += '}';
-
-  return result;
+  return lines.join(EOL);
 }
 
 function generateVisitor(): string {

@@ -585,6 +585,7 @@ export class ScannerUtilities {
           array[startIndex + 10] === CharacterCodes.r
           ? SyntaxKind.ConstructorKeyword
           : SyntaxKind.IdentifierName;
+
       default:
         return SyntaxKind.IdentifierName;
     }
