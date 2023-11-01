@@ -25,6 +25,8 @@
     "url": "https://git01.codeplex.com/typescript"
   },
   "scripts": {
+    "build": "npm-run-all --parallel build:*",
+    "build:typings": "ts-node --esm scripts/copy-typings.mts",
     "build:tsc": "tsc --noEmit src/compiler/tsc.ts && esbuild src/compiler/tsc.ts --bundle --platform=node --outfile=dist/tsc.js",
     "build:rt": "tsc --noEmit src/runtime/rt.ts && esbuild src/runtime/rt.ts --bundle --platform=node --outfile=dist/lib/rt.js",
     "test:build": "ts-node --esm scripts/build-samples.mts && vitest",
@@ -49,6 +51,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "glob": "^10.3.4",
     "jake": "^10.8.7",
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.0.2",
     "rimraf": "^5.0.1",
     "ts-node": "^10.9.1",
