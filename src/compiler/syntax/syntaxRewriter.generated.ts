@@ -8,7 +8,7 @@ import {
   IMemberExpressionSyntax,
   IStatementSyntax,
 } from './syntaxElement';
-import { ISyntaxList } from './syntaxList';
+import { ISyntaxList, list as listFn } from './syntaxList';
 import { SyntaxNode } from './syntaxNode';
 import { ISyntaxNodeOrToken } from './syntaxNodeOrToken';
 import {
@@ -43,6 +43,7 @@ import {
   ParameterListSyntax,
   FunctionTypeSyntax,
   ArrayTypeSyntax,
+  TupleTypeSyntax,
   GenericTypeSyntax,
   TypeQuerySyntax,
   ParameterSyntax,
@@ -99,7 +100,7 @@ import {
   DebuggerStatementSyntax,
 } from './syntaxNodes.generated';
 import { ISyntaxToken } from './syntaxToken';
-import { ISyntaxVisitor, list as listFn } from './syntaxVisitor.generated';
+import { ISyntaxVisitor } from './syntaxVisitor.generated';
 
 export class SyntaxRewriter implements ISyntaxVisitor {
   public visitToken(token: ISyntaxToken): ISyntaxToken {
@@ -408,6 +409,14 @@ export class SyntaxRewriter implements ISyntaxVisitor {
     return node.update(
       <ITypeSyntax>this.visitNodeOrToken(node.type),
       this.visitToken(node.openBracketToken),
+      this.visitToken(node.closeBracketToken)
+    );
+  }
+
+  public visitTupleType(node: TupleTypeSyntax): any {
+    return node.update(
+      this.visitToken(node.openBracketToken),
+      this.visitSeparatedList(node.types),
       this.visitToken(node.closeBracketToken)
     );
   }
