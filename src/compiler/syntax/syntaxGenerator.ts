@@ -3370,102 +3370,243 @@ function generateVisitor(): string {
 }
 
 function generateFactory(): string {
-  var result = '';
+  const lines = [
+    "import { ISeparatedSyntaxList } from './separatedSyntaxList';",
+    'import {',
+    '  INameSyntax,',
+    '  IModuleReferenceSyntax,',
+    '  IExpressionSyntax,',
+    '  IUnaryExpressionSyntax,',
+    '  ITypeSyntax,',
+    '  IMemberExpressionSyntax,',
+    '  IStatementSyntax,',
+    "} from './syntaxElement';",
+    "import { SyntaxKind } from './syntaxKind';",
+    "import { ISyntaxList } from './syntaxList';",
+    'import {',
+    '  SourceUnitSyntax,',
+    '  ExternalModuleReferenceSyntax,',
+    '  ModuleNameModuleReferenceSyntax,',
+    '  ImportDeclarationSyntax,',
+    '  ExportAssignmentSyntax,',
+    '  TypeParameterListSyntax,',
+    '  ClassDeclarationSyntax,',
+    '  ObjectTypeSyntax,',
+    '  InterfaceDeclarationSyntax,',
+    '  HeritageClauseSyntax,',
+    '  ModuleDeclarationSyntax,',
+    '  CallSignatureSyntax,',
+    '  BlockSyntax,',
+    '  FunctionDeclarationSyntax,',
+    '  VariableDeclarationSyntax,',
+    '  VariableStatementSyntax,',
+    '  TypeAnnotationSyntax,',
+    '  EqualsValueClauseSyntax,',
+    '  VariableDeclaratorSyntax,',
+    '  PrefixUnaryExpressionSyntax,',
+    '  ArrayLiteralExpressionSyntax,',
+    '  OmittedExpressionSyntax,',
+    '  ParenthesizedExpressionSyntax,',
+    '  SimpleArrowFunctionExpressionSyntax,',
+    '  ParenthesizedArrowFunctionExpressionSyntax,',
+    '  QualifiedNameSyntax,',
+    '  TypeArgumentListSyntax,',
+    '  ParameterListSyntax,',
+    '  ConstructorTypeSyntax,',
+    '  FunctionTypeSyntax,',
+    '  ArrayTypeSyntax,',
+    '  TupleTypeSyntax,',
+    '  GenericTypeSyntax,',
+    '  TypeQuerySyntax,',
+    '  ParameterSyntax,',
+    '  MemberAccessExpressionSyntax,',
+    '  PostfixUnaryExpressionSyntax,',
+    '  ElementAccessExpressionSyntax,',
+    '  ArgumentListSyntax,',
+    '  InvocationExpressionSyntax,',
+    '  BinaryExpressionSyntax,',
+    '  ConditionalExpressionSyntax,',
+    '  ConstructSignatureSyntax,',
+    '  MethodSignatureSyntax,',
+    '  IndexSignatureSyntax,',
+    '  PropertySignatureSyntax,',
+    '  ConstraintSyntax,',
+    '  TypeParameterSyntax,',
+    '  ElseClauseSyntax,',
+    '  IfStatementSyntax,',
+    '  ExpressionStatementSyntax,',
+    '  ConstructorDeclarationSyntax,',
+    '  MemberFunctionDeclarationSyntax,',
+    '  GetAccessorSyntax,',
+    '  SetAccessorSyntax,',
+    '  MemberVariableDeclarationSyntax,',
+    '  IndexMemberDeclarationSyntax,',
+    '  ThrowStatementSyntax,',
+    '  ReturnStatementSyntax,',
+    '  ObjectCreationExpressionSyntax,',
+    '  SwitchStatementSyntax,',
+    '  CaseSwitchClauseSyntax,',
+    '  DefaultSwitchClauseSyntax,',
+    '  BreakStatementSyntax,',
+    '  ContinueStatementSyntax,',
+    '  ForStatementSyntax,',
+    '  ForInStatementSyntax,',
+    '  WhileStatementSyntax,',
+    '  WithStatementSyntax,',
+    '  EnumDeclarationSyntax,',
+    '  EnumElementSyntax,',
+    '  CastExpressionSyntax,',
+    '  ObjectLiteralExpressionSyntax,',
+    '  SimplePropertyAssignmentSyntax,',
+    '  FunctionPropertyAssignmentSyntax,',
+    '  FunctionExpressionSyntax,',
+    '  EmptyStatementSyntax,',
+    '  CatchClauseSyntax,',
+    '  FinallyClauseSyntax,',
+    '  TryStatementSyntax,',
+    '  LabeledStatementSyntax,',
+    '  DoStatementSyntax,',
+    '  TypeOfExpressionSyntax,',
+    '  DeleteExpressionSyntax,',
+    '  VoidExpressionSyntax,',
+    '  DebuggerStatementSyntax,',
+    "} from './syntaxNodes.generated';",
+    "import { ISyntaxToken } from './syntaxToken';",
+    '',
+  ];
 
-  result += '    export interface IFactory {\r\n';
+  lines.push('export interface IFactory {');
 
-  var i: number;
-  var j: number;
-  var definition: ITypeDefinition;
-  var child: IMemberDefinition;
+  for (const definition of definitions) {
+    const typeDefs = definition.children
+      .map((x) => `${x.name}: ${getType(x)}`)
+      .join(', ');
 
-  for (i = 0; i < definitions.length; i++) {
-    definition = definitions[i];
-    result += '        ' + camelCase(getNameWithoutSuffix(definition)) + '(';
-
-    for (j = 0; j < definition.children.length; j++) {
-      if (j > 0) {
-        result += ', ';
-      }
-
-      child = definition.children[j];
-      result += child.name + ': ' + getType(child);
-    }
-
-    result += '): ' + definition.name + ';\r\n';
+    lines.push(
+      `        ${camelCase(getNameWithoutSuffix(definition))}(${typeDefs}): ${
+        definition.name
+      };`
+    );
   }
 
-  result += '    }\r\n\r\n';
+  lines.push('}', '', 'export class NormalModeFactory implements IFactory {');
+
+  for (const definition of definitions) {
+    const typeDefs = definition.children
+      .map((x) => `${x.name}: ${getType(x)}`)
+      .join(', ');
+
+    lines.push(
+      `  ${camelCase(getNameWithoutSuffix(definition))}(${typeDefs}): ${
+        definition.name
+      } {`
+    );
+
+    const args = [
+      ...definition.children.map((x) => x.name),
+      '/*parsedInStrictMode:*/ false',
+    ].join(', ');
+
+    lines.push(`    return new ${definition.name}(${args});`, '  }');
+  }
+
+  lines.push('}', '', 'export class StrictModeFactory implements IFactory {');
+
+  for (const definition of definitions) {
+    const typeDefs = definition.children
+      .map((x) => `${getSafeName(x)}: ${getType(x)}`)
+      .join(', ');
+
+    lines.push(
+      `  ${camelCase(getNameWithoutSuffix(definition))}(${typeDefs}): ${
+        definition.name
+      } {`
+    );
+
+    const args = [
+      ...definition.children.map((x) => getSafeName(x)),
+      '/*parsedInStrictMode:*/ true',
+    ].join(', ');
+
+    lines.push(`    return new ${definition.name}(${args});`, '  }');
+  }
+
+  lines.push(
+    '}',
+    '',
+    'export const normalModeFactory: IFactory = new NormalModeFactory();',
+    'export const strictModeFactory: IFactory = new StrictModeFactory();'
+  );
+
+  return lines.join(EOL);
+
+  // for (i = 0; i < definitions.length; i++) {
+  //   definition = definitions[i];
+
+  //   result += '        ' + camelCase(getNameWithoutSuffix(definition)) + '(';
+
+  //   for (j = 0; j < definition.children.length; j++) {
+  //     if (j > 0) {
+  //       result += ', ';
+  //     }
+
+  //     child = definition.children[j];
+  //     result += getSafeName(child) + ': ' + getType(child);
+  //   }
+
+  //   result += '): ' + definition.name + ' {\r\n';
+  //   result += '            return new ' + definition.name + '(';
+
+  //   for (j = 0; j < definition.children.length; j++) {
+  //     child = definition.children[j];
+  //     result += getSafeName(child);
+  //     result += ', ';
+  //   }
+
+  //   result += '/*parsedInStrictMode:*/ false);\r\n';
+  //   result += '        }\r\n';
+  // }
+
+  // result += '    }\r\n\r\n';
 
   // TODO: stop exporting these once compiler bugs are fixed.
-  result += '    export class NormalModeFactory implements IFactory {\r\n';
+  // result += '    export class StrictModeFactory implements IFactory {\r\n';
 
-  for (i = 0; i < definitions.length; i++) {
-    definition = definitions[i];
-    result += '        ' + camelCase(getNameWithoutSuffix(definition)) + '(';
+  // for (i = 0; i < definitions.length; i++) {
+  //   definition = definitions[i];
+  //   result += '        ' + camelCase(getNameWithoutSuffix(definition)) + '(';
 
-    for (j = 0; j < definition.children.length; j++) {
-      if (j > 0) {
-        result += ', ';
-      }
+  //   for (j = 0; j < definition.children.length; j++) {
+  //     if (j > 0) {
+  //       result += ', ';
+  //     }
 
-      child = definition.children[j];
-      result += getSafeName(child) + ': ' + getType(child);
-    }
+  //     child = definition.children[j];
+  //     result += getSafeName(child) + ': ' + getType(child);
+  //   }
 
-    result += '): ' + definition.name + ' {\r\n';
-    result += '            return new ' + definition.name + '(';
+  //   result += '): ' + definition.name + ' {\r\n';
+  //   result += '            return new ' + definition.name + '(';
 
-    for (j = 0; j < definition.children.length; j++) {
-      child = definition.children[j];
-      result += getSafeName(child);
-      result += ', ';
-    }
+  //   for (j = 0; j < definition.children.length; j++) {
+  //     child = definition.children[j];
+  //     result += getSafeName(child);
+  //     result += ', ';
+  //   }
 
-    result += '/*parsedInStrictMode:*/ false);\r\n';
-    result += '        }\r\n';
-  }
+  //   result += '/*parsedInStrictMode:*/ true);\r\n';
 
-  result += '    }\r\n\r\n';
+  //   result += '        }\r\n';
+  // }
 
-  // TODO: stop exporting these once compiler bugs are fixed.
-  result += '    export class StrictModeFactory implements IFactory {\r\n';
+  // result += '    }\r\n\r\n';
 
-  for (i = 0; i < definitions.length; i++) {
-    definition = definitions[i];
-    result += '        ' + camelCase(getNameWithoutSuffix(definition)) + '(';
+  // result +=
+  //   '    export const normalModeFactory: IFactory = new NormalModeFactory();\r\n';
+  // result +=
+  //   '    export const strictModeFactory: IFactory = new StrictModeFactory();\r\n';
 
-    for (j = 0; j < definition.children.length; j++) {
-      if (j > 0) {
-        result += ', ';
-      }
-
-      child = definition.children[j];
-      result += getSafeName(child) + ': ' + getType(child);
-    }
-
-    result += '): ' + definition.name + ' {\r\n';
-    result += '            return new ' + definition.name + '(';
-
-    for (j = 0; j < definition.children.length; j++) {
-      child = definition.children[j];
-      result += getSafeName(child);
-      result += ', ';
-    }
-
-    result += '/*parsedInStrictMode:*/ true);\r\n';
-
-    result += '        }\r\n';
-  }
-
-  result += '    }\r\n\r\n';
-
-  result +=
-    '    export var normalModeFactory: IFactory = new NormalModeFactory();\r\n';
-  result +=
-    '    export var strictModeFactory: IFactory = new StrictModeFactory();\r\n';
-
-  return result;
+  // return result;
 }
 
 var syntaxNodes = generateNodes();

@@ -42,6 +42,7 @@ import {
   ConstructorTypeSyntax,
   FunctionTypeSyntax,
   ArrayTypeSyntax,
+  TupleTypeSyntax,
   GenericTypeSyntax,
   TypeQuerySyntax,
   ParameterSyntax,
@@ -246,6 +247,11 @@ export interface IFactory {
     openBracketToken: ISyntaxToken,
     closeBracketToken: ISyntaxToken
   ): ArrayTypeSyntax;
+  tupleType(
+    openBracketToken: ISyntaxToken,
+    types: ISeparatedSyntaxList,
+    closeBracketToken: ISyntaxToken
+  ): TupleTypeSyntax;
   genericType(
     name: INameSyntax,
     typeArgumentList: TypeArgumentListSyntax
@@ -913,6 +919,18 @@ export class NormalModeFactory implements IFactory {
     return new ArrayTypeSyntax(
       type,
       openBracketToken,
+      closeBracketToken,
+      /*parsedInStrictMode:*/ false
+    );
+  }
+  tupleType(
+    openBracketToken: ISyntaxToken,
+    types: ISeparatedSyntaxList,
+    closeBracketToken: ISyntaxToken
+  ): TupleTypeSyntax {
+    return new TupleTypeSyntax(
+      openBracketToken,
+      types,
       closeBracketToken,
       /*parsedInStrictMode:*/ false
     );
@@ -2042,6 +2060,18 @@ export class StrictModeFactory implements IFactory {
       /*parsedInStrictMode:*/ true
     );
   }
+  tupleType(
+    openBracketToken: ISyntaxToken,
+    types: ISeparatedSyntaxList,
+    closeBracketToken: ISyntaxToken
+  ): TupleTypeSyntax {
+    return new TupleTypeSyntax(
+      openBracketToken,
+      types,
+      closeBracketToken,
+      /*parsedInStrictMode:*/ true
+    );
+  }
   genericType(
     name: INameSyntax,
     typeArgumentList: TypeArgumentListSyntax
@@ -2823,5 +2853,5 @@ export class StrictModeFactory implements IFactory {
   }
 }
 
-export var normalModeFactory: IFactory = new NormalModeFactory();
-export var strictModeFactory: IFactory = new StrictModeFactory();
+export const normalModeFactory: IFactory = new NormalModeFactory();
+export const strictModeFactory: IFactory = new StrictModeFactory();
