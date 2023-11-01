@@ -26,6 +26,7 @@ import {
   FunctionTypeSyntax,
   ObjectTypeSyntax,
   ArrayTypeSyntax,
+  TupleTypeSyntax,
   GenericTypeSyntax,
   TypeQuerySyntax,
   TypeAnnotationSyntax,
@@ -120,6 +121,7 @@ export interface ISyntaxVisitor {
   visitFunctionType(node: FunctionTypeSyntax): any;
   visitObjectType(node: ObjectTypeSyntax): any;
   visitArrayType(node: ArrayTypeSyntax): any;
+  visitTupleType(node: TupleTypeSyntax): any;
   visitGenericType(node: GenericTypeSyntax): any;
   visitTypeQuery(node: TypeQuerySyntax): any;
   visitTypeAnnotation(node: TypeAnnotationSyntax): any;
@@ -301,6 +303,10 @@ export class SyntaxVisitor implements ISyntaxVisitor {
   }
 
   public visitArrayType(node: ArrayTypeSyntax): any {
+    return this.defaultVisit(node);
+  }
+
+  public visitTupleType(node: TupleTypeSyntax): any {
     return this.defaultVisit(node);
   }
 

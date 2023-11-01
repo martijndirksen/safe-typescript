@@ -3046,7 +3046,28 @@ function generateToken(
 }
 
 function generateTokens(): string {
-  var result = '';
+  const imports = [
+    "import { Errors } from '../core/errors';",
+    "import { ISimpleText } from '../text/text';",
+    "import { SyntaxConstants } from './constants';",
+    "import { PositionedElement, PositionedToken } from './positionedElement';",
+    "import { Scanner } from './scanner';",
+    "import { ISyntaxElement } from './syntaxElement';",
+    "import { SyntaxFacts } from './syntaxFacts';",
+    "import { SyntaxKind } from './syntaxKind';",
+    'import {',
+    '  ISyntaxToken,',
+    '  value,',
+    '  valueText,',
+    '  tokenToJSON,',
+    '  realizeToken,',
+    '  isExpression,',
+    "} from './syntaxToken';",
+    "import { ISyntaxTriviaList, emptyTriviaList } from './syntaxTriviaList';",
+    "import { ISyntaxVisitor } from './syntaxVisitor.generated';",
+  ];
+
+  var result = `${imports.join(EOL)}${EOL}${EOL}`;
 
   result += generateToken(
     /*isFixedWidth:*/ false,
@@ -3178,7 +3199,104 @@ function generateTokens(): string {
 }
 
 function generateWalker(): string {
-  var result = '';
+  const imports = [
+    "import { ISeparatedSyntaxList } from './separatedSyntaxList';",
+    "import { ISyntaxList } from './syntaxList';",
+    "import { SyntaxNode } from './syntaxNode';",
+    "import { ISyntaxNodeOrToken } from './syntaxNodeOrToken';",
+    'import {',
+    '  SourceUnitSyntax,',
+    '  ExternalModuleReferenceSyntax,',
+    '  ModuleNameModuleReferenceSyntax,',
+    '  ImportDeclarationSyntax,',
+    '  ExportAssignmentSyntax,',
+    '  ClassDeclarationSyntax,',
+    '  InterfaceDeclarationSyntax,',
+    '  HeritageClauseSyntax,',
+    '  ModuleDeclarationSyntax,',
+    '  FunctionDeclarationSyntax,',
+    '  VariableStatementSyntax,',
+    '  VariableDeclarationSyntax,',
+    '  VariableDeclaratorSyntax,',
+    '  EqualsValueClauseSyntax,',
+    '  PrefixUnaryExpressionSyntax,',
+    '  ArrayLiteralExpressionSyntax,',
+    '  OmittedExpressionSyntax,',
+    '  ParenthesizedExpressionSyntax,',
+    '  SimpleArrowFunctionExpressionSyntax,',
+    '  ParenthesizedArrowFunctionExpressionSyntax,',
+    '  QualifiedNameSyntax,',
+    '  TypeArgumentListSyntax,',
+    '  ConstructorTypeSyntax,',
+    '  FunctionTypeSyntax,',
+    '  ObjectTypeSyntax,',
+    '  ArrayTypeSyntax,',
+    '  TupleTypeSyntax,',
+    '  GenericTypeSyntax,',
+    '  TypeQuerySyntax,',
+    '  TypeAnnotationSyntax,',
+    '  BlockSyntax,',
+    '  ParameterSyntax,',
+    '  MemberAccessExpressionSyntax,',
+    '  PostfixUnaryExpressionSyntax,',
+    '  ElementAccessExpressionSyntax,',
+    '  InvocationExpressionSyntax,',
+    '  ArgumentListSyntax,',
+    '  BinaryExpressionSyntax,',
+    '  ConditionalExpressionSyntax,',
+    '  ConstructSignatureSyntax,',
+    '  MethodSignatureSyntax,',
+    '  IndexSignatureSyntax,',
+    '  PropertySignatureSyntax,',
+    '  CallSignatureSyntax,',
+    '  ParameterListSyntax,',
+    '  TypeParameterListSyntax,',
+    '  TypeParameterSyntax,',
+    '  ConstraintSyntax,',
+    '  ElseClauseSyntax,',
+    '  IfStatementSyntax,',
+    '  ExpressionStatementSyntax,',
+    '  ConstructorDeclarationSyntax,',
+    '  MemberFunctionDeclarationSyntax,',
+    '  GetAccessorSyntax,',
+    '  SetAccessorSyntax,',
+    '  MemberVariableDeclarationSyntax,',
+    '  IndexMemberDeclarationSyntax,',
+    '  ThrowStatementSyntax,',
+    '  ReturnStatementSyntax,',
+    '  ObjectCreationExpressionSyntax,',
+    '  SwitchStatementSyntax,',
+    '  CaseSwitchClauseSyntax,',
+    '  DefaultSwitchClauseSyntax,',
+    '  BreakStatementSyntax,',
+    '  ContinueStatementSyntax,',
+    '  ForStatementSyntax,',
+    '  ForInStatementSyntax,',
+    '  WhileStatementSyntax,',
+    '  WithStatementSyntax,',
+    '  EnumDeclarationSyntax,',
+    '  EnumElementSyntax,',
+    '  CastExpressionSyntax,',
+    '  ObjectLiteralExpressionSyntax,',
+    '  SimplePropertyAssignmentSyntax,',
+    '  FunctionPropertyAssignmentSyntax,',
+    '  FunctionExpressionSyntax,',
+    '  EmptyStatementSyntax,',
+    '  TryStatementSyntax,',
+    '  CatchClauseSyntax,',
+    '  FinallyClauseSyntax,',
+    '  LabeledStatementSyntax,',
+    '  DoStatementSyntax,',
+    '  TypeOfExpressionSyntax,',
+    '  DeleteExpressionSyntax,',
+    '  VoidExpressionSyntax,',
+    '  DebuggerStatementSyntax,',
+    "} from './syntaxNodes.generated';",
+    "import { ISyntaxToken } from './syntaxToken';",
+    "import { ISyntaxVisitor } from './syntaxVisitor.generated';",
+  ];
+
+  var result = `${imports.join(EOL)}${EOL}${EOL}`;
 
   result +=
     '    export class SyntaxWalker implements ISyntaxVisitor {\r\n' +
@@ -3285,7 +3403,7 @@ function generateWalker(): string {
   }
 
   result += '    }';
-  result += '\r\n}';
+  result += '\r\n';
   return result;
 }
 
@@ -3426,9 +3544,102 @@ function generateScannerUtilities(): string {
 function generateVisitor(): string {
   var i: number;
   var definition: ITypeDefinition;
-  var result = '';
 
-  result += "///<reference path='references.ts' />\r\n\r\n";
+  const imports = [
+    "import { ISyntaxNodeOrToken } from './syntaxNodeOrToken';",
+    'import {',
+    '  SourceUnitSyntax,',
+    '  ExternalModuleReferenceSyntax,',
+    '  ModuleNameModuleReferenceSyntax,',
+    '  ImportDeclarationSyntax,',
+    '  ExportAssignmentSyntax,',
+    '  ClassDeclarationSyntax,',
+    '  InterfaceDeclarationSyntax,',
+    '  HeritageClauseSyntax,',
+    '  ModuleDeclarationSyntax,',
+    '  FunctionDeclarationSyntax,',
+    '  VariableStatementSyntax,',
+    '  VariableDeclarationSyntax,',
+    '  VariableDeclaratorSyntax,',
+    '  EqualsValueClauseSyntax,',
+    '  PrefixUnaryExpressionSyntax,',
+    '  ArrayLiteralExpressionSyntax,',
+    '  OmittedExpressionSyntax,',
+    '  ParenthesizedExpressionSyntax,',
+    '  SimpleArrowFunctionExpressionSyntax,',
+    '  ParenthesizedArrowFunctionExpressionSyntax,',
+    '  QualifiedNameSyntax,',
+    '  TypeArgumentListSyntax,',
+    '  ConstructorTypeSyntax,',
+    '  FunctionTypeSyntax,',
+    '  ObjectTypeSyntax,',
+    '  ArrayTypeSyntax,',
+    '  TupleTypeSyntax,',
+    '  GenericTypeSyntax,',
+    '  TypeQuerySyntax,',
+    '  TypeAnnotationSyntax,',
+    '  BlockSyntax,',
+    '  ParameterSyntax,',
+    '  MemberAccessExpressionSyntax,',
+    '  PostfixUnaryExpressionSyntax,',
+    '  ElementAccessExpressionSyntax,',
+    '  InvocationExpressionSyntax,',
+    '  ArgumentListSyntax,',
+    '  BinaryExpressionSyntax,',
+    '  ConditionalExpressionSyntax,',
+    '  ConstructSignatureSyntax,',
+    '  MethodSignatureSyntax,',
+    '  IndexSignatureSyntax,',
+    '  PropertySignatureSyntax,',
+    '  CallSignatureSyntax,',
+    '  ParameterListSyntax,',
+    '  TypeParameterListSyntax,',
+    '  TypeParameterSyntax,',
+    '  ConstraintSyntax,',
+    '  ElseClauseSyntax,',
+    '  IfStatementSyntax,',
+    '  ExpressionStatementSyntax,',
+    '  ConstructorDeclarationSyntax,',
+    '  MemberFunctionDeclarationSyntax,',
+    '  GetAccessorSyntax,',
+    '  SetAccessorSyntax,',
+    '  MemberVariableDeclarationSyntax,',
+    '  IndexMemberDeclarationSyntax,',
+    '  ThrowStatementSyntax,',
+    '  ReturnStatementSyntax,',
+    '  ObjectCreationExpressionSyntax,',
+    '  SwitchStatementSyntax,',
+    '  CaseSwitchClauseSyntax,',
+    '  DefaultSwitchClauseSyntax,',
+    '  BreakStatementSyntax,',
+    '  ContinueStatementSyntax,',
+    '  ForStatementSyntax,',
+    '  ForInStatementSyntax,',
+    '  WhileStatementSyntax,',
+    '  WithStatementSyntax,',
+    '  EnumDeclarationSyntax,',
+    '  EnumElementSyntax,',
+    '  CastExpressionSyntax,',
+    '  ObjectLiteralExpressionSyntax,',
+    '  SimplePropertyAssignmentSyntax,',
+    '  FunctionPropertyAssignmentSyntax,',
+    '  FunctionExpressionSyntax,',
+    '  EmptyStatementSyntax,',
+    '  TryStatementSyntax,',
+    '  CatchClauseSyntax,',
+    '  FinallyClauseSyntax,',
+    '  LabeledStatementSyntax,',
+    '  DoStatementSyntax,',
+    '  TypeOfExpressionSyntax,',
+    '  DeleteExpressionSyntax,',
+    '  VoidExpressionSyntax,',
+    '  DebuggerStatementSyntax,',
+    "} from './syntaxNodes.generated';",
+    "import { ISyntaxToken } from './syntaxToken';",
+    '',
+  ];
+
+  var result = `${imports.join(EOL)}`;
 
   result += '\r\n';
   result += '    export interface ISyntaxVisitor {\r\n';
@@ -3473,7 +3684,7 @@ function generateVisitor(): string {
     result += '    }';
   }
 
-  result += '\r\n}';
+  result += '\r\n';
 
   return result;
 }

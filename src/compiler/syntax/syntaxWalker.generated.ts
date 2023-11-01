@@ -29,6 +29,7 @@ import {
   FunctionTypeSyntax,
   ObjectTypeSyntax,
   ArrayTypeSyntax,
+  TupleTypeSyntax,
   GenericTypeSyntax,
   TypeQuerySyntax,
   TypeAnnotationSyntax,
@@ -321,6 +322,12 @@ export class SyntaxWalker implements ISyntaxVisitor {
   public visitArrayType(node: ArrayTypeSyntax): void {
     this.visitNodeOrToken(node.type);
     this.visitToken(node.openBracketToken);
+    this.visitToken(node.closeBracketToken);
+  }
+
+  public visitTupleType(node: TupleTypeSyntax): void {
+    this.visitToken(node.openBracketToken);
+    this.visitSeparatedList(node.types);
     this.visitToken(node.closeBracketToken);
   }
 
