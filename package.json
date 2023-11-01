@@ -26,6 +26,8 @@
   },
   "scripts": {
     "build": "ts-node --esm scripts/build.mts",
+    "build:typescript": "esbuild src/compiler/typescript.ts --bundle --platform=node --outfile=dist/typescript.js",
+    "build:tsc": "tsc --noEmit src/compiler/tsc.ts && esbuild src/compiler/tsc.ts --bundle --platform=node --outfile=dist/tsc.js",
     "test:build": "ts-node --esm scripts/build-samples.mts && vitest",
     "test:watch": "vitest",
     "tsc": "tsc",
@@ -43,6 +45,7 @@
     "@types/node": "^18.17.18",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
+    "esbuild": "^0.19.5",
     "eslint": "^8.47.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",

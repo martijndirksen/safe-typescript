@@ -88,10 +88,11 @@ const baseCompilerOptions: ts.CompilerOptions = {
   await cleanDistDirectory();
   await createDistDirectory();
   await buildProgram({
-    globPattern: [compilerGlob],
+    globPattern: [`src/compiler/typescript.ts`],
     ignore: ignoredCompilerSources,
     compilerOptions: {
       ...baseCompilerOptions,
+      module: ts.ModuleKind.System,
       outFile: join(distPath, 'typescript.js'),
       skipLibCheck: true,
     },

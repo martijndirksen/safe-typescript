@@ -287,6 +287,7 @@ export var IO = (function () {
           _path.dirname(_fs.realpathSync(fileName))
         );
         // TODO: MD, what is this?
+        // @ts-expect-error _compiler does not exist on main
         require.main._compile(source, fileName);
       },
       getExecutingFilePath() {

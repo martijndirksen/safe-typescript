@@ -41,7 +41,6 @@ export class TUVar extends SoundType {
     }
     return this;
   }
-  // @ts-expect-error implicit any
   public equals(u: SoundType) {
     if (this.isResolved()) {
       return this.resolved.equals(u);
@@ -476,7 +475,7 @@ export class StructuredType extends SoundType {
   public addType(n: string, t: SoundType, ast: AST = null) {
     if (this.typesMap[n]) {
       throw new Error(
-        // @ts-expect-error any
+        // @ts-ignore
         'Type ' + n + ' is already defined in module ' + this['name']
       );
     }
@@ -533,7 +532,7 @@ export class StructuredType extends SoundType {
     types.forEach((t) => skel.addType(t.fst.name, t.fst, t.snd));
     return skel;
   }
-  // @ts-expect-error any
+  // @ts-ignore
   public removeExtraneousFields() {
     if (this.indexSignature() && this instanceof TRecord) {
       var t = new TRecord([]);
@@ -698,6 +697,7 @@ export class TRecord extends StructuredType {
         return false;
     }
   }
+  // @ts-ignore
   public subst(s: Pair<TVar, SoundType>[], descend: boolean) {
     return this.substBase(s, new TRecord([], []), descend);
   }
@@ -911,6 +911,7 @@ export class TModule extends NamedType {
   public callSignature(): SoundType {
     return null;
   }
+  // @ts-ignore
   public subst(s: Pair<TVar, SoundType>[], descend: boolean) {
     if (descend) {
       var skel = new TModule(this.name);
@@ -938,6 +939,7 @@ export class TEnum extends NamedType {
   public unFree(): boolean {
     return true;
   }
+  // @ts-ignore
   public subst(s: Pair<TVar, SoundType>[], descend: boolean) {
     if (descend) {
       var skel = new TEnum(this.name, this.elements);
@@ -986,6 +988,7 @@ export class TObject extends NamedType {
       MkAST.stringConst(this.name),
     ]);
   }
+  // @ts-ignore
   public subst(s: Pair<TVar, SoundType>[], descend: boolean) {
     if (descend) {
       var skel = new TObject(this.name);
@@ -1071,10 +1074,12 @@ export class TInterface extends NamedType {
       ]);
     }
   }
+  // @ts-ignore
   public subst(s: Pair<TVar, SoundType>[], descend: boolean): SoundType {
     if (descend) {
       var skel = new TInterface(this.name);
       skel.virtual = this.virtual;
+      // @ts-ignore
       return this.substBase(s, skel, false);
     }
     return this;
@@ -1118,6 +1123,7 @@ export class TClass extends NamedType {
         );
     }
   }
+  // @ts-ignore
   public subst(s: Pair<TVar, SoundType>[], descend: boolean) {
     if (descend) {
       var skel = new TClass(this.name);
@@ -1145,6 +1151,7 @@ export class TVar extends SoundType {
   public equals(t: SoundType) {
     return t.typeName === this.typeName && (<TVar>t).name === this.name;
   }
+  // @ts-ignore
   public subst(s: Pair<TVar, SoundType>[], descend: boolean) {
     var found = s.filter((xt) => xt.fst.name === this.name);
     if (found && found.length >= 1) {
@@ -1203,6 +1210,7 @@ export class TPoly extends SoundType {
     }
     return null;
   }
+  // @ts-ignore
   public subst(s: Pair<TVar, SoundType>[], descend: boolean): SoundType {
     var t = this.resolveStub();
     if (t) {
@@ -1282,6 +1290,7 @@ export class TInst extends SoundType {
       }
     }
   }
+  // @ts-ignore
   public unfold() {
     var t = this.t1.instantiate(this.args, true);
     if (t.typeName === TypeName.Inst) {
@@ -1290,6 +1299,7 @@ export class TInst extends SoundType {
     t.instantiated = true;
     return t;
   }
+  // @ts-ignore
   public subst(s: Pair<TVar, SoundType>[], descend: boolean) {
     return new TInst(
       <TPoly>this.t1.subst(s, false),

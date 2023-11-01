@@ -22,10 +22,6 @@ import { MemberName, MemberNameArray } from '../types';
 import { PullDecl } from './pullDecls';
 import { PullElementKind, PullElementFlags } from './pullFlags';
 import { PullHelpers } from './pullHelpers';
-import {
-  PullTypeReferenceSymbol,
-  GenerativeTypeClassification,
-} from './pullTypeInstantiation';
 import { PullTypeResolver } from './pullTypeResolution';
 import { CandidateInferenceInfo } from './pullTypeResolutionContext';
 
@@ -35,6 +31,13 @@ export var sentinelEmptyArray: any[] = [];
 
 export function resetPullSymbolID() {
   pullSymbolID = 0;
+}
+
+export enum GenerativeTypeClassification {
+  Unknown,
+  Open,
+  Closed,
+  InfinitelyExpanding,
 }
 
 export class PullSymbol {
@@ -1875,7 +1878,7 @@ export class PullTypeSymbol extends PullSymbol {
   public inSymbolPrivacyCheck = false;
   public inWrapCheck = false;
 
-  public typeReference: PullTypeReferenceSymbol = null;
+  public typeReference: PullTypeSymbol = null;
 
   constructor(name: string, kind: PullElementKind) {
     super(name, kind);

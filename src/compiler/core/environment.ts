@@ -1,9 +1,17 @@
-import fs from 'node:fs';
+import {
+  readFileSync as nodeReadFileSync,
+  statSync as nodeStatSync,
+  mkdirSync as nodeMkdirSync,
+  openSync as nodeOpenSync,
+  writeSync as nodeWriteSync,
+  closeSync as nodeCloseSync,
+  existsSync as nodeExistsSync,
+  unlinkSync as nodeUnlinkSync,
+  readdirSync as nodeReaddirSync,
+} from 'node:fs';
 import { dirname } from 'node:path';
 import { EOL } from 'node:os';
 import { IOUtils } from '../io';
-import { DiagnosticCode } from '../resources/diagnosticCode.generated';
-import { getDiagnosticMessage } from './diagnosticCore';
 
 declare var Buffer: {
   new (str: string, encoding?: string): any;
@@ -56,7 +64,7 @@ export const Environment: IEnvironment = {
   },
 
   readFile(file: string): FileInformation {
-    var buffer = fs.readFileSync(file);
+    var buffer = nodeReadFileSync(file);
     switch (buffer[0]) {
       case 0xfe:
         if (buffer[1] === 0xff) {
@@ -100,14 +108,14 @@ export const Environment: IEnvironment = {
 
   writeFile(path: string, contents: string, writeByteOrderMark: boolean) {
     function mkdirRecursiveSync(dir: string) {
-      var stats = fs.statSync(dir);
+      var stats = nodeStatSync(dir);
       if (stats.isFile()) {
         throw '"' + dir + '" exists but isn\'t a directory.';
       } else if (stats.isDirectory()) {
         return;
       } else {
         mkdirRecursiveSync(dirname(dir));
-        fs.mkdirSync(dir, 509 /*775 in octal*/);
+        nodeMkdirSync(dir, 509 /*775 in octal*/);
       }
     }
 
@@ -118,7 +126,7 @@ export const Environment: IEnvironment = {
     }
 
     var chunkLength = 4 * 1024;
-    var fileDescriptor = fs.openSync(path, 'w');
+    var fileDescriptor = nodeOpenSync(path, 'w');
     try {
       for (var index = 0; index < contents.length; index += chunkLength) {
         var buffer = new Buffer(
@@ -126,25 +134,25 @@ export const Environment: IEnvironment = {
           'utf8'
         );
 
-        fs.writeSync(fileDescriptor, buffer, 0, buffer.length, null);
+        nodeWriteSync(fileDescriptor, buffer, 0, buffer.length, null);
       }
     } finally {
-      fs.closeSync(fileDescriptor);
+      nodeCloseSync(fileDescriptor);
     }
   },
 
   fileExists(path: string): boolean {
-    return fs.existsSync(path);
+    return nodeExistsSync(path);
   },
 
   deleteFile(path: string) {
     try {
-      fs.unlinkSync(path);
+      nodeUnlinkSync(path);
     } catch (e) {}
   },
 
   directoryExists(path: string): boolean {
-    return fs.existsSync(path) && fs.statSync(path).isDirectory();
+    return nodeExistsSync(path) && nodeStatSync(path).isDirectory();
   },
 
   listFiles(
@@ -155,9 +163,9 @@ export const Environment: IEnvironment = {
     function filesInFolder(folder: string): string[] {
       var paths: string[] = [];
 
-      var files = fs.readdirSync(folder);
+      var files = nodeReaddirSync(folder);
       for (var i = 0; i < files.length; i++) {
-        var stat = fs.statSync(folder + '\\' + files[i]);
+        var stat = nodeStatSync(folder + '\\' + files[i]);
         if (options?.recursive && stat.isDirectory()) {
           paths = paths.concat(filesInFolder(folder + '\\' + files[i]));
         } else if (stat.isFile() && (!pattern || files[i].match(pattern))) {

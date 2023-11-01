@@ -369,7 +369,6 @@ export module TranslateTypes {
           var t = <TVar>tcenv.lookupType({ dottedName: tp.name });
           if (t && t.typeName === TypeName.Variable) {
             var x = (<TVar>t).asBinder();
-            // @ts-expect-error implicit any
             x['push'] = false;
             return x;
           } else {
@@ -378,13 +377,11 @@ export module TranslateTypes {
             );
             t = new TVar(tp.name, tp.name, constraint);
             var x = t.asBinder();
-            // @ts-expect-error implicit any
             x['push'] = true;
             return x;
           }
         });
     var arr = tcenv.withLocalTypes(
-      // @ts-expect-error implicit any
       binders.filter((f) => f['push']),
       () =>
         new TArrow(

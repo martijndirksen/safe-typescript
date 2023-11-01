@@ -70,6 +70,7 @@ import {
   FunctionTypeSyntax,
   ConstructorTypeSyntax,
   VariableDeclaratorSyntax,
+  TupleTypeSyntax,
 } from './syntaxNodes.generated';
 import { ISyntaxToken } from './syntaxToken';
 import { SyntaxUtilities } from './syntaxUtilities';

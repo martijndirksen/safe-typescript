@@ -1,5 +1,4 @@
 // Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0.
-///<reference path="..\typescript.ts" />
 
 import { Debug } from '../core/debug';
 import { createIntrinsicsObject } from '../hashTable';
@@ -11,15 +10,9 @@ import {
   PullTypeParameterSymbol,
   PullSignatureSymbol,
   GetAllMembersVisiblity,
+  GenerativeTypeClassification,
 } from './pullSymbols';
 import { PullTypeResolver } from './pullTypeResolution';
-
-export enum GenerativeTypeClassification {
-  Unknown,
-  Open,
-  Closed,
-  InfinitelyExpanding,
-}
 
 // Type references and instantiated type references
 export class PullTypeReferenceSymbol extends PullTypeSymbol {
@@ -37,7 +30,7 @@ export class PullTypeReferenceSymbol extends PullTypeSymbol {
       type.typeReference = typeReference;
     }
 
-    return typeReference;
+    return typeReference as PullTypeReferenceSymbol;
   }
 
   // use the root symbol to model the actual type
@@ -775,7 +768,7 @@ export class PullInstantiatedTypeReferenceSymbol extends PullTypeReferenceSymbol
     public referencedTypeSymbol: PullTypeSymbol,
     private _typeParameterArgumentMap: PullTypeSymbol[]
   ) {
-    super(referencedTypeSymbol);
+    super(referencedTypeSymbol as PullTypeReferenceSymbol);
   }
 
   public isGeneric(): boolean {

@@ -120,6 +120,7 @@ import {
   FunctionTypeSyntax,
   ConstructorTypeSyntax,
   ParameterSyntax,
+  TupleTypeSyntax,
 } from './syntaxNodes.generated';
 import {
   ISyntaxToken,
@@ -128,8 +129,12 @@ import {
   token,
 } from './syntaxToken';
 import { SyntaxTree } from './syntaxTree';
-import { ISyntaxTrivia } from './syntaxTrivia';
-import { ISyntaxTriviaList } from './syntaxTriviaList';
+import { ISyntaxTrivia, skippedTokenTrivia } from './syntaxTrivia';
+import {
+  ISyntaxTriviaList,
+  emptyTriviaList,
+  triviaList,
+} from './syntaxTriviaList';
 
 // Information the parser needs to effectively rewind.
 interface IParserRewindPoint {
@@ -1274,6 +1279,7 @@ class ParserImpl {
   // TODO: do we need to store/restore this when speculative parsing?  I don't think so.  The
   // parsing logic already handles storing/restoring this and should work properly even if we're
   // speculative parsing.
+  // @ts-expect-error 0 is not assignable to ListParsingState
   private listParsingState: ListParsingState = 0;
 
   // Whether or not we are in strict parsing mode.  All that changes in strict parsing mode is
@@ -1812,7 +1818,7 @@ class ParserImpl {
 
     // Don't need this array anymore.  Give it back so we can reuse it.
     this.returnSyntaxTokenArray(skippedTokens);
-    return token.withLeadingTrivia(Syntax.triviaList(leadingTrivia));
+    return token.withLeadingTrivia(triviaList(leadingTrivia));
   }
 
   private addSkippedTokensAfterToken(
@@ -1833,7 +1839,7 @@ class ParserImpl {
 
     // Don't need this array anymore.  Give it back so we can reuse it.
     this.returnSyntaxTokenArray(skippedTokens);
-    return token.withTrailingTrivia(Syntax.triviaList(trailingTrivia));
+    return token.withTrailingTrivia(triviaList(trailingTrivia));
   }
 
   private addSkippedTokenAfterToken(
@@ -1845,7 +1851,7 @@ class ParserImpl {
     var trailingTrivia = token.trailingTrivia().toArray();
     this.addSkippedTokenToTriviaArray(trailingTrivia, skippedToken);
 
-    return token.withTrailingTrivia(Syntax.triviaList(trailingTrivia));
+    return token.withTrailingTrivia(triviaList(trailingTrivia));
   }
 
   private addSkippedTokenToTriviaArray(
@@ -1859,9 +1865,9 @@ class ParserImpl {
 
     // now, add the text of the token as skipped text to the trivia array.
     var trimmedToken = skippedToken
-      .withLeadingTrivia(Syntax.emptyTriviaList)
-      .withTrailingTrivia(Syntax.emptyTriviaList);
-    array.push(Syntax.skippedTokenTrivia(trimmedToken));
+      .withLeadingTrivia(emptyTriviaList)
+      .withTrailingTrivia(emptyTriviaList);
+    array.push(skippedTokenTrivia(trimmedToken));
 
     // Finally, add the trailing trivia of the skipped token to the trivia array.
     this.addTriviaTo(skippedToken.trailingTrivia(), array);
@@ -2399,7 +2405,7 @@ class ParserImpl {
       break;
     }
 
-    var result = list(tokens);
+    var result = list(tokens as CheckedArray<ISyntaxToken>);
 
     // If the tokens array is greater than one, then we can't return it.  It will have been
     // copied directly into the syntax list.
@@ -2700,7 +2706,7 @@ class ParserImpl {
       modifierArray.push(this.eatAnyToken());
     }
 
-    var modifiers = list(modifierArray);
+    var modifiers = list(modifierArray as CheckedArray<ISyntaxNode>);
     this.returnZeroOrOneLengthSyntaxTokenArray(modifierArray);
 
     var propertyName = this.eatPropertyName();
@@ -2818,7 +2824,7 @@ class ParserImpl {
       modifierArray.push(this.eatAnyToken());
     }
 
-    var modifiers = list(modifierArray);
+    var modifiers = list(modifierArray as CheckedArray<ISyntaxNodeOrToken>);
     this.returnZeroOrOneLengthSyntaxTokenArray(modifierArray);
 
     var variableDeclarator = this.parseVariableDeclarator(
@@ -4338,6 +4344,7 @@ class ParserImpl {
   }
 
   private parseExpression(allowIn: boolean): IExpressionSyntax {
+    // @ts-expect-error 0
     return this.parseSubExpression(0, allowIn);
   }
 
@@ -4542,8 +4549,11 @@ class ParserImpl {
         }
       }
 
+      // @ts-ignore
       if (storage[0] === SyntaxKind.GreaterThanToken) {
+        // @ts-ignore
         if (storage[1] === SyntaxKind.GreaterThanToken) {
+          // @ts-ignore
           if (storage[2] === SyntaxKind.EqualsToken) {
             // >>>=
             return {
@@ -4558,6 +4568,7 @@ class ParserImpl {
               syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanToken,
             };
           }
+          // @ts-ignore
         } else if (storage[1] === SyntaxKind.EqualsToken) {
           // >>=
           return {
@@ -4571,6 +4582,7 @@ class ParserImpl {
             syntaxKind: SyntaxKind.GreaterThanGreaterThanToken,
           };
         }
+        // @ts-ignore
       } else if (storage[0] === SyntaxKind.EqualsToken) {
         // >=
         return {
@@ -6012,7 +6024,7 @@ class ParserImpl {
       break;
     }
 
-    var modifiers = list(modifierArray);
+    var modifiers = list(modifierArray as CheckedArray<ISyntaxToken>);
     this.returnZeroOrOneLengthSyntaxTokenArray(modifierArray);
 
     var identifier = this.eatIdentifierToken();

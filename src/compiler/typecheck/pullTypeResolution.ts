@@ -154,11 +154,11 @@ import {
   PullStringConstantTypeSymbol,
   PullAccessorSymbol,
   PullPrimitiveTypeSymbol,
+  GenerativeTypeClassification,
 } from './pullSymbols';
 import {
   PullInstantiatedTypeReferenceSymbol,
   PullTypeReferenceSymbol,
-  GenerativeTypeClassification,
 } from './pullTypeInstantiation';
 import {
   PullTypeResolutionContext,
