@@ -113,7 +113,9 @@ export class SourceUnitSyntax extends SyntaxNode {
   public withModuleElement(
     moduleElement: IModuleElementSyntax
   ): SourceUnitSyntax {
-    return this.withModuleElements(listFn([moduleElement]));
+    return this.withModuleElements(
+      listFn([moduleElement] as CheckedArray<IModuleElementSyntax>)
+    );
   }
 
   public withEndOfFileToken(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
@@ -923,7 +925,9 @@ export class ClassDeclarationSyntax
   public withClassElement(
     classElement: IClassElementSyntax
   ): ClassDeclarationSyntax {
-    return this.withClassElements(listFn([classElement]));
+    return this.withClassElements(
+      listFn([classElement] as CheckedArray<IClassElementSyntax>)
+    );
   }
 
   public withCloseBraceToken(
@@ -1459,7 +1463,9 @@ export class ModuleDeclarationSyntax
   public withModuleElement(
     moduleElement: IModuleElementSyntax
   ): ModuleDeclarationSyntax {
-    return this.withModuleElements(listFn([moduleElement]));
+    return this.withModuleElements(
+      listFn([moduleElement] as CheckedArray<IModuleElementSyntax>)
+    );
   }
 
   public withCloseBraceToken(
@@ -3647,6 +3653,118 @@ export class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
     closeBracketToken: ISyntaxToken
   ): ArrayTypeSyntax {
     return this.update(this.type, this.openBracketToken, closeBracketToken);
+  }
+
+  public isTypeScriptSpecific(): boolean {
+    return true;
+  }
+}
+
+export class TupleTypeSyntax extends SyntaxNode implements ITypeSyntax {
+  constructor(
+    public openBracketToken: ISyntaxToken,
+    public types: ISeparatedSyntaxList,
+    public closeBracketToken: ISyntaxToken,
+    parsedInStrictMode: boolean
+  ) {
+    super(parsedInStrictMode);
+  }
+
+  public accept(visitor: ISyntaxVisitor): any {
+    return visitor.visitTupleType(this);
+  }
+
+  public kind(): SyntaxKind {
+    return SyntaxKind.TupleType;
+  }
+
+  public childCount(): number {
+    return 3;
+  }
+
+  public childAt(slot: number): ISyntaxElement {
+    switch (slot) {
+      case 0:
+        return this.openBracketToken;
+      case 1:
+        return this.types;
+      case 2:
+        return this.closeBracketToken;
+      default:
+        throw Errors.invalidOperation();
+    }
+  }
+
+  public isType(): boolean {
+    return true;
+  }
+
+  public update(
+    openBracketToken: ISyntaxToken,
+    types: ISeparatedSyntaxList,
+    closeBracketToken: ISyntaxToken
+  ): TupleTypeSyntax {
+    if (
+      this.openBracketToken === openBracketToken &&
+      this.types === types &&
+      this.closeBracketToken === closeBracketToken
+    ) {
+      return this;
+    }
+
+    return new TupleTypeSyntax(
+      openBracketToken,
+      types,
+      closeBracketToken,
+      /*parsedInStrictMode:*/ this.parsedInStrictMode()
+    );
+  }
+
+  public static create(
+    openBracketToken: ISyntaxToken,
+    closeBracketToken: ISyntaxToken
+  ): TupleTypeSyntax {
+    return new TupleTypeSyntax(
+      openBracketToken,
+      emptySeparatedList,
+      closeBracketToken,
+      /*parsedInStrictMode:*/ false
+    );
+  }
+
+  public static create1(): TupleTypeSyntax {
+    return new TupleTypeSyntax(
+      token(SyntaxKind.OpenBracketToken),
+      emptySeparatedList,
+      token(SyntaxKind.CloseBracketToken),
+      /*parsedInStrictMode:*/ false
+    );
+  }
+
+  public withLeadingTrivia(trivia: ISyntaxTriviaList): TupleTypeSyntax {
+    return <TupleTypeSyntax>super.withLeadingTrivia(trivia);
+  }
+
+  public withTrailingTrivia(trivia: ISyntaxTriviaList): TupleTypeSyntax {
+    return <TupleTypeSyntax>super.withTrailingTrivia(trivia);
+  }
+
+  public withOpenBracketToken(openBracketToken: ISyntaxToken): TupleTypeSyntax {
+    return this.update(openBracketToken, this.types, this.closeBracketToken);
+  }
+
+  public withTypes(types: ISeparatedSyntaxList): TupleTypeSyntax {
+    return this.update(this.openBracketToken, types, this.closeBracketToken);
+  }
+
+  public withType(type: ITypeSyntax): TupleTypeSyntax {
+    return this.withTypes(separatedList([type]));
+  }
+
+  public withCloseBracketToken(
+    closeBracketToken: ISyntaxToken
+  ): TupleTypeSyntax {
+    return this.update(this.openBracketToken, this.types, closeBracketToken);
   }
 
   public isTypeScriptSpecific(): boolean {

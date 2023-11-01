@@ -1699,9 +1699,9 @@ function generateFactory1Method(definition: ITypeDefinition): string {
     if (!isOptional(child)) {
       result += child.name;
     } else if (child.isList) {
-      result += 'Syntax.emptyList';
+      result += 'emptyList';
     } else if (child.isSeparatedList) {
-      result += 'Syntax.emptySeparatedList';
+      result += 'emptySeparatedList';
     } else {
       result += 'null';
     }
@@ -1803,13 +1803,13 @@ function generateFactory2Method(definition: ITypeDefinition): string {
     if (isMandatory(child)) {
       result += child.name;
     } else if (child.isList) {
-      result += 'Syntax.emptyList';
+      result += 'emptyList';
     } else if (child.isSeparatedList) {
-      result += 'Syntax.emptySeparatedList';
+      result += 'emptySeparatedList';
     } else if (isOptional(child)) {
       result += 'null';
     } else if (child.isToken) {
-      result += 'Syntax.token(SyntaxKind.' + tokenKinds(child)[0] + ')';
+      result += 'token(SyntaxKind.' + tokenKinds(child)[0] + ')';
     } else {
       result += child.type + '.create1()';
     }
@@ -2178,9 +2178,10 @@ function generateWithMethod(
       result += '        return this.with' + pascalCase(child.name) + '(';
 
       if (child.isList) {
-        result += 'Syntax.list([' + argName + '])';
+        result +=
+          'listFn([' + argName + `]  as CheckedArray<${child.elementType}>)`;
       } else {
-        result += 'Syntax.separatedList([' + argName + '])';
+        result += 'separatedList([' + argName + '])';
       }
 
       result += ');\r\n';
@@ -2363,35 +2364,35 @@ function generateStructuralEqualsMethod(definition: ITypeDefinition): string {
     if (child.type !== 'SyntaxKind') {
       if (child.isList) {
         result +=
-          '        if (!Syntax.listStructuralEquals(' +
+          '        if (!listStructuralEquals(' +
           getPropertyAccess(child) +
           ', other._' +
           child.name +
           ')) { return false; }\r\n';
       } else if (child.isSeparatedList) {
         result +=
-          '        if (!Syntax.separatedListStructuralEquals(' +
+          '        if (!separatedListStructuralEquals(' +
           getPropertyAccess(child) +
           ', other._' +
           child.name +
           ')) { return false; }\r\n';
       } else if (child.isToken) {
         result +=
-          '        if (!Syntax.tokenStructuralEquals(' +
+          '        if (!tokenStructuralEquals(' +
           getPropertyAccess(child) +
           ', other._' +
           child.name +
           ')) { return false; }\r\n';
       } else if (isNodeOrToken(child)) {
         result +=
-          '        if (!Syntax.nodeOrTokenStructuralEquals(' +
+          '        if (!nodeOrTokenStructuralEquals(' +
           getPropertyAccess(child) +
           ', other._' +
           child.name +
           ')) { return false; }\r\n';
       } else {
         result +=
-          '        if (!Syntax.nodeStructuralEquals(' +
+          '        if (!nodeStructuralEquals(' +
           getPropertyAccess(child) +
           ', other._' +
           child.name +
@@ -2432,43 +2433,57 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateIsTypeScriptSpecificMethod(definition);
   }
 
-  // result += generateIsMissingMethod(definition);
-  // result += generateFirstTokenMethod(definition);
-  // result += generateLastTokenMethod(definition);
-  // result += generateInsertChildrenIntoMethod(definition);
-  // result += generateCollectTextElementsMethod(definition);
-  // result += generateFindTokenInternalMethod(definition);
-  // result += generateStructuralEqualsMethod(definition);
-
   result += '    }';
 
   return result;
 }
 
 function generateNodes(): string {
-  var result = "///<reference path='references.ts' />\r\n\r\n";
+  const lines = [
+    "import { CheckedArray } from '../../runtime/rt';",
+    "import { Errors } from '../core/errors';",
+    'import {',
+    '  ISeparatedSyntaxList,',
+    '  separatedList,',
+    '  emptySeparatedList,',
+    "} from './separatedSyntaxList';",
+    'import {',
+    '  ISyntaxElement,',
+    '  IModuleElementSyntax,',
+    '  IModuleReferenceSyntax,',
+    '  INameSyntax,',
+    '  IClassElementSyntax,',
+    '  IStatementSyntax,',
+    '  IExpressionSyntax,',
+    '  IUnaryExpressionSyntax,',
+    '  IPrimaryExpressionSyntax,',
+    '  IArrowFunctionExpressionSyntax,',
+    '  ITypeSyntax,',
+    '  ITypeMemberSyntax,',
+    '  IMemberExpressionSyntax,',
+    '  IPostfixExpressionSyntax,',
+    '  IMemberDeclarationSyntax,',
+    '  IPropertyAssignmentSyntax,',
+    '  ISwitchClauseSyntax,',
+    '  IIterationStatementSyntax,',
+    "} from './syntaxElement';",
+    "import { SyntaxKind } from './syntaxKind';",
+    "import { ISyntaxList, emptyList, list as listFn } from './syntaxList';",
+    "import { SyntaxNode } from './syntaxNode';",
+    "import { ISyntaxToken, token } from './syntaxToken';",
+    "import { ISyntaxTriviaList } from './syntaxTriviaList';",
+    "import { ISyntaxVisitor } from './syntaxVisitor.generated';",
+    '',
+  ];
 
-  result += '\r\n';
+  lines.push(...definitions.map((x) => generateNode(x) + EOL));
 
-  for (var i = 0; i < definitions.length; i++) {
-    var definition = definitions[i];
-
-    if (i > 0) {
-      result += '\r\n\r\n';
-    }
-
-    result += generateNode(definition);
-  }
-
-  result += '\r\n}';
-
-  return result;
+  return lines.join(EOL);
 }
 
 function isInterface(name: string) {
   return (
-    name.substr(0, 1) === 'I' &&
-    name.substr(1, 1).toUpperCase() === name.substr(1, 1)
+    name.startsWith('I') && name.slice(1, 2).toUpperCase() === name.slice(1, 2)
   );
 }
 
@@ -2515,7 +2530,7 @@ function generateRewriter(): string {
     '            }\r\n' +
     '\r\n' +
     '            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n' +
-    '            return newItems === null ? list : list(newItems);\r\n' +
+    '            return newItems === null ? list : listFn(newItems);\r\n' +
     '        }\r\n' +
     '\r\n' +
     '        public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n' +
@@ -2858,7 +2873,7 @@ function generateToken(
     '        public leadingTrivia(): ISyntaxTriviaList { return ' +
     (leading
       ? 'Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false)'
-      : 'Syntax.emptyTriviaList') +
+      : 'emptyTriviaList') +
     '; }\r\n\r\n';
 
   result +=
@@ -2883,7 +2898,7 @@ function generateToken(
     '        public trailingTrivia(): ISyntaxTriviaList { return ' +
     (trailing
       ? 'Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)'
-      : 'Syntax.emptyTriviaList') +
+      : 'emptyTriviaList') +
     '; }\r\n\r\n';
   result += '        public hasSkippedToken(): boolean { return false; }\r\n';
 
@@ -3370,6 +3385,7 @@ function generateVisitor(): string {
 }
 
 function generateFactory(): string {
+  // This is a bit stupid, but it will suffice.
   const lines = [
     "import { ISeparatedSyntaxList } from './separatedSyntaxList';",
     'import {',
@@ -3539,74 +3555,6 @@ function generateFactory(): string {
   );
 
   return lines.join(EOL);
-
-  // for (i = 0; i < definitions.length; i++) {
-  //   definition = definitions[i];
-
-  //   result += '        ' + camelCase(getNameWithoutSuffix(definition)) + '(';
-
-  //   for (j = 0; j < definition.children.length; j++) {
-  //     if (j > 0) {
-  //       result += ', ';
-  //     }
-
-  //     child = definition.children[j];
-  //     result += getSafeName(child) + ': ' + getType(child);
-  //   }
-
-  //   result += '): ' + definition.name + ' {\r\n';
-  //   result += '            return new ' + definition.name + '(';
-
-  //   for (j = 0; j < definition.children.length; j++) {
-  //     child = definition.children[j];
-  //     result += getSafeName(child);
-  //     result += ', ';
-  //   }
-
-  //   result += '/*parsedInStrictMode:*/ false);\r\n';
-  //   result += '        }\r\n';
-  // }
-
-  // result += '    }\r\n\r\n';
-
-  // TODO: stop exporting these once compiler bugs are fixed.
-  // result += '    export class StrictModeFactory implements IFactory {\r\n';
-
-  // for (i = 0; i < definitions.length; i++) {
-  //   definition = definitions[i];
-  //   result += '        ' + camelCase(getNameWithoutSuffix(definition)) + '(';
-
-  //   for (j = 0; j < definition.children.length; j++) {
-  //     if (j > 0) {
-  //       result += ', ';
-  //     }
-
-  //     child = definition.children[j];
-  //     result += getSafeName(child) + ': ' + getType(child);
-  //   }
-
-  //   result += '): ' + definition.name + ' {\r\n';
-  //   result += '            return new ' + definition.name + '(';
-
-  //   for (j = 0; j < definition.children.length; j++) {
-  //     child = definition.children[j];
-  //     result += getSafeName(child);
-  //     result += ', ';
-  //   }
-
-  //   result += '/*parsedInStrictMode:*/ true);\r\n';
-
-  //   result += '        }\r\n';
-  // }
-
-  // result += '    }\r\n\r\n';
-
-  // result +=
-  //   '    export const normalModeFactory: IFactory = new NormalModeFactory();\r\n';
-  // result +=
-  //   '    export const strictModeFactory: IFactory = new StrictModeFactory();\r\n';
-
-  // return result;
 }
 
 var syntaxNodes = generateNodes();
