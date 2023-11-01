@@ -3081,14 +3081,14 @@ class ParserImpl {
     var result = this.parseSeparatedSyntaxList(
       ListParsingState.Tuple_ElementTypes
     );
+
     openBracketToken = this.addSkippedTokensAfterToken(
       openBracketToken,
       result.skippedTokens
     );
 
     var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
-    // TODO search for tupleType factory method implementation
-    // Seems to be generated somehow, ensure this is indeed generated now
+
     return this.factory.tupleType(
       openBracketToken,
       result.list,
