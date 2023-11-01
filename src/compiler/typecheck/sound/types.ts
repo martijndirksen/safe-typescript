@@ -34,12 +34,14 @@ export class TUVar extends SoundType {
     }
     this.resolved = t;
   }
+  // @ts-expect-error implicit any
   public unfold() {
     if (this.resolved) {
       return this.resolved.unfold();
     }
     return this;
   }
+  // @ts-expect-error implicit any
   public equals(u: SoundType) {
     if (this.isResolved()) {
       return this.resolved.equals(u);
@@ -208,6 +210,7 @@ export class TIndexMap extends SoundType {
       '{[x:' + this.indexType.toString() + '] : ' + this.elt.toString() + '}'
     );
   }
+  // @ts-expect-error subtyping problem
   public subst(s: Pair<TVar, SoundType>[], descend: boolean) {
     return new TIndexMap(
       this.indexType.subst(s, descend),
@@ -257,6 +260,7 @@ export class TArrow extends SoundType {
   ) {
     super(TypeName.Arrow);
   }
+  // @ts-expect-error subtyping problem
   public subst(s: Pair<TVar, SoundType>[], descend: boolean): SoundType {
     return new TArrow(
       this.args.map((a: TArg) => a.subst(s, descend)),
@@ -472,6 +476,7 @@ export class StructuredType extends SoundType {
   public addType(n: string, t: SoundType, ast: AST = null) {
     if (this.typesMap[n]) {
       throw new Error(
+        // @ts-expect-error any
         'Type ' + n + ' is already defined in module ' + this['name']
       );
     }
@@ -528,6 +533,7 @@ export class StructuredType extends SoundType {
     types.forEach((t) => skel.addType(t.fst.name, t.fst, t.snd));
     return skel;
   }
+  // @ts-expect-error any
   public removeExtraneousFields() {
     if (this.indexSignature() && this instanceof TRecord) {
       var t = new TRecord([]);

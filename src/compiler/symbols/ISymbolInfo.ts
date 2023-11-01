@@ -1,5 +1,3 @@
-///<reference path='ISymbol.ts' />
-
 import { ISymbol } from './ISymbol';
 
 /**

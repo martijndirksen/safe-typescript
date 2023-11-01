@@ -27,6 +27,7 @@ import {
   BinaryExpressionSyntax,
   SourceUnitSyntax,
   PrefixUnaryExpressionSyntax,
+  TupleTypeSyntax,
 } from './syntaxNodes.generated';
 import { token, ISyntaxToken, ITokenInfo, identifier } from './syntaxToken';
 import { ISyntaxTrivia } from './syntaxTrivia';
@@ -103,11 +104,10 @@ export function isInTypeOnlyContext(positionedToken: PositionedToken): boolean {
     switch (parent.kind()) {
       case SyntaxKind.ArrayType:
         return (<ArrayTypeSyntax>parent).type === nodeOrToken;
-      case SyntaxKind.TupleType:
-        return (<TupleTypeSyntax>parent).type === nodeOrToken;
       case SyntaxKind.CastExpression:
         return (<CastExpressionSyntax>parent).type === nodeOrToken;
       case SyntaxKind.TypeAnnotation:
+      case SyntaxKind.TupleType:
       case SyntaxKind.ExtendsHeritageClause:
       case SyntaxKind.ImplementsHeritageClause:
       case SyntaxKind.TypeArgumentList:

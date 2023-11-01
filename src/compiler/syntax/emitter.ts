@@ -86,7 +86,7 @@ import {
   VariableStatementSyntax,
 } from './syntaxNodes.generated';
 import { SyntaxRewriter } from './syntaxRewriter.generated';
-import { ISyntaxToken, identifier, token } from './syntaxToken';
+import { ISyntaxToken, identifier as identifierFn, token } from './syntaxToken';
 import { carriageReturnLineFeedTrivia } from './syntaxTrivia';
 import {
   ISyntaxTriviaList,
@@ -483,7 +483,7 @@ class EmitterImpl extends SyntaxRewriter {
     var expressionStatement = ExpressionStatementSyntax.create1(
       this.factory.invocationExpression(
         ParenthesizedExpressionSyntax.create1(functionExpression),
-        ArgumentListSyntax.create1().withArgument(
+        ArgumentListSyntax.create1().withArg(
           this.initializedVariable(moduleName)
         )
       )
@@ -803,6 +803,7 @@ class EmitterImpl extends SyntaxRewriter {
         statements.push(this.generateThisCaptureStatement(statementColumn));
       }
 
+      // @ts-expect-error MD: Oopsie in type?
       statements.push.apply(statements, rewritten.block.statements.toArray());
 
       rewritten = rewritten.withBlock(
@@ -908,7 +909,7 @@ class EmitterImpl extends SyntaxRewriter {
               identifierName('_super'),
               identifierName('apply')
             ),
-            ArgumentListSyntax.create1().withArguments(
+            ArgumentListSyntax.create1().withArgs(
               separatedList([
                 token(SyntaxKind.ThisKeyword),
                 token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
@@ -1197,7 +1198,7 @@ class EmitterImpl extends SyntaxRewriter {
 
     return this.factory
       .simplePropertyAssignment(
-        identifier(propertyName),
+        identifierFn(propertyName),
         token(SyntaxKind.ColonToken).withTrailingTrivia(this.space),
         FunctionExpressionSyntax.create(
           token(SyntaxKind.FunctionKeyword),
@@ -1280,7 +1281,7 @@ class EmitterImpl extends SyntaxRewriter {
     propertyAssignments.push(
       this.factory
         .simplePropertyAssignment(
-          identifier('enumerable'),
+          identifierFn('enumerable'),
           token(SyntaxKind.ColonToken).withTrailingTrivia(this.space),
           trueExpression()
         )
@@ -1293,7 +1294,7 @@ class EmitterImpl extends SyntaxRewriter {
     propertyAssignments.push(
       this.factory
         .simplePropertyAssignment(
-          identifier('configurable'),
+          identifierFn('configurable'),
           token(SyntaxKind.ColonToken).withTrailingTrivia(this.space),
           trueExpression()
         )
@@ -1315,7 +1316,7 @@ class EmitterImpl extends SyntaxRewriter {
           identifierName('Object'),
           identifierName('defineProperty')
         ),
-        ArgumentListSyntax.create1().withArguments(separatedList(argumentList))
+        ArgumentListSyntax.create1().withArgs(separatedList(argumentList))
       )
     )
       .withLeadingTrivia(memberAccessor.leadingTrivia())
@@ -1380,7 +1381,7 @@ class EmitterImpl extends SyntaxRewriter {
         ExpressionStatementSyntax.create1(
           this.factory.invocationExpression(
             identifierName('__extends'),
-            ArgumentListSyntax.create1().withArguments(
+            ArgumentListSyntax.create1().withArgs(
               separatedList([
                 <ISyntaxNodeOrToken>identifier,
                 token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
@@ -1426,7 +1427,7 @@ class EmitterImpl extends SyntaxRewriter {
 
     var block = this.factory.block(
       token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
-      list(statements),
+      list(statements as CheckedArray<IStatementSyntax>),
       token(SyntaxKind.CloseBraceToken).withLeadingTrivia(
         this.indentationTriviaForStartOfNode(node)
       )
@@ -1434,7 +1435,7 @@ class EmitterImpl extends SyntaxRewriter {
 
     var callParameters: ParameterSyntax[] = [];
     if (node.heritageClauses.childCount() > 0) {
-      callParameters.push(ParameterSyntax.create(Syntax.identifier('_super')));
+      callParameters.push(ParameterSyntax.create(identifierFn('_super')));
     }
 
     var callSignature = CallSignatureSyntax.create(
@@ -1465,9 +1466,7 @@ class EmitterImpl extends SyntaxRewriter {
           .withCallSignature(callSignature)
           .withBlock(block)
       ),
-      ArgumentListSyntax.create1().withArguments(
-        separatedList(invocationParameters)
-      )
+      ArgumentListSyntax.create1().withArgs(separatedList(invocationParameters))
     );
 
     // C = (function(_super) { ... })(BaseType)
@@ -1708,7 +1707,7 @@ class EmitterImpl extends SyntaxRewriter {
           ParenthesizedExpressionSyntax.create1(
             this.generateEnumFunctionExpression(node)
           ),
-          ArgumentListSyntax.create1().withArgument(
+          ArgumentListSyntax.create1().withArg(
             this.initializedVariable(identifier)
           )
         )
@@ -1732,6 +1731,7 @@ class EmitterImpl extends SyntaxRewriter {
     );
 
     // MD: Renamed from arguments to argumentList to avoid conflict with arguments keyword
+    // @ts-expect-error arguments does not exist on argumentList?
     var argumentList = result.argumentList.arguments.toArray();
     if (argumentList.length > 0) {
       argumentList.unshift(
@@ -1744,7 +1744,7 @@ class EmitterImpl extends SyntaxRewriter {
     return result
       .withExpression(expression)
       .withArgumentList(
-        result.argumentList.withArguments(separatedList(argumentList))
+        result.argumentList.withArgs(separatedList(argumentList))
       )
       .withLeadingTrivia(result.leadingTrivia());
   }
@@ -1757,6 +1757,7 @@ class EmitterImpl extends SyntaxRewriter {
     );
 
     // MD: Renamed from arguments to argumentList to avoid conflict with arguments keyword
+    // @ts-expect-error arguments does not exist on argumentList?
     var argumentList = result.argumentList.arguments.toArray();
     if (argumentList.length > 0) {
       argumentList.unshift(
@@ -1773,7 +1774,7 @@ class EmitterImpl extends SyntaxRewriter {
     return result
       .withExpression(expression)
       .withArgumentList(
-        result.argumentList.withArguments(separatedList(argumentList))
+        result.argumentList.withArgs(separatedList(argumentList))
       );
   }
 
@@ -1877,7 +1878,7 @@ class EmitterImpl extends SyntaxRewriter {
         token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
         separatedList([
           this.factory.variableDeclarator(
-            identifier('_this').withTrailingTrivia(this.space),
+            identifierFn('_this').withTrailingTrivia(this.space),
             null,
             this.factory.equalsValueClause(
               token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),

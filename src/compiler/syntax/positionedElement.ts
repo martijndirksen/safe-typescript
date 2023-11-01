@@ -146,9 +146,11 @@ export class PositionedElement {
   public root(): PositionedNode {
     var current = this;
     while (current.parent() !== null) {
+      // @ts-expect-error MD: this type magic
       current = current.parent();
     }
 
+    // @ts-expect-error MD: this type magic
     return <PositionedNode>current;
   }
 

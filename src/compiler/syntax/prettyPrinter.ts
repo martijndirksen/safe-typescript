@@ -96,6 +96,7 @@ import {
   DeleteExpressionSyntax,
   VoidExpressionSyntax,
   DebuggerStatementSyntax,
+  TupleTypeSyntax,
 } from './syntaxNodes.generated';
 import { ISyntaxToken } from './syntaxToken';
 import { ISyntaxVisitor } from './syntaxVisitor.generated';
@@ -571,8 +572,8 @@ class PrettyPrinterImpl implements ISyntaxVisitor {
   }
 
   public visitTupleType(node: TupleTypeSyntax): void {
-    node.type.accept(this);
     this.appendToken(node.openBracketToken);
+    this.appendSeparatorSpaceList(node.types);
     this.appendToken(node.closeBracketToken);
   }
 
@@ -652,7 +653,7 @@ class PrettyPrinterImpl implements ISyntaxVisitor {
 
   public visitArgumentList(node: ArgumentListSyntax): void {
     this.appendToken(node.openParenToken);
-    this.appendSeparatorSpaceList(node.arguments);
+    this.appendSeparatorSpaceList(node.args);
     this.appendToken(node.closeParenToken);
   }
 

@@ -199,6 +199,7 @@ import {
   DeleteExpressionSyntax,
   VoidExpressionSyntax,
   DebuggerStatementSyntax,
+  TupleTypeSyntax,
 } from './syntax/syntaxNodes.generated';
 import { ISyntaxToken } from './syntax/syntaxToken';
 import { SyntaxTree } from './syntax/syntaxTree';
@@ -1109,11 +1110,11 @@ export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
   public visitTupleType(node: TupleTypeSyntax): TupleType {
     var start = this.position;
 
-    var underlying: AST = this.visitType(node.type);
     this.movePast(node.openBracketToken);
+    var types = this.visitSeparatedSyntaxList(node.types);
     this.movePast(node.closeBracketToken);
 
-    var result = new TupleType(underlying);
+    var result = new TupleType(types);
     this.setSpan(result, start, node);
 
     return result;
