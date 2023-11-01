@@ -26,9 +26,7 @@ async function buildSamples(globPattern: string | string[]) {
 
   for (const file of files) {
     await rimraf('samples/**/*.js', { glob: true });
-    await execCommand(
-      `node ./dist/tsc.safe.js --safe ${file} --module commonjs`
-    );
+    await execCommand(`node ./dist/tsc.js --safe ${file} --module commonjs`);
     await prependFileWithContent(
       file.replace('.ts', '.js'),
       `import { RT } from '../dist/lib/rt.js';`

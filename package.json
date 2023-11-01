@@ -25,12 +25,10 @@
     "url": "https://git01.codeplex.com/typescript"
   },
   "scripts": {
-    "build": "ts-node --esm scripts/build.mts",
-    "build:typescript": "esbuild src/compiler/typescript.ts --bundle --platform=node --outfile=dist/typescript.js",
     "build:tsc": "tsc --noEmit src/compiler/tsc.ts && esbuild src/compiler/tsc.ts --bundle --platform=node --outfile=dist/tsc.js",
+    "build:rt": "tsc --noEmit src/runtime/rt.ts && esbuild src/runtime/rt.ts --bundle --platform=node --outfile=dist/lib/rt.js",
     "test:build": "ts-node --esm scripts/build-samples.mts && vitest",
     "test:watch": "vitest",
-    "tsc": "tsc",
     "generate": "ts-node src/compiler/syntax/syntaxGenerator.ts && prettier --write src/compiler/syntax/*.generated.ts"
   },
   "preferGlobal": true,
