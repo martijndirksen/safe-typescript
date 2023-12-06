@@ -1950,6 +1950,9 @@ export class PullTypeSymbol extends PullSymbol {
   public isEnum() {
     return this.kind == PullElementKind.Enum;
   }
+  public isTuple() {
+    return this.kind === PullElementKind.Tuple;
+  }
 
   public getTypeParameterArgumentMap(): PullTypeSymbol[] {
     return null;
@@ -2026,7 +2029,6 @@ export class PullTypeSymbol extends PullSymbol {
   }
 
   // REVIEW
-  // TODO: MD Is a tuple-variant necessary? What does this pullSymbols stuff do?
   public getArrayType(): PullTypeSymbol {
     return this._arrayVersionOfThisType;
   }
@@ -2035,7 +2037,6 @@ export class PullTypeSymbol extends PullSymbol {
     return null;
   }
 
-  // TODO: MD Is a tuple-variant necessary? What does this pullSymbols stuff do?
   public setArrayType(arrayType: PullTypeSymbol) {
     this._arrayVersionOfThisType = arrayType;
   }

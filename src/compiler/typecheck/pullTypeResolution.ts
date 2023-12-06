@@ -32,7 +32,6 @@ import {
   GenericType,
   TypeQuery,
   ArrayType,
-  TupleType,
   MemberVariableDeclaration,
   PropertySignature,
   VariableDeclarator,
@@ -166,7 +165,7 @@ import {
   PullContextualTypeContext,
 } from './pullTypeResolutionContext';
 import { SyntaxFacts } from '../syntax/syntaxFacts';
-import { getPullTypeSymbolFromAst } from '../tuples/pullTypeResolution';
+import { getTuplePullTypeSymbolFromAst } from '../tuples/pullTypeResolution';
 
 export interface IPullTypeCollection {
   getLength: () => number;
@@ -3752,9 +3751,8 @@ export class PullTypeResolver {
 
       typeDeclSymbol = arraySymbol;
     } else if (term.kind() === SyntaxKind.TupleType) {
-      typeDeclSymbol = getPullTypeSymbolFromAst(
-        context,
-        this.semanticInfoChain,
+      typeDeclSymbol = getTuplePullTypeSymbolFromAst(
+        { pullTypeResolver: this, resolutionContext: context },
         term
       );
     } else {
@@ -6703,7 +6701,7 @@ export class PullTypeResolver {
     return this.semanticInfoChain.voidTypeSymbol;
   }
 
-  private resolveSeparatedList(
+  public resolveSeparatedList(
     list: ISeparatedSyntaxList2,
     context: PullTypeResolutionContext
   ): PullSymbol {

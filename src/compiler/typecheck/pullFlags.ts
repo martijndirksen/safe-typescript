@@ -95,6 +95,8 @@ export enum PullElementKind {
   WithBlock = 1 << 27,
   CatchBlock = 1 << 28,
 
+  Tuple = 1 << 29,
+
   // WARNING: To prevent JS VMs from wrapping these values as floats, we don't want to utilize more than the 31 bits above.  (Doing so would
   // seriously slow down bitwise operations
 
@@ -126,7 +128,8 @@ export enum PullElementKind {
     ConstructorType |
     EnumMember |
     WithBlock |
-    CatchBlock,
+    CatchBlock |
+    Tuple,
 
   SomeFunction = Function |
     ConstructorMethod |
@@ -147,7 +150,8 @@ export enum PullElementKind {
     ObjectType |
     FunctionType |
     ConstructorType |
-    TypeParameter,
+    TypeParameter |
+    Tuple,
 
   AcceptableAlias = Variable |
     SomeFunction |
@@ -157,7 +161,8 @@ export enum PullElementKind {
     Container |
     ObjectType |
     FunctionType |
-    ConstructorType,
+    ConstructorType |
+    Tuple,
 
   SomeContainer = Container | DynamicModule | TypeAlias,
 
