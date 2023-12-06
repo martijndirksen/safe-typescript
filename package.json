@@ -25,12 +25,18 @@
     "url": "https://git01.codeplex.com/typescript"
   },
   "scripts": {
+    "watch:tsc": "tsc --noEmit src/compiler/tsc.ts && esbuild src/compiler/tsc.ts --bundle --platform=node --outfile=dist/tsc.js --watch",
+    "watch:rt": "tsc --noEmit src/runtime/rt.ts && esbuild src/runtime/rt.ts --bundle --platform=node --outfile=dist/lib/rt.js --watch",
+    "watch:typings": "nodemon -w src/typings -e ts --exec \"npm run build:typings\"",
+    "watch:test-samples": "nodemon -w src/typings -e ts --exec \"npm run build:test-samples\"",
+    "watch": "npm-run-all --parallel watch:*",
     "build": "npm-run-all --parallel build:*",
     "build:typings": "ts-node --esm scripts/copy-typings.mts",
     "build:tsc": "tsc --noEmit src/compiler/tsc.ts && esbuild src/compiler/tsc.ts --bundle --platform=node --outfile=dist/tsc.js",
     "build:rt": "tsc --noEmit src/runtime/rt.ts && esbuild src/runtime/rt.ts --bundle --platform=node --outfile=dist/lib/rt.js",
-    "test:build": "ts-node --esm scripts/build-samples.mts && vitest",
-    "test:watch": "vitest",
+    "build:test-samples": "ts-node --esm scripts/build-samples.mts",
+    "test:run": "vitest run",
+    "test": "vitest",
     "generate": "ts-node src/compiler/syntax/syntaxGenerator.ts && prettier --write src/compiler/syntax/*.generated.ts"
   },
   "preferGlobal": true,
@@ -51,6 +57,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "glob": "^10.3.4",
     "jake": "^10.8.7",
+    "nodemon": "^3.0.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.0.2",
     "rimraf": "^5.0.1",

@@ -43,6 +43,8 @@ export function getTuplePullTypeSymbolFromAst(
       false, // TODO: Do we need support for contextual typing?
       ctx.resolutionContext
     ).type;
+    console.log(seperatedSyntaxList.nonSeparatorAt(i));
+
     console.log(`member ${i}/${n}: ${member}`);
 
     pullType.addMember(member);
