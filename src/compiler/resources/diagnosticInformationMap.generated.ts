@@ -2117,4 +2117,8 @@ export var diagnosticInformationMap: DiagnosticInformationMap = {
     code: 7089,
     category: DiagnosticCategory.Error,
   },
+  'Tuple type must have at least one type element.': {
+    code: 7090,
+    category: DiagnosticCategory.Error,
+  },
 };

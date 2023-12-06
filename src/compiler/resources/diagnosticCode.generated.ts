@@ -868,4 +868,5 @@ export var DiagnosticCode = {
     'Safe TS: noGetters command line flag but code uses a get accessor',
   SEC_type_instantiation_not_subtype_constraint:
     "Safe TS: Instantiated type '{0}' is not a subtype of constraint on '{1}'",
+  TUPLE_zero_tuple_type: 'Tuple type must have at least one type element.',
 };

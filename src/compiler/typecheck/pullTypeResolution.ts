@@ -166,6 +166,7 @@ import {
   PullContextualTypeContext,
 } from './pullTypeResolutionContext';
 import { SyntaxFacts } from '../syntax/syntaxFacts';
+import { getPullTypeSymbolFromAst } from '../tuples/pullTypeResolution';
 
 export interface IPullTypeCollection {
   getLength: () => number;
@@ -3751,9 +3752,11 @@ export class PullTypeResolver {
 
       typeDeclSymbol = arraySymbol;
     } else if (term.kind() === SyntaxKind.TupleType) {
-      var tupleType = <TupleType>term;
-      // TODO MD: Do this properly
-      typeDeclSymbol = this.semanticInfoChain.anyTypeSymbol;
+      typeDeclSymbol = getPullTypeSymbolFromAst(
+        context,
+        this.semanticInfoChain,
+        term
+      );
     } else {
       throw Errors.invalidOperation('unknown type');
     }

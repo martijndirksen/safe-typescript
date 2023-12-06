@@ -3720,22 +3720,10 @@ export class TupleTypeSyntax extends SyntaxNode implements ITypeSyntax {
     );
   }
 
-  public static create(
-    openBracketToken: ISyntaxToken,
-    closeBracketToken: ISyntaxToken
-  ): TupleTypeSyntax {
-    return new TupleTypeSyntax(
-      openBracketToken,
-      emptySeparatedList,
-      closeBracketToken,
-      /*parsedInStrictMode:*/ false
-    );
-  }
-
-  public static create1(): TupleTypeSyntax {
+  public static create1(types: ISeparatedSyntaxList): TupleTypeSyntax {
     return new TupleTypeSyntax(
       token(SyntaxKind.OpenBracketToken),
-      emptySeparatedList,
+      types,
       token(SyntaxKind.CloseBracketToken),
       /*parsedInStrictMode:*/ false
     );

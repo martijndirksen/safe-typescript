@@ -1682,5 +1682,9 @@
   "'{0}', which lacks 'get' accessor and parameter type annotation on 'set' accessor, implicitly has an 'any' type.": {
     "category": "Error",
     "code": 7016
+  },
+  "Tuple type must have at least one type element.": {
+    "category": "Error",
+    "code": 7017
   }
 }
