@@ -360,18 +360,18 @@ export class ISyntaxList2 extends AST {
 export class ISeparatedSyntaxList2 extends AST {
   constructor(
     private _fileName: string,
-    private members: AST[],
+    private _members: AST[],
     private _separatorCount: number
   ) {
     super();
 
-    for (var i = 0, n = members.length; i < n; i++) {
-      members[i].parent = this;
+    for (var i = 0, n = _members.length; i < n; i++) {
+      _members[i].parent = this;
     }
   }
 
   public nonSeparatorCount(): number {
-    return this.members.length;
+    return this._members.length;
   }
 
   public separatorCount(): number {
@@ -379,7 +379,11 @@ export class ISeparatedSyntaxList2 extends AST {
   }
 
   public nonSeparatorAt(index: number): AST {
-    return this.members[index];
+    return this._members[index];
+  }
+
+  public get members(): readonly AST[] {
+    return this._members;
   }
 
   public nonSeparatorIndexOf(ast: AST): number {
@@ -406,7 +410,7 @@ export class ISeparatedSyntaxList2 extends AST {
   ): boolean {
     return (
       super.structuralEquals(ast, includingPosition) &&
-      astArrayStructuralEquals(this.members, ast.members, includingPosition)
+      astArrayStructuralEquals(this._members, ast._members, includingPosition)
     );
   }
 }

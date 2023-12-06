@@ -2,7 +2,6 @@ import { AST, ISeparatedSyntaxList2, TupleType } from '../ast';
 import { DiagnosticCode } from '../resources/diagnosticCode.generated';
 import { SyntaxKind } from '../syntax/syntaxKind';
 import { PullElementKind } from '../typecheck/pullFlags';
-import { SemanticInfoChain } from '../typecheck/pullSemanticInfo';
 import { PullErrorTypeSymbol, PullTypeSymbol } from '../typecheck/pullSymbols';
 import { PullTypeResolver } from '../typecheck/pullTypeResolution';
 import { PullTypeResolutionContext } from '../typecheck/pullTypeResolutionContext';
@@ -12,10 +11,8 @@ function isTupleType(term: AST): term is TupleType {
 }
 
 export function getTuplePullTypeSymbolFromAst(
-  ctx: {
-    pullTypeResolver: PullTypeResolver;
-    resolutionContext: PullTypeResolutionContext;
-  },
+  pullTypeResolver: PullTypeResolver,
+  resolutionContext: PullTypeResolutionContext,
   term: AST
 ): PullTypeSymbol {
   if (!isTupleType(term)) {
@@ -26,34 +23,25 @@ export function getTuplePullTypeSymbolFromAst(
   const isZeroTuple = seperatedSyntaxList.width() === 0; // []
 
   if (isZeroTuple) {
-    ctx.resolutionContext.postDiagnostic(
-      ctx.pullTypeResolver.semanticInfoChain.diagnosticFromAST(
+    resolutionContext.postDiagnostic(
+      pullTypeResolver.semanticInfoChain.diagnosticFromAST(
         term,
         DiagnosticCode.TUPLE_zero_tuple_type
       )
     );
-    return ctx.pullTypeResolver.getNewErrorTypeSymbol();
+    return pullTypeResolver.getNewErrorTypeSymbol();
   }
 
   const pullType = new PullTypeSymbol('tuple', PullElementKind.Tuple);
 
-  for (var i = 0, n = seperatedSyntaxList.nonSeparatorCount(); i < n; i++) {
-    //console.log(`member ${i}/${n}`, seperatedSyntaxList.nonSeparatorAt(i));
-    const member = ctx.pullTypeResolver.resolveAST(
-      seperatedSyntaxList.nonSeparatorAt(i),
-      false, // TODO: Do we need support for contextual typing?
-      ctx.resolutionContext
+  for (const astMember of seperatedSyntaxList.members) {
+    const member = pullTypeResolver.resolveTypeReference(
+      astMember,
+      resolutionContext
     );
-
-    const val = ctx.pullTypeResolver.resolveTypeReference(
-      seperatedSyntaxList.nonSeparatorAt(i),
-      ctx.resolutionContext
-    );
-    console.log(val);
-    //console.log(seperatedSyntaxList.nonSeparatorAt(i));
-
-    console.log(`member ${i}/${n}: ${member}`);
-
+    if (member instanceof PullErrorTypeSymbol) {
+      return member;
+    }
     pullType.addMember(member);
   }
 

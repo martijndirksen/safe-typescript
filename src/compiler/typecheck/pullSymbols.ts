@@ -2906,6 +2906,7 @@ export class PullTypeSymbol extends PullSymbol {
       kind === PullElementKind.TypeAlias || // dynamic module
       kind === PullElementKind.Enum || // enum
       kind === PullElementKind.TypeParameter || //TypeParameter
+      kind === PullElementKind.Tuple ||
       ((kind === PullElementKind.Interface ||
         kind === PullElementKind.ObjectType) &&
         this.name != '')

@@ -3751,10 +3751,7 @@ export class PullTypeResolver {
 
       typeDeclSymbol = arraySymbol;
     } else if (term.kind() === SyntaxKind.TupleType) {
-      typeDeclSymbol = getTuplePullTypeSymbolFromAst(
-        { pullTypeResolver: this, resolutionContext: context },
-        term
-      );
+      typeDeclSymbol = getTuplePullTypeSymbolFromAst(this, context, term);
     } else {
       throw Errors.invalidOperation('unknown type');
     }
