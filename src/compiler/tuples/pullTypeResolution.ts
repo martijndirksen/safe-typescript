@@ -38,12 +38,19 @@ export function getTuplePullTypeSymbolFromAst(
   const pullType = new PullTypeSymbol('tuple', PullElementKind.Tuple);
 
   for (var i = 0, n = seperatedSyntaxList.nonSeparatorCount(); i < n; i++) {
+    //console.log(`member ${i}/${n}`, seperatedSyntaxList.nonSeparatorAt(i));
     const member = ctx.pullTypeResolver.resolveAST(
       seperatedSyntaxList.nonSeparatorAt(i),
       false, // TODO: Do we need support for contextual typing?
       ctx.resolutionContext
-    ).type;
-    console.log(seperatedSyntaxList.nonSeparatorAt(i));
+    );
+
+    const val = ctx.pullTypeResolver.resolveTypeReference(
+      seperatedSyntaxList.nonSeparatorAt(i),
+      ctx.resolutionContext
+    );
+    console.log(val);
+    //console.log(seperatedSyntaxList.nonSeparatorAt(i));
 
     console.log(`member ${i}/${n}: ${member}`);
 
