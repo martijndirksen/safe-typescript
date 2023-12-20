@@ -931,7 +931,7 @@ export class BatchCompiler implements IReferenceResolverHost {
       (fileName: string, contents: string) =>
         this.writeFile(fileName, contents, false)
     );
-    if (!this.compilationSettings.errorStats()) return;
+    if (!this.compilationSettings?.errorStats()) return;
     var toSortedArray = (m: any): Pair<string, any>[] => {
       var out: Pair<string, any>[] = [];
       for (var x in m) {
@@ -985,7 +985,7 @@ export class BatchCompiler implements IReferenceResolverHost {
     }
     var errNum = diagnosticInfo.code.toString();
     var fileName = diagnostic.fileName();
-    if (this.compilationSettings.errorStats()) {
+    if (this.compilationSettings?.errorStats()) {
       if (!BatchCompiler.errFileMap[errNum]) {
         BatchCompiler.errFileMap[errNum] = {
           count: 0,

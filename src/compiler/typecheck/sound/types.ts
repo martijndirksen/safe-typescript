@@ -658,6 +658,7 @@ export class JustType extends StructuredType {
 export class TRecord extends StructuredType {
   constructor(fields: Field[], methods: Method[] = []) {
     super(TypeName.Record, fields, methods);
+    // this.addIndexSignature() // TODO MD: Possibly a type union based index signature? Not sure if necessary.
   }
   public toRTTI() {
     if (this.isVirtual()) {

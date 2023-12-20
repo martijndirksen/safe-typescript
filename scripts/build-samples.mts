@@ -30,7 +30,7 @@ async function buildSamples(globPattern: string | string[]) {
     await execCommand(`node ./dist/tsc.js --safe ${file} --module commonjs`);
     await prependFileWithContent(
       file.replace('.ts', '.js'),
-      `import { RT } from '../dist/lib/rt.js';`
+      `var RT = require('../dist/lib/rt.js').RT;`
     );
   }
 }

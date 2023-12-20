@@ -4,6 +4,8 @@ export class Bob {
 }
 
 export function concat(tuple: [number, Bob, string]): string {
-  tuple[1] = new Bob();
+  tuple[2] = new Bob();
   return tuple[0] + ' ' + tuple[1] + ' ' + tuple[2];
 }
+
+concat([3, new Bob(), 's']);

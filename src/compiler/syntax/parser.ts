@@ -3089,11 +3089,13 @@ class ParserImpl {
 
     var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
-    return this.factory.tupleType(
+    const tuple = this.factory.tupleType(
       openBracketToken,
       result.list,
       closeBracketToken
     );
+
+    return tuple;
   }
 
   private isTypeMember(inErrorRecovery: boolean): boolean {

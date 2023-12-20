@@ -96,6 +96,7 @@ import { DiagnosticCode } from '../../resources/diagnosticCode.generated';
 import { ImmutableCompilationSettings } from '../../settings';
 import { SyntaxKind } from '../../syntax/syntaxKind';
 import { TextSpan } from '../../text/textSpan';
+import { computeTupleType, tcTupleType } from '../../tuples/tc';
 import { getModuleNames } from '../pullDeclCollection';
 import { NormalPullDecl } from '../pullDecls';
 import { hasModifier, PullElementFlags, PullElementKind } from '../pullFlags';
@@ -317,7 +318,7 @@ export class SoundTypeChecker {
   }
 
   //Calls the type-checker and discards the return flag
-  private tc(ast: AST): AST {
+  public tc(ast: AST): AST {
     return this.tcaux(ast).fst;
   }
 
@@ -399,7 +400,7 @@ export class SoundTypeChecker {
          *  i.e., rewire the symbol tables to point to the rewritten term instead of the original one
          * This seems to be sufficient to provide the emitter with all the metadata it needs to emit the rewritten term
          **********************************************************************************/
-  private pkg(
+  public pkg(
     orig: AST,
     checked: AST,
     t: SoundType = TConstant.Void,
@@ -820,6 +821,9 @@ export class SoundTypeChecker {
 
       case SyntaxKind.TypeArgumentList:
         return this.tcTypeArgumentList(<TypeArgumentList>ast);
+
+      case SyntaxKind.TupleType:
+        return tcTupleType(ast, this);
 
       default:
         return TcUtil.NYI('Unexpected ast kind ' + kind2string(nodeType));
@@ -2878,9 +2882,10 @@ export class SoundTypeChecker {
     }
     return this.pkg(ast, new_obj, result_t);
   }
-  private computeType(ast: AST): SoundType {
+  public computeType(ast: AST): SoundType {
     switch (ast.kind()) {
-      // TODO: MD There could be a case here for TupleType?
+      case SyntaxKind.TupleType:
+        return computeTupleType(ast, this);
       case SyntaxKind.AnyKeyword:
         return TConstant.Any;
       case SyntaxKind.BooleanKeyword:
