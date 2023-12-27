@@ -14167,7 +14167,7 @@ export class PullTypeResolver {
     );
   }
 
-  private sourceIsAssignableToTarget(
+  public sourceIsAssignableToTarget(
     source: PullTypeSymbol,
     target: PullTypeSymbol,
     ast: AST,

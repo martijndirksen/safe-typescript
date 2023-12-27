@@ -100,16 +100,30 @@ export function sourceIsRelatableToTargetTuple(
 
       if (!source) throw new Error('Unable to resolve PullSymbol from AST');
 
-      const isIdentical = ctx.typesAreIdentical(source.type, target.type);
+      if (source.type.isAny()) continue;
+
+      // isIdentical is way more strict and does not allow subtyping.
+      // We can use this if we say that depth subtyping is not allowed.
+      const isIdentical = ctx.typesAreIdentical(source.type, target.type, ast);
+
+      const isAssignable = ctx.sourceIsAssignableToTarget(
+        source.type,
+        target.type,
+        ast,
+        context,
+        comparisonInfo,
+        isComparingInstantiatedSignatures
+      );
 
       console.log(
         'Checking ',
         SyntaxKind[ast.kind()],
         PullElementKind[target.kind],
-        isIdentical
+        isIdentical,
+        isAssignable
       );
 
-      if (!isIdentical) return false;
+      if (!isAssignable) return false;
     }
   }
   // else if array reference...
