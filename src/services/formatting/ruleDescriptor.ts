@@ -1,6 +1,6 @@
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,34 +13,43 @@
 // limitations under the License.
 //
 
-///<reference path='formatting.ts' />
+import { SyntaxKind } from '../../compiler/syntax/syntaxKind';
+import { TokenRange } from './tokenRange';
 
-module TypeScript.Services.Formatting {
-    export class RuleDescriptor {
-        constructor(public LeftTokenRange: Shared.TokenRange, public RightTokenRange: Shared.TokenRange) {
-        }
+export class RuleDescriptor {
+  constructor(
+    public LeftTokenRange: TokenRange,
+    public RightTokenRange: TokenRange
+  ) {}
 
-        public toString(): string {
-            return "[leftRange=" + this.LeftTokenRange + "," +
-                "rightRange=" + this.RightTokenRange + "]";
-        }
+  public toString(): string {
+    return (
+      '[leftRange=' +
+      this.LeftTokenRange +
+      ',' +
+      'rightRange=' +
+      this.RightTokenRange +
+      ']'
+    );
+  }
 
-        static create1(left: SyntaxKind, right: SyntaxKind): RuleDescriptor {
-            return RuleDescriptor.create4(Shared.TokenRange.FromToken(left), Shared.TokenRange.FromToken(right))
-        }
+  static create1(left: SyntaxKind, right: SyntaxKind): RuleDescriptor {
+    return RuleDescriptor.create4(
+      TokenRange.FromToken(left),
+      TokenRange.FromToken(right)
+    );
+  }
 
-        static create2(left: Shared.TokenRange, right: SyntaxKind): RuleDescriptor {
-            return RuleDescriptor.create4(left, Shared.TokenRange.FromToken(right));
-        }
+  static create2(left: TokenRange, right: SyntaxKind): RuleDescriptor {
+    return RuleDescriptor.create4(left, TokenRange.FromToken(right));
+  }
 
-        static create3(left: SyntaxKind, right: Shared.TokenRange): RuleDescriptor
-            //: this(TokenRange.FromToken(left), right)
-        {
-            return RuleDescriptor.create4(Shared.TokenRange.FromToken(left), right);
-        }
+  static create3(left: SyntaxKind, right: TokenRange): RuleDescriptor {
+    //: this(TokenRange.FromToken(left), right)
+    return RuleDescriptor.create4(TokenRange.FromToken(left), right);
+  }
 
-        static create4(left: Shared.TokenRange, right: Shared.TokenRange): RuleDescriptor {
-            return new RuleDescriptor(left, right);
-        }
-    }
+  static create4(left: TokenRange, right: TokenRange): RuleDescriptor {
+    return new RuleDescriptor(left, right);
+  }
 }

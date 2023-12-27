@@ -1,6 +1,6 @@
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -12,57 +12,62 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-///<reference path='typescriptServices.ts' />
 
-module TypeScript.Services {
+import { IdentiferNameHashTable } from '../compiler/hashTable';
+import { PullDecl } from '../compiler/typecheck/pullDecls';
+import { CompletionEntryDetails } from './languageService';
 
-    export interface CachedCompletionEntryDetails extends CompletionEntryDetails{
-        isResolved(): boolean;
-    }
+export interface CachedCompletionEntryDetails extends CompletionEntryDetails {
+  isResolved(): boolean;
+}
 
-    export class ResolvedCompletionEntry implements CachedCompletionEntryDetails {
-        constructor(public name: string,
-            public kind: string,
-            public kindModifiers: string,
-            public type: string,
-            public fullSymbolName: string,
-            public docComment: string) {
-        }
+export class ResolvedCompletionEntry implements CachedCompletionEntryDetails {
+  constructor(
+    public name: string,
+    public kind: string,
+    public kindModifiers: string,
+    public type: string,
+    public fullSymbolName: string,
+    public docComment: string
+  ) {}
 
-        public isResolved(): boolean {
-            return true;
-        }
-    }
+  public isResolved(): boolean {
+    return true;
+  }
+}
 
-    export class DeclReferenceCompletionEntry implements CachedCompletionEntryDetails {
-        public type: string = null;
-        public fullSymbolName: string = null;
-        public docComment: string = null;
+export class DeclReferenceCompletionEntry
+  implements CachedCompletionEntryDetails
+{
+  public type: string = null;
+  public fullSymbolName: string = null;
+  public docComment: string = null;
 
-        private hasBeenResolved = false;
+  private hasBeenResolved = false;
 
-        constructor(public name: string,
-            public kind: string,
-            public kindModifiers: string,
-            public decl: TypeScript.PullDecl) {
-        }
+  constructor(
+    public name: string,
+    public kind: string,
+    public kindModifiers: string,
+    public decl: PullDecl
+  ) {}
 
-        public isResolved(): boolean {
-            return this.hasBeenResolved;
-        }
+  public isResolved(): boolean {
+    return this.hasBeenResolved;
+  }
 
-        public resolve(type: string, fullSymbolName: string, docComments: string) {
-            this.type = type;
-            this.fullSymbolName = fullSymbolName;
-            this.docComment = docComments;
-            this.hasBeenResolved = true;
-        }
-    }
+  public resolve(type: string, fullSymbolName: string, docComments: string) {
+    this.type = type;
+    this.fullSymbolName = fullSymbolName;
+    this.docComment = docComments;
+    this.hasBeenResolved = true;
+  }
+}
 
-    export class CompletionSession {
-        constructor(public fileName: string,
-            public position: number,
-            public entries: TypeScript.IdentiferNameHashTable<CachedCompletionEntryDetails>) {
-        }
-    }
+export class CompletionSession {
+  constructor(
+    public fileName: string,
+    public position: number,
+    public entries: IdentiferNameHashTable<CachedCompletionEntryDetails>
+  ) {}
 }

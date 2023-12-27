@@ -1,23 +1,23 @@
-// Modified by N.Swamy (2014)
-///<reference path='ISymbol.ts' />
-///<reference path='ITypeSymbol.ts' />
+import { IGenericSymbol, IParameterizedSymbol, ISymbol } from './ISymbol';
+import { ITypeSymbol } from './ITypeSymbol';
 
-interface ISignatureSymbol extends ISymbol {
-    type(): ITypeSymbol;
+export interface ISignatureSymbol extends ISymbol {
+  type(): ITypeSymbol;
 }
 
-interface ICallSignatureSymbol extends IParameterizedSymbol, IGenericSymbol {
-}
+export interface ICallSignatureSymbol
+  extends IParameterizedSymbol,
+    IGenericSymbol {}
 
-interface IConstructSignatureSymbol extends IParameterizedSymbol, IGenericSymbol {
-}
+export interface IConstructSignatureSymbol
+  extends IParameterizedSymbol,
+    IGenericSymbol {}
 
-interface IIndexSignatureSymbol extends IParameterizedSymbol {
-}
+export interface IIndexSignatureSymbol extends IParameterizedSymbol {}
 
-interface IPropertySignature extends ISignatureSymbol {
-    isOptional(): boolean;
+export interface IPropertySignature extends ISignatureSymbol {
+  isOptional(): boolean;
 
-    /// True if this property's type is an anonymous type that is a function type.
-    isFunctionSignature(): boolean;
+  /// True if this property's type is an anonymous type that is a function type.
+  isFunctionSignature(): boolean;
 }

@@ -1,6 +1,6 @@
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,33 +13,66 @@
 // limitations under the License.
 //
 
-///<reference path='formatting.ts' />
+import { IFormattingOptions } from '../../compiler/syntax/formattingOptions';
+import { SourceUnitSyntax } from '../../compiler/syntax/syntaxNodes.generated';
+import { ISyntaxToken } from '../../compiler/syntax/syntaxToken';
+import { TextSpan } from '../../compiler/text/textSpan';
+import { IndentationTrackingWalker } from './indentationTrackingWalker';
+import { ITextSnapshot } from './textSnapshot';
 
-module TypeScript.Services.Formatting {
-    export class SingleTokenIndenter extends IndentationTrackingWalker {
-        private indentationAmount: number = null;
-        private indentationPosition: number;
+export class SingleTokenIndenter extends IndentationTrackingWalker {
+  private indentationAmount: number = null;
+  private indentationPosition: number;
 
-        constructor(indentationPosition: number, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, indentFirstToken: boolean, options: FormattingOptions) {
-            super(new TextSpan(indentationPosition, 1), sourceUnit, snapshot, indentFirstToken, options);
+  constructor(
+    indentationPosition: number,
+    sourceUnit: SourceUnitSyntax,
+    snapshot: ITextSnapshot,
+    indentFirstToken: boolean,
+    options: IFormattingOptions
+  ) {
+    super(
+      new TextSpan(indentationPosition, 1),
+      sourceUnit,
+      snapshot,
+      indentFirstToken,
+      options
+    );
 
-            this.indentationPosition = indentationPosition;
-        }
+    this.indentationPosition = indentationPosition;
+  }
 
-        public static getIndentationAmount(position: number, sourceUnit: SourceUnitSyntax, snapshot: ITextSnapshot, options: FormattingOptions): number {
-            var walker = new SingleTokenIndenter(position, sourceUnit, snapshot, true, options);
-            sourceUnit.accept(walker);
-            return walker.indentationAmount;
-        }
+  public static getIndentationAmount(
+    position: number,
+    sourceUnit: SourceUnitSyntax,
+    snapshot: ITextSnapshot,
+    options: IFormattingOptions
+  ): number {
+    var walker = new SingleTokenIndenter(
+      position,
+      sourceUnit,
+      snapshot,
+      true,
+      options
+    );
+    sourceUnit.accept(walker);
+    return walker.indentationAmount;
+  }
 
-        public indentToken(token: ISyntaxToken, indentationAmount: number, commentIndentationAmount: number): void {
-            // Compute an indentation string for this token
-            if (token.fullWidth() === 0 || (this.indentationPosition - this.position() < token.leadingTriviaWidth())) {
-                // The position is in the leading trivia, use comment indentation
-                this.indentationAmount = commentIndentationAmount;
-            } else {
-                this.indentationAmount = indentationAmount;
-            }
-        }
+  public indentToken(
+    token: ISyntaxToken,
+    indentationAmount: number,
+    commentIndentationAmount: number
+  ): void {
+    // Compute an indentation string for this token
+    if (
+      token.fullWidth() === 0 ||
+      this.indentationPosition - this.position() < token.leadingTriviaWidth()
+    ) {
+      // The position is in the leading trivia, use comment indentation
+      this.indentationAmount = commentIndentationAmount;
+    } else {
+      this.indentationAmount = indentationAmount;
     }
+  }
 }

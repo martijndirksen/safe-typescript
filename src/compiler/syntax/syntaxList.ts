@@ -1,367 +1,435 @@
-// Modified by N.Swamy (2014)
-///<reference path='references.ts' />
+import { RT, type CheckedArray } from '../../runtime/rt';
+import { Errors } from '../core/errors';
+import { SyntaxConstants } from './constants';
+import {
+  PositionedElement,
+  PositionedToken,
+  PositionedList,
+} from './positionedElement';
+import { ISyntaxElement } from './syntaxElement';
+import { SyntaxKind } from './syntaxKind';
+import { ISyntaxNodeOrToken } from './syntaxNodeOrToken';
+import { ISyntaxToken } from './syntaxToken';
+import { ISyntaxTriviaList, emptyTriviaList } from './syntaxTriviaList';
 
-module TypeScript {
-    export interface ISyntaxList extends ISyntaxElement {
-        childAt(index: number): ISyntaxNodeOrToken;
-        toArray(): ISyntaxNodeOrToken[];
+export interface ISyntaxList extends ISyntaxElement {
+  childAt(index: number): ISyntaxNodeOrToken;
+  toArray(): ISyntaxNodeOrToken[];
 
-        insertChildrenInto(array: ISyntaxElement[], index: number): void;
-    }
+  insertChildrenInto(array: ISyntaxElement[], index: number): void;
 }
 
-module TypeScript.Syntax {
-    // TODO: stop exporting this once typecheck bug is fixed.
-    export class EmptySyntaxList implements ISyntaxList {
-        public kind(): SyntaxKind { return SyntaxKind.List; }
+// TODO: stop exporting this once typecheck bug is fixed.
+export class EmptySyntaxList implements ISyntaxList {
+  public kind(): SyntaxKind {
+    return SyntaxKind.List;
+  }
 
-        public isNode(): boolean { return false; }
-        public isToken(): boolean { return false; }
-        public isList(): boolean { return true; }
-        public isSeparatedList(): boolean { return false; }
+  public isNode(): boolean {
+    return false;
+  }
+  public isToken(): boolean {
+    return false;
+  }
+  public isList(): boolean {
+    return true;
+  }
+  public isSeparatedList(): boolean {
+    return false;
+  }
 
-        public toJSON(key: any): any {
-            return <any[]>[];
-        }
+  public toJSON(key: any): any {
+    return <any[]>[];
+  }
 
-        public childCount(): number {
-            return 0;
-        }
+  public childCount(): number {
+    return 0;
+  }
 
-        public childAt(index: number): ISyntaxNodeOrToken {
-            throw Errors.argumentOutOfRange("index");
-        }
+  public childAt(index: number): ISyntaxNodeOrToken {
+    throw Errors.argumentOutOfRange('index');
+  }
 
-        public toArray(): ISyntaxNodeOrToken[] {
-            return [];
-        }
+  public toArray(): ISyntaxNodeOrToken[] {
+    return [];
+  }
 
-        public collectTextElements(elements: string[]): void {
-        }
+  public collectTextElements(elements: string[]): void {}
 
-        public firstToken(): ISyntaxToken {
-            return null;
-        }
+  public firstToken(): ISyntaxToken {
+    return null;
+  }
 
-        public lastToken(): ISyntaxToken {
-            return null;
-        }
+  public lastToken(): ISyntaxToken {
+    return null;
+  }
 
-        public fullWidth(): number {
-            return 0;
-        }
+  public fullWidth(): number {
+    return 0;
+  }
 
-        public width(): number {
-            return 0;
-        }
+  public width(): number {
+    return 0;
+  }
 
-        public leadingTrivia(): ISyntaxTriviaList {
-            return Syntax.emptyTriviaList;
-        }
+  public leadingTrivia(): ISyntaxTriviaList {
+    return emptyTriviaList;
+  }
 
-        public trailingTrivia(): ISyntaxTriviaList {
-            return Syntax.emptyTriviaList;
-        }
+  public trailingTrivia(): ISyntaxTriviaList {
+    return emptyTriviaList;
+  }
 
-        public leadingTriviaWidth(): number {
-            return 0;
-        }
+  public leadingTriviaWidth(): number {
+    return 0;
+  }
 
-        public trailingTriviaWidth(): number {
-            return 0;
-        }
+  public trailingTriviaWidth(): number {
+    return 0;
+  }
 
-        public fullText(): string {
-            return "";
-        }
+  public fullText(): string {
+    return '';
+  }
 
-        public isTypeScriptSpecific(): boolean {
-            return false;
-        }
+  public isTypeScriptSpecific(): boolean {
+    return false;
+  }
 
-        public isIncrementallyUnusable(): boolean {
-            return false;
-        }
+  public isIncrementallyUnusable(): boolean {
+    return false;
+  }
 
-        public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
-            // This should never have been called on this list.  It has a 0 width, so the client 
-            // should have skipped over this.
-            throw Errors.invalidOperation();
-        }
+  public findTokenInternal(
+    parent: PositionedElement,
+    position: number,
+    fullStart: number
+  ): PositionedToken {
+    // This should never have been called on this list.  It has a 0 width, so the client
+    // should have skipped over this.
+    throw Errors.invalidOperation();
+  }
 
-        public insertChildrenInto(array: ISyntaxElement[], index: number): void {
-        }
+  public insertChildrenInto(array: ISyntaxElement[], index: number): void {}
+}
+
+export var emptyList: ISyntaxList = new EmptySyntaxList();
+
+class SingletonSyntaxList implements ISyntaxList {
+  private item: ISyntaxNodeOrToken;
+
+  constructor(item: ISyntaxNodeOrToken) {
+    this.item = item;
+  }
+
+  public kind(): SyntaxKind {
+    return SyntaxKind.List;
+  }
+
+  public isToken(): boolean {
+    return false;
+  }
+  public isNode(): boolean {
+    return false;
+  }
+  public isList(): boolean {
+    return true;
+  }
+  public isSeparatedList(): boolean {
+    return false;
+  }
+
+  public toJSON(key: any) {
+    return [this.item];
+  }
+
+  public childCount() {
+    return 1;
+  }
+
+  public childAt(index: number): ISyntaxNodeOrToken {
+    if (index !== 0) {
+      throw Errors.argumentOutOfRange('index');
     }
 
-    export var emptyList: ISyntaxList = new EmptySyntaxList();
+    return this.item;
+  }
 
-    class SingletonSyntaxList implements ISyntaxList {
-        private item: ISyntaxNodeOrToken;
+  public toArray(): ISyntaxNodeOrToken[] {
+    return [this.item];
+  }
 
-        constructor(item: ISyntaxNodeOrToken) {
-            this.item = item;
-        }
+  public collectTextElements(elements: string[]): void {
+    this.item.collectTextElements(elements);
+  }
 
-        public kind(): SyntaxKind { return SyntaxKind.List; }
+  public firstToken(): ISyntaxToken {
+    return this.item.firstToken();
+  }
 
-        public isToken(): boolean { return false; }
-        public isNode(): boolean { return false; }
-        public isList(): boolean { return true; }
-        public isSeparatedList(): boolean { return false; }
+  public lastToken(): ISyntaxToken {
+    return this.item.lastToken();
+  }
 
-        public toJSON(key: any) {
-            return [this.item];
-        }
+  public fullWidth(): number {
+    return this.item.fullWidth();
+  }
 
-        public childCount() {
-            return 1;
-        }
+  public width(): number {
+    return this.item.width();
+  }
 
-        public childAt(index: number): ISyntaxNodeOrToken {
-            if (index !== 0) {
-                throw Errors.argumentOutOfRange("index");
-            }
+  public leadingTrivia(): ISyntaxTriviaList {
+    return this.item.leadingTrivia();
+  }
 
-            return this.item;
-        }
+  public trailingTrivia(): ISyntaxTriviaList {
+    return this.item.trailingTrivia();
+  }
 
-        public toArray(): ISyntaxNodeOrToken[] {
-            return [this.item];
-        }
+  public leadingTriviaWidth(): number {
+    return this.item.leadingTriviaWidth();
+  }
 
-        public collectTextElements(elements: string[]): void {
-            this.item.collectTextElements(elements);
-        }
+  public trailingTriviaWidth(): number {
+    return this.item.trailingTriviaWidth();
+  }
 
-        public firstToken(): ISyntaxToken {
-            return this.item.firstToken();
-        }
+  public fullText(): string {
+    return this.item.fullText();
+  }
 
-        public lastToken(): ISyntaxToken {
-            return this.item.lastToken();
-        }
+  public isTypeScriptSpecific(): boolean {
+    return this.item.isTypeScriptSpecific();
+  }
 
-        public fullWidth(): number {
-            return this.item.fullWidth();
-        }
+  public isIncrementallyUnusable(): boolean {
+    return this.item.isIncrementallyUnusable();
+  }
 
-        public width(): number {
-            return this.item.width();
-        }
-        
-        public leadingTrivia(): ISyntaxTriviaList {
-            return this.item.leadingTrivia();
-        }
+  public findTokenInternal(
+    parent: PositionedElement,
+    position: number,
+    fullStart: number
+  ): PositionedToken {
+    // Debug.assert(position >= 0 && position < this.item.fullWidth());
+    return (<any>this.item).findTokenInternal(
+      new PositionedList(parent, this, fullStart),
+      position,
+      fullStart
+    );
+  }
 
-        public trailingTrivia(): ISyntaxTriviaList {
-            return this.item.trailingTrivia();
-        }
+  public insertChildrenInto(array: ISyntaxElement[], index: number): void {
+    array.splice(index, 0, this.item);
+  }
+}
 
-        public leadingTriviaWidth(): number {
-            return this.item.leadingTriviaWidth();
-        }
+class NormalSyntaxList implements ISyntaxList {
+  private nodeOrTokens: CheckedArray<ISyntaxNodeOrToken>; //[];
+  private _data: number = 0;
 
-        public trailingTriviaWidth(): number {
-            return this.item.trailingTriviaWidth();
-        }
+  constructor(nodeOrTokens: CheckedArray<ISyntaxNodeOrToken>) {
+    this.nodeOrTokens = nodeOrTokens;
+  }
 
-        public fullText(): string {
-            return this.item.fullText();
-        }
+  public kind(): SyntaxKind {
+    return SyntaxKind.List;
+  }
 
-        public isTypeScriptSpecific(): boolean {
-            return this.item.isTypeScriptSpecific();
-        }
+  public isNode(): boolean {
+    return false;
+  }
+  public isToken(): boolean {
+    return false;
+  }
+  public isList(): boolean {
+    return true;
+  }
+  public isSeparatedList(): boolean {
+    return false;
+  }
 
-        public isIncrementallyUnusable(): boolean {
-            return this.item.isIncrementallyUnusable();
-        }
+  public toJSON(key: any) {
+    return this.nodeOrTokens;
+  }
 
-        public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
-            // Debug.assert(position >= 0 && position < this.item.fullWidth());
-            return (<any>this.item).findTokenInternal(
-                new PositionedList(parent, this, fullStart), position, fullStart);
-        }
+  public childCount() {
+    return this.nodeOrTokens.length;
+  }
 
-        public insertChildrenInto(array: ISyntaxElement[], index: number): void {
-            array.splice(index, 0, this.item);
-        }
+  public childAt(index: number): ISyntaxNodeOrToken {
+    if (index < 0 || index >= this.nodeOrTokens.length) {
+      throw Errors.argumentOutOfRange('index');
     }
 
-    class NormalSyntaxList implements ISyntaxList {
-        private nodeOrTokens: CheckedArray<ISyntaxNodeOrToken>;//[];
-        private _data: number = 0;
+    return this.nodeOrTokens[index];
+  }
 
-        constructor(nodeOrTokens: CheckedArray<ISyntaxNodeOrToken>) {
-            this.nodeOrTokens = nodeOrTokens;
-        }
+  public toArray(): ISyntaxNodeOrToken[] {
+    return this.nodeOrTokens.slice(0);
+  }
 
-        public kind(): SyntaxKind { return SyntaxKind.List; }
+  public collectTextElements(elements: string[]): void {
+    for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+      var element = this.nodeOrTokens[i];
+      element.collectTextElements(elements);
+    }
+  }
 
-        public isNode(): boolean { return false; }
-        public isToken(): boolean { return false; }
-        public isList(): boolean { return true; }
-        public isSeparatedList(): boolean { return false; }
-
-        public toJSON(key: any) {
-            return this.nodeOrTokens;
-        }
-
-        public childCount() {
-            return this.nodeOrTokens.length;
-        }
-
-        public childAt(index: number): ISyntaxNodeOrToken {
-            if (index < 0 || index >= this.nodeOrTokens.length) {
-                throw Errors.argumentOutOfRange("index");
-            }
-
-            return this.nodeOrTokens[index];
-        }
-
-        public toArray(): ISyntaxNodeOrToken[] {
-            return this.nodeOrTokens.slice(0);
-        }
-
-        public collectTextElements(elements: string[]): void {
-            for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
-                var element = this.nodeOrTokens[i];
-                element.collectTextElements(elements);
-            }
-        }
-
-        public firstToken(): ISyntaxToken {
-            for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
-                var token = this.nodeOrTokens[i].firstToken();
-                if (token !== null) {
-                    return token;
-                }
-            }
-
-            return null;
-        }
-
-        public lastToken(): ISyntaxToken {
-            for (var i = this.nodeOrTokens.length - 1; i >= 0; i--) {
-                var token = this.nodeOrTokens[i].lastToken();
-                if (token !== null) {
-                    return token;
-                }
-            }
-
-            return null;
-        }
-
-        public fullText(): string {
-            var elements = new Array<string>();
-            this.collectTextElements(elements);
-            return elements.join("");
-        }
-
-        public isTypeScriptSpecific(): boolean {
-            for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
-                if (this.nodeOrTokens[i].isTypeScriptSpecific()) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public isIncrementallyUnusable(): boolean {
-            return (this.data() & SyntaxConstants.NodeIncrementallyUnusableMask) !== 0;
-        }
-
-        public fullWidth(): number {
-            return this.data() >>> SyntaxConstants.NodeFullWidthShift;
-        }
-
-        public width(): number {
-            var fullWidth = this.fullWidth();
-            return fullWidth - this.leadingTriviaWidth() - this.trailingTriviaWidth();
-        }
-
-        public leadingTrivia(): ISyntaxTriviaList {
-            return this.firstToken().leadingTrivia();
-        }
-
-        public trailingTrivia(): ISyntaxTriviaList {
-            return this.lastToken().trailingTrivia();
-        }
-
-        public leadingTriviaWidth(): number {
-            return this.firstToken().leadingTriviaWidth();
-        }
-
-        public trailingTriviaWidth(): number {
-            return this.lastToken().trailingTriviaWidth();
-        }
-
-        private computeData(): number {
-            var fullWidth = 0;
-            var isIncrementallyUnusable = false;
-
-            for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
-                var node = this.nodeOrTokens[i];
-                fullWidth += node.fullWidth();
-                isIncrementallyUnusable = isIncrementallyUnusable || node.isIncrementallyUnusable();
-            }
-
-            return (fullWidth << SyntaxConstants.NodeFullWidthShift)
-                 | (isIncrementallyUnusable ? SyntaxConstants.NodeIncrementallyUnusableMask : 0)
-                 | SyntaxConstants.NodeDataComputed;
-        }
-
-        private data(): number {
-            if ((this._data & SyntaxConstants.NodeDataComputed) === 0) {
-                this._data = this.computeData();
-            }
-
-            return this._data;
-        }
-
-        public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
-            // Debug.assert(position >= 0 && position < this.fullWidth());
-            
-            parent = new PositionedList(parent, this, fullStart);
-            for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
-                var nodeOrToken = this.nodeOrTokens[i];
-
-                var childWidth = nodeOrToken.fullWidth();
-                if (position < childWidth) {
-                    return (<any>nodeOrToken).findTokenInternal(parent, position, fullStart);
-                }
-
-                position -= childWidth;
-                fullStart += childWidth;
-            }
-
-            throw Errors.invalidOperation();
-        }
-
-        public insertChildrenInto(array: ISyntaxElement[], index: number): void {
-            if (index === 0) {
-                RT.applyVariadic<ISyntaxNodeOrToken>(array, "unshift", RT.forceCheckedArray<ISyntaxNodeOrToken,ISyntaxNodeOrToken>(this.nodeOrTokens));
-                //array.unshift.apply(array, this.nodeOrTokens);
-            }
-            else {
-                // TODO: this seems awfully innefficient.  Can we do better here?
-                RT.applyVariadic<any>(array, "splice", [index, <any>0].concat(this.nodeOrTokens));
-                //array.splice.apply(array, [index, <any>0].concat(this.nodeOrTokens));
-            }
-        }
+  public firstToken(): ISyntaxToken {
+    for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+      var token = this.nodeOrTokens[i].firstToken();
+      if (token !== null) {
+        return token;
+      }
     }
 
-    export function list(nodes: CheckedArray<ISyntaxNodeOrToken>): ISyntaxList {
-        if (nodes === undefined || nodes === null || nodes.length === 0) {
-            return emptyList;
-        }
+    return null;
+  }
 
-        if (nodes.length === 1) {
-            var item = nodes[0];
-            return new SingletonSyntaxList(item);
-        }
-
-        return new NormalSyntaxList(nodes);
+  public lastToken(): ISyntaxToken {
+    for (var i = this.nodeOrTokens.length - 1; i >= 0; i--) {
+      var token = this.nodeOrTokens[i].lastToken();
+      if (token !== null) {
+        return token;
+      }
     }
+
+    return null;
+  }
+
+  public fullText(): string {
+    var elements = new Array<string>();
+    this.collectTextElements(elements);
+    return elements.join('');
+  }
+
+  public isTypeScriptSpecific(): boolean {
+    for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+      if (this.nodeOrTokens[i].isTypeScriptSpecific()) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  public isIncrementallyUnusable(): boolean {
+    return (this.data() & SyntaxConstants.NodeIncrementallyUnusableMask) !== 0;
+  }
+
+  public fullWidth(): number {
+    return this.data() >>> SyntaxConstants.NodeFullWidthShift;
+  }
+
+  public width(): number {
+    var fullWidth = this.fullWidth();
+    return fullWidth - this.leadingTriviaWidth() - this.trailingTriviaWidth();
+  }
+
+  public leadingTrivia(): ISyntaxTriviaList {
+    return this.firstToken().leadingTrivia();
+  }
+
+  public trailingTrivia(): ISyntaxTriviaList {
+    return this.lastToken().trailingTrivia();
+  }
+
+  public leadingTriviaWidth(): number {
+    return this.firstToken().leadingTriviaWidth();
+  }
+
+  public trailingTriviaWidth(): number {
+    return this.lastToken().trailingTriviaWidth();
+  }
+
+  private computeData(): number {
+    var fullWidth = 0;
+    var isIncrementallyUnusable = false;
+
+    for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+      var node = this.nodeOrTokens[i];
+      fullWidth += node.fullWidth();
+      isIncrementallyUnusable =
+        isIncrementallyUnusable || node.isIncrementallyUnusable();
+    }
+
+    return (
+      (fullWidth << SyntaxConstants.NodeFullWidthShift) |
+      (isIncrementallyUnusable
+        ? SyntaxConstants.NodeIncrementallyUnusableMask
+        : 0) |
+      SyntaxConstants.NodeDataComputed
+    );
+  }
+
+  private data(): number {
+    if ((this._data & SyntaxConstants.NodeDataComputed) === 0) {
+      this._data = this.computeData();
+    }
+
+    return this._data;
+  }
+
+  public findTokenInternal(
+    parent: PositionedElement,
+    position: number,
+    fullStart: number
+  ): PositionedToken {
+    // Debug.assert(position >= 0 && position < this.fullWidth());
+
+    parent = new PositionedList(parent, this, fullStart);
+    for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+      var nodeOrToken = this.nodeOrTokens[i];
+
+      var childWidth = nodeOrToken.fullWidth();
+      if (position < childWidth) {
+        return (<any>nodeOrToken).findTokenInternal(
+          parent,
+          position,
+          fullStart
+        );
+      }
+
+      position -= childWidth;
+      fullStart += childWidth;
+    }
+
+    throw Errors.invalidOperation();
+  }
+
+  public insertChildrenInto(array: ISyntaxElement[], index: number): void {
+    if (index === 0) {
+      RT.applyVariadic<ISyntaxNodeOrToken>(
+        array,
+        'unshift',
+        RT.forceCheckedArray<ISyntaxNodeOrToken, ISyntaxNodeOrToken>(
+          this.nodeOrTokens
+        )
+      );
+      //array.unshift.apply(array, this.nodeOrTokens);
+    } else {
+      // TODO: this seems awfully innefficient.  Can we do better here?
+      RT.applyVariadic<any>(
+        array,
+        'splice',
+        [index, <any>0].concat(this.nodeOrTokens)
+      );
+      //array.splice.apply(array, [index, <any>0].concat(this.nodeOrTokens));
+    }
+  }
+}
+
+export function list(nodes: CheckedArray<ISyntaxNodeOrToken>): ISyntaxList {
+  if (nodes === undefined || nodes === null || nodes.length === 0) {
+    return emptyList;
+  }
+
+  if (nodes.length === 1) {
+    var item = nodes[0];
+    return new SingletonSyntaxList(item);
+  }
+
+  return new NormalSyntaxList(nodes);
 }

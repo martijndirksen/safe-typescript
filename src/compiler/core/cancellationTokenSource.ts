@@ -1,8 +1,6 @@
-// Modified by N.Swamy (2014)
-///<reference path='ICancellationToken.ts' />
+import type { ICancellationToken } from './cancellationToken';
 
-interface ICancellationTokenSource {
-    token(): ICancellationToken;
-
-    cancel(): void;
+export interface ICancellationTokenSource {
+  token(): ICancellationToken;
+  cancel(): void;
 }

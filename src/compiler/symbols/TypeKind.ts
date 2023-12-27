@@ -1,19 +1,18 @@
-// Modified by N.Swamy (2014)
 /**
  * Enumeration for possible kinds of type symbols.
  */
-enum TypeKind {
-    Any,
-    Number,
-    Boolean,
-    String,
-    Void,
-    Null,
-    Undefined,
-    Class,
-    Interface,
-    // Array,
-    Anonymous,
-    Enum,
-    TypeParameter,
+export enum TypeKind {
+  Any,
+  Number,
+  Boolean,
+  String,
+  Void,
+  Null,
+  Undefined,
+  Class,
+  Interface,
+  // Array, // MD: For some reason this is not included?
+  Anonymous,
+  Enum,
+  TypeParameter,
 }

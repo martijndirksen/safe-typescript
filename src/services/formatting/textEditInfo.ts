@@ -1,6 +1,6 @@
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,16 +13,22 @@
 // limitations under the License.
 //
 
-///<reference path='formatting.ts' />
+export class TextEditInfo {
+  constructor(
+    public position: number,
+    public length: number,
+    public replaceWith: string
+  ) {}
 
-module TypeScript.Services.Formatting {
-    export class TextEditInfo {
-
-        constructor(public position: number, public length: number, public replaceWith: string) {
-        }
-
-        public toString() {
-            return "[ position: " + this.position + ", length: " + this.length + ", replaceWith: '" + this.replaceWith + "' ]";
-        }
-    }
+  public toString() {
+    return (
+      '[ position: ' +
+      this.position +
+      ', length: ' +
+      this.length +
+      ", replaceWith: '" +
+      this.replaceWith +
+      "' ]"
+    );
+  }
 }

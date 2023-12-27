@@ -1,12 +1,17 @@
-// Modified by N.Swamy (2014)
-///<reference path='references.ts' />
+export interface IFormattingOptions {
+  useTabs: boolean;
+  spacesPerTab: number;
+  indentSpaces: number;
+  newLineCharacter: string;
+}
 
-class FormattingOptions {
-    constructor(public useTabs: boolean,
-                public spacesPerTab: number,
-                public indentSpaces: number,
-                public newLineCharacter: string) {
-    }
-
-    public static defaultOptions = new FormattingOptions(/*useTabs:*/ false, /*spacesPerTab:*/ 4, /*indentSpaces:*/ 4, /*newLineCharacter*/ "\r\n");
+export function createFormattingOptions(
+  options?: Partial<IFormattingOptions>
+): IFormattingOptions {
+  return {
+    useTabs: options?.useTabs ?? false,
+    spacesPerTab: options?.spacesPerTab ?? 4,
+    indentSpaces: options?.indentSpaces ?? 4,
+    newLineCharacter: options?.newLineCharacter ?? '\r\n',
+  };
 }

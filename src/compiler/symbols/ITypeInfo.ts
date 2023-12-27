@@ -1,17 +1,16 @@
-// Modified by N.Swamy (2014)
-///<reference path='ISymbol.ts' />
+import { ITypeSymbol } from './ITypeSymbol';
 
-interface ITypeInfo {
-    /**
-     * The type of the expression represented by the syntax node. For expressions that do not
-     * have a type, null is returned. If the type could not be determined due to an error, than
-     * an ErrorTypeSymbol is returned.
-     */
-    type(): ITypeSymbol;
+export interface ITypeInfo {
+  /**
+   * The type of the expression represented by the syntax node. For expressions that do not
+   * have a type, null is returned. If the type could not be determined due to an error, than
+   * an ErrorTypeSymbol is returned.
+   */
+  type(): ITypeSymbol;
 
-    /**
-     * The type of the expression after it has undergone an implicit conversion. If the type
-     * did not undergo an implicit conversion, returns the same as Type.
-     */
-    convertedType(): ITypeSymbol;
+  /**
+   * The type of the expression after it has undergone an implicit conversion. If the type
+   * did not undergo an implicit conversion, returns the same as Type.
+   */
+  convertedType(): ITypeSymbol;
 }

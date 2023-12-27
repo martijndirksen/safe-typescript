@@ -1,33 +1,40 @@
-// Modified by N.Swamy (2014)
-///<reference path='ISymbol.ts' />
-///<reference path='ITypeSymbol.ts' />
+import {
+  IGenericSymbol,
+  IParameterSymbol,
+  IParameterizedSymbol,
+  ISymbol,
+} from './ISymbol';
+import { ITypeSymbol } from './ITypeSymbol';
 
-interface IMemberSymbol extends ISymbol {
-}
+export interface IMemberSymbol extends ISymbol {}
 
-interface IConstructorSymbol extends IMemberSymbol, IParameterizedSymbol {
-}
+export interface IConstructorSymbol
+  extends IMemberSymbol,
+    IParameterizedSymbol {}
 
-interface IFunctionSymbol extends IMemberSymbol, IParameterizedSymbol, IGenericSymbol {
-    returnType(): ITypeSymbol;
+export interface IFunctionSymbol
+  extends IMemberSymbol,
+    IParameterizedSymbol,
+    IGenericSymbol {
+  returnType(): ITypeSymbol;
 }
 
 /**
  * Represents a variable in a class, module or enum.
  */
-interface IVariableSymbol extends IMemberSymbol {
-    /**
-     * Gets the type of this field.
-     */
-    type(): ITypeSymbol;
+export interface IVariableSymbol extends IMemberSymbol {
+  /**
+   * Gets the type of this field.
+   */
+  type(): ITypeSymbol;
 
-    hasValue(): boolean;
+  hasValue(): boolean;
 
-    /**
-     * Gets the constant value of this field.
-     */
-    value(): any;
+  /**
+   * Gets the constant value of this field.
+   */
+  value(): any;
 
-    /// The parameter this variable was created from if it was created from a parameter.
-    associatedParameter(): IParameterSymbol;
+  /// The parameter this variable was created from if it was created from a parameter.
+  associatedParameter(): IParameterSymbol;
 }

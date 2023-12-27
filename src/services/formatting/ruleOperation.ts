@@ -1,6 +1,6 @@
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,32 +13,25 @@
 // limitations under the License.
 //
 
-///<reference path='formatting.ts' />
+import { RuleAction } from './ruleAction';
+import { RuleOperationContext } from './ruleOperationContext';
 
-module TypeScript.Services.Formatting {
-    export class RuleOperation {
-        public Context: RuleOperationContext;
-        public Action: RuleAction;
+export class RuleOperation {
+  public Context?: RuleOperationContext;
+  public Action?: RuleAction;
 
-        constructor() {
-            this.Context = null;
-            this.Action = null;
-        }
+  public toString(): string {
+    return '[context=' + this.Context + ',' + 'action=' + this.Action + ']';
+  }
 
-        public toString(): string {
-            return "[context=" + this.Context + "," +
-                "action=" + this.Action + "]";
-        }
+  static create1(action: RuleAction) {
+    return RuleOperation.create2(RuleOperationContext.Any, action);
+  }
 
-        static create1(action: RuleAction) {
-            return RuleOperation.create2(RuleOperationContext.Any, action)
-        }
-
-        static create2(context: RuleOperationContext, action: RuleAction) {
-            var result = new RuleOperation();
-            result.Context = context;
-            result.Action = action;
-            return result;
-        }
-    }
+  static create2(context: RuleOperationContext, action: RuleAction) {
+    var result = new RuleOperation();
+    result.Context = context;
+    result.Action = action;
+    return result;
+  }
 }

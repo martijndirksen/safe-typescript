@@ -1,11 +1,10 @@
-// Modified by N.Swamy (2014)
-///<reference path='references.ts' />
+import { ISyntaxElement } from './syntaxElement';
+import { ISyntaxTriviaList } from './syntaxTriviaList';
+import { ISyntaxVisitor } from './syntaxVisitor.generated';
 
-module TypeScript {
-    export interface ISyntaxNodeOrToken extends ISyntaxElement {
-        withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
-        withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
+export interface ISyntaxNodeOrToken extends ISyntaxElement {
+  withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
+  withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
 
-        accept(visitor: ISyntaxVisitor): any;
-    }
+  accept(visitor: ISyntaxVisitor): any;
 }

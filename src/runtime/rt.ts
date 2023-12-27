@@ -6,7 +6,7 @@
 // - Fixed multiple type errors related to the misuse of undefined
 // - Added a few more checks to detect undefined in RT procedures
 
-interface CheckedArray<T> {
+export interface CheckedArray<T> {
   toString(): string;
   toLocaleString(): string;
   concat(...items: T[]): T[];
@@ -93,6 +93,7 @@ export module RT {
     return <S[]>(<any>c);
   }
   export function applyVariadic<T>(o: Virtual, m: string, args: T[]): any {
+    // @ts-ignore RTTI magic
     var f = o[m];
     return f.apply(o, args);
   }
@@ -1467,6 +1468,7 @@ export module RT {
         ); // add new_flds in RTTI tentatively
         for (f in new_flds) {
           // go deep
+          // @ts-ignore RTTI magic
           checkAndTag(v[f], Any, new_flds[f]);
         }
         return v;
@@ -1546,6 +1548,7 @@ export module RT {
             'readField from interface / instance reading dot type/un field'
           );
         }
+        // @ts-ignore RTTI magic
         return shallowTag(o[fname], t1);
       case TT.STRING:
         if (fname === 'length') {
@@ -1565,6 +1568,8 @@ export module RT {
             'array readField elt type is dotted/un: ' + prettyprint_t(t1)
           );
         }
+
+        // @ts-ignore RTTI magic
         return shallowTag(o[<number>checkAndTag(f, Any, Num)], t1);
       case TT.STRUCTURED_TYPE:
         t1 = t.fieldTable[fname] || from.fieldTable[fname];
@@ -1580,8 +1585,10 @@ export module RT {
         } else if (t1.tt === TT.JUST_TYPE || t1.tt === TT.UN) {
           throw new Error('readField from struct reading dot/un type field');
         }
+        // @ts-ignore RTTI magic
         return shallowTag(o[fname], t1);
       case TT.ANY:
+        // @ts-ignore RTTI magic
         return o[fname];
       case TT.INDEX_MAP:
         tt = (<IndexMapType>t).key.tt;
@@ -1593,6 +1600,7 @@ export module RT {
           );
         }
         if (tt === TT.NUMBER) {
+          // @ts-ignore RTTI magic
           return shallowTag(o[<any>checkAndTag(f, Any, Num)], t1);
         } else {
           if (objectMethods[fname]) {
@@ -1600,6 +1608,7 @@ export module RT {
               'readField for indexMap reading Object method: ' + fname
             );
           }
+          // @ts-ignore RTTI magic
           return shallowTag(o[fname], t1);
         }
     }
@@ -1650,6 +1659,7 @@ export module RT {
         } else {
           v = checkAndTag(v, tv, t1);
         }
+        // @ts-ignore RTTI magic
         return (o[fname] = v);
       case TT.ARRAY:
         if (fname === 'length') {
@@ -1666,6 +1676,7 @@ export module RT {
         } else {
           v = checkAndTag(v, tv, t1);
         }
+        // @ts-ignore RTTI magic
         return (o[<number>f] = v);
       case TT.STRUCTURED_TYPE:
         t1 = t.fieldTable[fname] || from.fieldTable[fname];
@@ -1684,8 +1695,10 @@ export module RT {
         } else {
           v = checkAndTag(v, tv, t1);
         }
+        // @ts-ignore RTTI magic
         return (o[fname] = v);
       case TT.ANY:
+        // @ts-ignore RTTI magic
         return (o[fname] = v);
       case TT.INDEX_MAP:
         tt = (<IndexMapType>t).key.tt;
@@ -1701,6 +1714,7 @@ export module RT {
           if (f === undefined || f === null || f.__rtti__ !== Num) {
             throw new Error('Indexmap writeField number index error');
           }
+          // @ts-ignore RTTI magic
           return (o[f] = v);
         } else {
           if (objectMethods[fname]) {
@@ -1708,6 +1722,7 @@ export module RT {
               'writeField for indexMap writing Object method: ' + fname
             );
           }
+          // @ts-ignore RTTI magic
           return (o[fname] = v);
         }
     }
@@ -1786,30 +1801,38 @@ export module RT {
 
     switch (args.length) {
       case 0:
+        // @ts-ignore RTTI magic
         return shallowTag(o[mname](), t1.result);
       case 1:
+        // @ts-ignore RTTI magic
         return shallowTag(o[mname](args[0]), t1.result);
       case 2:
+        // @ts-ignore RTTI magic
         return shallowTag(o[mname](args[0], args[1]), t1.result);
       case 3:
+        // @ts-ignore RTTI magic
         return shallowTag(o[mname](args[0], args[1], args[2]), t1.result);
       case 4:
         return shallowTag(
+          // @ts-ignore RTTI magic
           o[mname](args[0], args[1], args[2], args[3]),
           t1.result
         );
       case 5:
         return shallowTag(
+          // @ts-ignore RTTI magic
           o[mname](args[0], args[1], args[2], args[3], args[4]),
           t1.result
         );
       case 6:
         return shallowTag(
+          // @ts-ignore RTTI magic
           o[mname](args[0], args[1], args[2], args[3], args[4], args[5]),
           t1.result
         );
       case 7:
         return shallowTag(
+          // @ts-ignore RTTI magic
           o[mname](
             args[0],
             args[1],
@@ -1823,6 +1846,7 @@ export module RT {
         );
       case 8:
         return shallowTag(
+          // @ts-ignore RTTI magic
           o[mname](
             args[0],
             args[1],
@@ -1837,6 +1861,7 @@ export module RT {
         );
       case 9:
         return shallowTag(
+          // @ts-ignore RTTI magic
           o[mname](
             args[0],
             args[1],
@@ -1852,6 +1877,7 @@ export module RT {
         );
       case 10:
         return shallowTag(
+          // @ts-ignore RTTI magic
           o[mname](
             args[0],
             args[1],
@@ -2298,6 +2324,7 @@ export module RT {
       // non-zero or not undefined
       throw new Error('callMethod0 did not provide all mandatory arguments');
     }
+    // @ts-ignore RTTI magic
     return shallowTag(o[mname](), t1.result);
   }
   export function callMethod1(
@@ -2340,6 +2367,7 @@ export module RT {
       }
       checkAndTag(arg1, argType1, varargs_t);
     }
+    // @ts-ignore RTTI magic
     return shallowTag(o[mname](arg1), t1.result);
   }
   export function callMethod2(
@@ -2406,6 +2434,7 @@ export module RT {
       default:
         throw new Error('Impossible');
     }
+    // @ts-ignore RTTI magic
     return shallowTag(o[mname](arg1, arg2), t1.result);
   }
   export function callMethod3(
@@ -2491,6 +2520,7 @@ export module RT {
       default:
         throw new Error('Impossible');
     }
+    // @ts-ignore RTTI magic
     return shallowTag(o[mname](arg1, arg2, arg3), t1.result);
   }
   export function callMethod4(
@@ -2985,6 +3015,7 @@ export module RT {
       case TT.INSTANCE:
       case TT.INTERFACE:
       case TT.CLASS:
+        // @ts-ignore RTTI magic
         t1 = t[fname];
         if (t1 === undefined) {
           if (t.methodTable[fname] || objectMethods[fname]) {
@@ -3079,6 +3110,7 @@ export module RT {
       case TT.INSTANCE:
       case TT.INTERFACE:
       case TT.CLASS:
+        // @ts-ignore RTTI magic
         t1 = t[fname];
         if (t1 === undefined) {
           if (t.methodTable[fname] || objectMethods[fname]) {
@@ -3120,14 +3152,17 @@ export module RT {
     }
 
     if (op === 'AddAssignmentExpression') {
+      // @ts-ignore RTTI magic
       var val: any = o[fname] + v;
       if (t1 === Num) {
         if (val.__rtti__ !== Num) {
           throw new Error('assignmentWithOp add error, expected a number');
         } else {
+          // @ts-ignore RTTI magic
           return (o[fname] = val);
         }
       } else if (t1 === Str || t1 === Any) {
+        // @ts-ignore RTTI magic
         return (o[fname] = val);
       } else {
         throw new Error(

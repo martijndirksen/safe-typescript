@@ -1,6 +1,6 @@
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,18 +13,18 @@
 // limitations under the License.
 //
 
-///<reference path='formatting.ts' />
+import { ITextSnapshot } from './textSnapshot';
+import { ITextSnapshotLine } from './textSnapshotLine';
 
-module TypeScript.Services.Formatting {
-
-    export class SnapshotPoint {
-        constructor(public snapshot: ITextSnapshot, public position: number) {
-        }
-        public getContainingLine(): ITextSnapshotLine {
-            return this.snapshot.getLineFromPosition(this.position);
-        }
-        public add(offset: number): SnapshotPoint {
-            return new SnapshotPoint(this.snapshot, this.position + offset);
-        }
-    }
+export class SnapshotPoint {
+  constructor(
+    public snapshot: ITextSnapshot,
+    public position: number
+  ) {}
+  public getContainingLine(): ITextSnapshotLine {
+    return this.snapshot.getLineFromPosition(this.position);
+  }
+  public add(offset: number): SnapshotPoint {
+    return new SnapshotPoint(this.snapshot, this.position + offset);
+  }
 }

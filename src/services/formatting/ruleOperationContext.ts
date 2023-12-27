@@ -1,6 +1,6 @@
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,35 +13,33 @@
 // limitations under the License.
 //
 
-///<reference path='formatting.ts' />
+import { FormattingContext } from './formattingContext';
 
-module TypeScript.Services.Formatting {
+export class RuleOperationContext {
+  private customContextChecks: { (context: FormattingContext): boolean }[];
 
-    export class RuleOperationContext {
-        private customContextChecks: { (context: FormattingContext): boolean; }[];
-        
-        constructor(...funcs: { (context: FormattingContext): boolean; }[]) {
-            this.customContextChecks = funcs;
-        }
+  constructor(...funcs: { (context: FormattingContext): boolean }[]) {
+    this.customContextChecks = funcs;
+  }
 
-        static Any: RuleOperationContext = new RuleOperationContext();
+  static Any: RuleOperationContext = new RuleOperationContext();
 
-
-        public IsAny(): boolean {
-            { return this == RuleOperationContext.Any; }
-        }
-
-        public  InContext(context: FormattingContext): boolean {
-            if (this.IsAny()) {
-                return true;
-            }
-
-            for (var i = 0, len = this.customContextChecks.length; i < len; i++) {
-                if (!this.customContextChecks[i](context)) {
-                    return false;
-                }
-            }
-            return true;
-        }
+  public IsAny(): boolean {
+    {
+      return this == RuleOperationContext.Any;
     }
+  }
+
+  public InContext(context: FormattingContext): boolean {
+    if (this.IsAny()) {
+      return true;
+    }
+
+    for (var i = 0, len = this.customContextChecks.length; i < len; i++) {
+      if (!this.customContextChecks[i](context)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
