@@ -165,7 +165,12 @@ import {
   PullContextualTypeContext,
 } from './pullTypeResolutionContext';
 import { SyntaxFacts } from '../syntax/syntaxFacts';
-import { getTuplePullTypeSymbolFromAst } from '../tuples/pullTypeResolution';
+import {
+  getTuplePullTypeSymbolFromAst,
+  sourceIsRelatableToTargetTuple,
+} from '../tuples/pullTypeResolution';
+import { inspect } from 'util';
+import { TcUtil, kind2string } from './sound/tcUtil';
 
 export interface IPullTypeCollection {
   getLength: () => number;
@@ -14552,6 +14557,29 @@ export class PullTypeResolver {
       return true;
     }
 
+    // MD: This is used to check relatability for tuples specifically
+    if (
+      target.kind === PullElementKind.Tuple &&
+      !sourceIsRelatableToTargetTuple(
+        this,
+        source,
+        target,
+        assignableTo,
+        comparisonCache,
+        ast,
+        context,
+        comparisonInfo,
+        isComparingInstantiatedSignatures
+      )
+    ) {
+      comparisonCache.setValueAt(
+        source.pullSymbolID,
+        target.pullSymbolID,
+        undefined
+      );
+      return false;
+    }
+
     if (
       target.hasMembers() &&
       !this.sourceMembersAreRelatableToTargetMembers(
@@ -14637,7 +14665,7 @@ export class PullTypeResolver {
     return true;
   }
 
-  private sourceMembersAreRelatableToTargetMembers(
+  public sourceMembersAreRelatableToTargetMembers(
     source: PullTypeSymbol,
     target: PullTypeSymbol,
     assignableTo: boolean,
@@ -15921,6 +15949,7 @@ export class PullTypeResolver {
         comparisonInfo
       );
     } else if (arg.kind() === SyntaxKind.ArrayLiteralExpression) {
+      console.log('determining overload for array literal');
       return this.overloadIsApplicableForArrayLiteralArgument(
         paramType,
         <ArrayLiteralExpression>arg,
@@ -16047,6 +16076,11 @@ export class PullTypeResolver {
       comparisonInfo,
       arg,
       context
+    );
+
+    console.log(
+      'Applicability status for array literal: %s',
+      OverloadApplicabilityStatus[applicabilityStatus]
     );
 
     context.popContextualType();

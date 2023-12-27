@@ -1,5 +1,6 @@
 // Modified by N.Swamy, A.Rastogi (2014)
 
+import { inspect } from 'util';
 import {
   SoundType,
   AST,
@@ -434,7 +435,7 @@ export class SoundTypeChecker {
     if (!ast) {
       throw new Error('Unexpected null AST');
     }
-    //console.log(TcUtil.Logger.pos(ast) + ": " + kind2string(ast.kind()));
+    // console.log(TcUtil.Logger.pos(ast) + ': ' + kind2string(ast.kind()));
     var nodeType = ast.kind();
     switch (nodeType) {
       case SyntaxKind.AnyKeyword:

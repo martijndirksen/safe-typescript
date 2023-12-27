@@ -2,7 +2,6 @@ import { AST, ISeparatedSyntaxList2, SoundType, TupleType } from '../ast';
 import { SyntaxKind } from '../syntax/syntaxKind';
 import { SoundTypeChecker } from '../typecheck/sound/tc';
 import { TcUtil } from '../typecheck/sound/tcUtil';
-import { Field } from '../typecheck/sound/types';
 import { TTuple } from './types';
 
 function isTupleType(ast: AST): ast is TupleType {

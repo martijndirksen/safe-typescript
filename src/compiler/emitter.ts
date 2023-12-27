@@ -78,6 +78,7 @@ import {
   VariableStatement,
   GenericType,
   ExportAssignment,
+  TupleType,
 } from './ast';
 import {
   importDeclarationIsElided,
