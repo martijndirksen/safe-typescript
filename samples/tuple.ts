@@ -17,12 +17,10 @@ export class Employee extends Person {
   id: number;
 }
 
-export function concat(tuple: [number, Person, string, Date]): string {
-  //tuple[2] = new Person();
+export function concat(tuple: [string, string, string]): string {
   return tuple[0] + ' ' + tuple[1] + ' ' + tuple[2];
 }
-var date: any = new Date();
-concat([3, new Employee('Steve', 28, 1), 's', date]);
+concat(['s', 'b', 'c', 'd']);
 
 // export function concatStr(a: string[], b: string[]) {
 //   return null;

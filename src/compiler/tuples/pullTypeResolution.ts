@@ -5,6 +5,7 @@ import {
   TupleType,
 } from '../ast';
 import { IBitMatrix } from '../core/bitMatrix';
+import { getDiagnosticMessage } from '../core/diagnosticCore';
 import { DiagnosticCode } from '../resources/diagnosticCode.generated';
 import { SyntaxKind } from '../syntax/syntaxKind';
 import { PullElementKind } from '../typecheck/pullFlags';
@@ -88,7 +89,15 @@ export function sourceIsRelatableToTargetTuple(
 
   if (isArrayLiteralExpression(ast)) {
     // Width subtyping is not allowed
-    if (ast.expressions.members.length !== targetMembers.length) return false;
+    if (ast.expressions.members.length !== targetMembers.length) {
+      comparisonInfo.addMessage(
+        getDiagnosticMessage(DiagnosticCode.TUPLE_width_subtyping_not_allowed, [
+          targetMembers.length.toString(),
+          ast.expressions.members.length.toString(),
+        ])
+      );
+      return false;
+    }
 
     const elementsToCheck: [AST, PullSymbol][] = ast.expressions.members.map(
       (x, i) => [x, targetMembers[i]]
@@ -141,5 +150,5 @@ export function sourceIsRelatableToTargetTuple(
   // // Width subtyping is not allowed
   // if (sourceMembers.length !== targetMembers.length) return false;
 
-  return true;
+  return false;
 }

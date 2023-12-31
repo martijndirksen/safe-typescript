@@ -2121,4 +2121,8 @@ export var diagnosticInformationMap: DiagnosticInformationMap = {
     code: 7090,
     category: DiagnosticCategory.Error,
   },
+  'Expected a tuple of {0} elements, while a tuple of {1} elements was given': {
+    code: 7091,
+    category: DiagnosticCategory.Error,
+  },
 };

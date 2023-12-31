@@ -459,7 +459,6 @@ var definitions: ITypeDefinition[] = [
     name: 'TupleTypeSyntax',
     baseType: 'SyntaxNode',
     interfaces: ['ITypeSyntax'],
-    // TODO: MD Check syntax tree correctness
     children: [
       <any>{ name: 'openBracketToken', isToken: true },
       <any>{

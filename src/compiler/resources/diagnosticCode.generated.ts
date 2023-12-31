@@ -869,4 +869,6 @@ export var DiagnosticCode = {
   SEC_type_instantiation_not_subtype_constraint:
     "Safe TS: Instantiated type '{0}' is not a subtype of constraint on '{1}'",
   TUPLE_zero_tuple_type: 'Tuple type must have at least one type element.',
+  TUPLE_width_subtyping_not_allowed:
+    'Expected a tuple of {0} elements, while a tuple of {1} elements was given',
 };
