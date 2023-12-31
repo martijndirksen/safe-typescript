@@ -17,13 +17,14 @@ export class Employee extends Person {
   id: number;
 }
 
-export function concat(tuple: [string, string, string]): string {
-  return tuple[0] + ' ' + tuple[1] + ' ' + tuple[2];
+export function print(tuple: [Person, string]): string {
+  return tuple[0].name + tuple[1];
 }
-concat(['s', 'b', 'c', 'd']);
 
-// export function concatStr(a: string[], b: string[]) {
-//   return null;
-// }
+print(['Bob', 'Steve']);
+// error TS2082: Supplied parameters do not match any signature
+// of call target:
+//  Type 'String' is missing property 'name' from type 'Person'.
 
-// concatStr(['4'], ['bob']);
+print([new Person('Bob', 26), 'Steve']);
+print([new Employee('Bob', 26, 1001), 'Steve']);

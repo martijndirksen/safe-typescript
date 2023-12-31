@@ -150,5 +150,5 @@ export function sourceIsRelatableToTargetTuple(
   // // Width subtyping is not allowed
   // if (sourceMembers.length !== targetMembers.length) return false;
 
-  return false;
+  return true;
 }
