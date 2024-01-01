@@ -21,10 +21,13 @@ export function print(tuple: [Person, string]): string {
   return tuple[0].name + tuple[1];
 }
 
-print(['Bob', 'Steve']);
+//print(['Bob', 'Steve']);
 // error TS2082: Supplied parameters do not match any signature
 // of call target:
 //  Type 'String' is missing property 'name' from type 'Person'.
 
-print([new Person('Bob', 26), 'Steve']);
-print([new Employee('Bob', 26, 1001), 'Steve']);
+var input = [new Person('Bob', 26), 'Steve'];
+
+print(input);
+// print([new Person('Bob', 26), 'Steve']);
+// print([new Employee('Bob', 26, 1001), 'Steve']);
