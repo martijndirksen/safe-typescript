@@ -11090,6 +11090,9 @@ export class PullTypeResolver {
         isContextuallyTyped,
         context
       );
+
+      console.log('resolveArrayLiteralExpression', symbol.fullName());
+
       this.setSymbolForAST(arrayLit, symbol, context);
     }
 
@@ -19370,6 +19373,22 @@ export class PullTypeResolver {
       ast,
       context,
       comparisonInfo
+    );
+
+    if (source.isPrimitive()) {
+      const typed = source as PullPrimitiveTypeSymbol;
+      console.log(typed.getDisplayName());
+    }
+    if (target.isPrimitive()) {
+      const typed = target as PullPrimitiveTypeSymbol;
+      console.log(typed.getDisplayName());
+    }
+
+    console.log(
+      'resolveAssignmentExpression',
+      PullElementKind[source?.kind],
+      PullElementKind[target?.kind],
+      isAssignable
     );
 
     if (!isAssignable) {

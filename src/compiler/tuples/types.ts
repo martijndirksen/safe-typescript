@@ -18,6 +18,7 @@ export class TTuple extends StructuredType {
       return MkAST.callRT('JustType', [MkAST.stringConst('tuple type')]);
     }
     var r = MkAST.callExpr(MkAST.fieldOfRT('StructuredType'), [
+      MkAST.mkObjLit([]),
       toFieldTable(this.exposeFields()),
     ]);
     return r;
