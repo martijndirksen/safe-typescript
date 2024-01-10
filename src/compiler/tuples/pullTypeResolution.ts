@@ -124,14 +124,6 @@ export function sourceIsRelatableToTargetTuple(
         isComparingInstantiatedSignatures
       );
 
-      console.log(
-        'Checking ',
-        SyntaxKind[ast.kind()],
-        PullElementKind[target.kind],
-        isIdentical,
-        isAssignable
-      );
-
       if (!isAssignable) return false;
     }
   }

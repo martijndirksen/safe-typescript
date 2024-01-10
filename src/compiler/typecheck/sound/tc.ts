@@ -2275,7 +2275,6 @@ export class SoundTypeChecker {
     } else {
       res = err ? MkAST.unsafe(arr) : arr;
     }
-    console.log('tcArrayLiteral', expected_t.toString());
     return this.pkg(ast, res, res_t);
   }
   private tcThisExpression(ast: ThisExpression) {

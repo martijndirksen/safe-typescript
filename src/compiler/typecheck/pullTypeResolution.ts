@@ -11091,8 +11091,6 @@ export class PullTypeResolver {
         context
       );
 
-      console.log('resolveArrayLiteralExpression', symbol.fullName());
-
       this.setSymbolForAST(arrayLit, symbol, context);
     }
 
@@ -15952,7 +15950,6 @@ export class PullTypeResolver {
         comparisonInfo
       );
     } else if (arg.kind() === SyntaxKind.ArrayLiteralExpression) {
-      console.log('determining overload for array literal');
       return this.overloadIsApplicableForArrayLiteralArgument(
         paramType,
         <ArrayLiteralExpression>arg,
@@ -16079,11 +16076,6 @@ export class PullTypeResolver {
       comparisonInfo,
       arg,
       context
-    );
-
-    console.log(
-      'Applicability status for array literal: %s',
-      OverloadApplicabilityStatus[applicabilityStatus]
     );
 
     context.popContextualType();
@@ -19377,19 +19369,10 @@ export class PullTypeResolver {
 
     if (source.isPrimitive()) {
       const typed = source as PullPrimitiveTypeSymbol;
-      console.log(typed.getDisplayName());
     }
     if (target.isPrimitive()) {
       const typed = target as PullPrimitiveTypeSymbol;
-      console.log(typed.getDisplayName());
     }
-
-    console.log(
-      'resolveAssignmentExpression',
-      PullElementKind[source?.kind],
-      PullElementKind[target?.kind],
-      isAssignable
-    );
 
     if (!isAssignable) {
       var enclosingSymbol = this.getEnclosingSymbolForAST(ast);

@@ -855,6 +855,9 @@ export module RT {
                 snd: StructuredType(forgotten_methods, forgotten_flds),
               };
             }
+          case TT.ANY:
+            // MD: Added this case so we can assign an array literal to a tuple type
+            return { fst: true, snd: zero };
           default:
             return { fst: false, snd: zero };
         }
