@@ -127,7 +127,7 @@ import {
   NamedType,
   TConstant,
   TEnum,
-  Field,
+  createField,
   TIndexMap,
   TRecord,
   TVar,
@@ -143,6 +143,7 @@ import {
   functionType,
   TUVar,
   callSignature,
+  Field,
 } from './types';
 
 export class SoundTypeChecker {
@@ -985,12 +986,12 @@ export class SoundTypeChecker {
       switch (a.kind()) {
         case SyntaxKind.PropertySignature:
           var ps = <PropertySignature>a;
-          fields.push(Field(ps.propertyName.text(), ps.soundType));
+          fields.push(createField(ps.propertyName.text(), ps.soundType));
           break;
         case SyntaxKind.MemberVariableDeclaration:
           var mvd = <MemberVariableDeclaration>a;
           fields.push(
-            Field(
+            createField(
               mvd.variableDeclarator.propertyName.text(),
               mvd.variableDeclarator.soundType
             )
@@ -998,11 +999,11 @@ export class SoundTypeChecker {
           break;
         case SyntaxKind.MemberFunctionDeclaration:
           var mfd = <MemberFunctionDeclaration>a;
-          fields.push(Field(mfd.propertyName.text(), mfd.soundType));
+          fields.push(createField(mfd.propertyName.text(), mfd.soundType));
           break;
         case SyntaxKind.MethodSignature:
           var ms = <MethodSignature>a;
-          methods.push(Field(ms.propertyName.text(), ms.soundType));
+          methods.push(createField(ms.propertyName.text(), ms.soundType));
           break;
         case SyntaxKind.IndexMemberDeclaration:
           if (!indexSig) {
@@ -1346,7 +1347,6 @@ export class SoundTypeChecker {
   }
   private tcPropertySignature(ast: PropertySignature) {
     var t = <TypeAnnotation>this.tc(ast.typeAnnotation);
-    var field = Field(ast.propertyName.text(), t.soundType);
     return this.pkg(
       ast,
       new PropertySignature(ast.propertyName, ast.questionToken, t),
@@ -1483,7 +1483,7 @@ export class SoundTypeChecker {
     );
     this.pkg(ast.propertyAssignments, propertyAssignments, TConstant.Void);
     var trec = new TRecord(
-      fields.map((f) => Field(unquote(f.name), f.type)),
+      fields.map((f) => createField(unquote(f.name), f.type)),
       methods.map((m) => Method(unquote(m.name), m.type))
     );
     var sc = TypeRelations.subtype(

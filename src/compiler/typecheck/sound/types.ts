@@ -224,7 +224,7 @@ export interface MethodOrField {
   mutable?: boolean;
 }
 export interface Field extends MethodOrField {}
-export function Field(
+export function createField(
   name: string,
   type: SoundType,
   optional: boolean = false
@@ -235,7 +235,8 @@ function substField(
   s: Pair<TVar, SoundType>[],
   descend: boolean = false
 ): (f: Field) => Field {
-  return (f: Field) => Field(f.name, f.type.subst(s, descend), f.optional);
+  return (f: Field) =>
+    createField(f.name, f.type.subst(s, descend), f.optional);
 }
 var fieldToRtti = (f: Field) => {
   var field = [
@@ -511,7 +512,7 @@ export class StructuredType extends SoundType {
     return <TIndexMap>this.getFieldType('<index>', overload);
   }
   public addIndexSignature(t: TIndexMap) {
-    this.addField(Field('<index>', t, false));
+    this.addField(createField('<index>', t, false));
   }
   public constructSignature(overload: number = 0): SoundType {
     return this.getMethodType('<new>', overload);
@@ -636,7 +637,7 @@ export class JustType extends StructuredType {
     return undefined;
   }
   public addIndexSignature(t: TIndexMap) {
-    this.addField(Field('<index>', t, false));
+    this.addField(createField('<index>', t, false));
   }
   public constructSignature(overload: number = 0): SoundType {
     return this.getMethodType('<new>', overload);

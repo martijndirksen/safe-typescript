@@ -26,7 +26,7 @@ import { TranslateTypes } from './translateTypes';
 import {
   TModule,
   NamedType,
-  Field,
+  createField,
   TConstant,
   TClass,
   TPoly,
@@ -35,6 +35,7 @@ import {
   TRecord,
   TIndexMap,
   JustType,
+  Field,
 } from './types';
 
 export enum ScopeType {
@@ -215,7 +216,7 @@ export class TcEnv implements RT.Virtual {
     TcUtil.Logger.setSettings(compilationSettings);
     this.scopes = ScopeStack.mkT();
     this.global = new TModule('<global>');
-    this.global.addField(Field('undefined', TConstant.Void));
+    this.global.addField(createField('undefined', TConstant.Void));
     this.openNamespaces = [this.global];
     this.localTypeNames = RT.createEmptyMap<SoundType>();
   }
@@ -324,7 +325,7 @@ export class TcEnv implements RT.Virtual {
     for (var i = 0; i < x.length - 1; i++) {
       var next = ns.getMember(x[i]);
       if (!next) {
-        next = Field(x[i], new TModule(x[i]), false);
+        next = createField(x[i], new TModule(x[i]), false);
         ns.addField(next);
       }
       if (next.type.typeName !== TypeName.Module) {
@@ -576,7 +577,7 @@ export class TcEnv implements RT.Virtual {
       }
       decl.snd = false;
     } else {
-      ns.addField(Field(fieldName, fieldType));
+      ns.addField(createField(fieldName, fieldType));
     }
   }
   public buildSignature(
@@ -665,7 +666,7 @@ export class TcEnv implements RT.Virtual {
           );
         }
       } else {
-        mod.addField(Field(id, t));
+        mod.addField(createField(id, t));
         mod.addMemberDecl(id, a, circular);
       }
     };
@@ -679,7 +680,7 @@ export class TcEnv implements RT.Virtual {
             //console.log(names[i].text());
             var nextModuleField = currentModule.getMember(names[i].text());
             if (!nextModuleField) {
-              nextModuleField = Field(
+              nextModuleField = createField(
                 names[i].text(),
                 new TModule(names[i].text())
               );
@@ -696,7 +697,7 @@ export class TcEnv implements RT.Virtual {
                 [names[i].text()],
                 a
               );
-              nextModuleField = Field(
+              nextModuleField = createField(
                 names[i].text(),
                 new TModule(names[i].text())
               );
@@ -795,7 +796,7 @@ export class TcEnv implements RT.Virtual {
           );
           var fields = TcUtil.mapSepList2(ed.enumElements, (a: AST) => {
             var en = <EnumElement>a;
-            return Field(en.propertyName.text(), enumType, false);
+            return createField(en.propertyName.text(), enumType, false);
           });
           if (enumType && enumType.typeName === TypeName.Enum) {
             tryAddType(currentModule, a, ed.identifier.text(), <TEnum>enumType);

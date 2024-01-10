@@ -16,7 +16,7 @@ import {
   TClass,
   StructuredType,
   Method,
-  Field,
+  createField,
   TVar,
   TInst,
   TPoly,
@@ -193,7 +193,7 @@ export module TranslateTypes {
         );
       } else {
         r.addField(
-          Field(
+          createField(
             mems[i].name,
             translateTypeInternal(mems[i].type, tcenv, debug),
             mems[i].isOptional
