@@ -2215,6 +2215,7 @@ export class SoundTypeChecker {
     if (ast.expressions.nonSeparatorCount() === 0) {
       expected_t = new TUVar();
     } else {
+      // MD: Here we have the difficulty of the array literal not being a tuple at all, and there is no way of knowing this.
       var at = TranslateTypes.translateType(this.symbol(ast).type, this.tcenv);
       if (TcUtil.isArray(at)) {
         expected_t = TcUtil.arrayElementType(<TInst>at);

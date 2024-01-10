@@ -128,6 +128,7 @@ export module RT {
     CLASS,
     INDEX_MAP,
     STRUCTURED_TYPE,
+    TUPLE,
     JUST_TYPE,
     UN,
   }
@@ -501,6 +502,10 @@ export module RT {
     (<any>fields).__proto__ = null;
     return { tt: TT.STRUCTURED_TYPE, methodTable: methods, fieldTable: fields };
   }
+  export function Tuple(fields: FieldTable): RTTI {
+    (<any>fields).__proto__ = null;
+    return { tt: TT.TUPLE, fieldTable: fields, methodTable: {} };
+  }
   export function JustType(t: RTTI): JustType {
     return {
       tt: TT.JUST_TYPE,
@@ -855,12 +860,40 @@ export module RT {
                 snd: StructuredType(forgotten_methods, forgotten_flds),
               };
             }
-          case TT.ANY:
-            // MD: Added this case so we can assign an array literal to a tuple type
-            return { fst: true, snd: zero };
           default:
             return { fst: false, snd: zero };
         }
+      case TT.TUPLE: {
+        // MD: Subtyping for tuples in RT
+        if (t1.tt === TT.TUPLE) {
+          for (const field in t2.fieldTable) {
+            if (!t1.fieldTable[field]) {
+              return { fst: false, snd: zero };
+            }
+            if (!equalTypes(t1.fieldTable[field], t2.fieldTable[field], cxt)) {
+              return { fst: false, snd: zero };
+            }
+          }
+
+          const missingFieldTable: FieldTable = {};
+
+          for (const field in t1.fieldTable) {
+            if (!t2.fieldTable[field]) {
+              missingFieldTable[field] = t1.fieldTable[field];
+            }
+          }
+
+          return {
+            fst: true,
+            snd:
+              Object.keys(missingFieldTable).length > 0
+                ? Tuple(missingFieldTable)
+                : zero,
+          };
+        }
+
+        return { fst: false, snd: zero };
+      }
       case TT.JUST_TYPE:
         return {
           fst: subtype(
@@ -1262,6 +1295,7 @@ export module RT {
       case TT.ARRAY:
       case TT.INDEX_MAP:
       case TT.CLASS:
+      case TT.TUPLE:
         //t_o = o.__rtti__ || Any;
         //assert(t_o === Any || equalTypes(t_o, t, {}), "shallowTag on array and index map assumes no or same RTTI");
         //(t_o  !== Any) || (o.__rtti__ = t);
@@ -1475,10 +1509,80 @@ export module RT {
           checkAndTag(v[f], Any, new_flds[f]);
         }
         return v;
+      case TT.TUPLE: {
+        // MD: In the initial assignment of a tuple from an array literal, the source type is TT.ANY.
+        // Check and tag for tuples
+        if (!Array.isArray(v))
+          throw new Error('Cannot assign non-array value to tuple');
+
+        // We disallow width subtyping
+        const targetLength = Object.entries(to.fieldTable).length;
+        if (v.length !== targetLength)
+          throw new Error(
+            `Tuple length mismatch detected, source has ${v.length} and target expects ${targetLength}`
+          );
+
+        if (t_v.tt === TT.ANY) {
+          // In this case we are probably trying to assign an array literal to a tuple. Because the source ANY
+          // is entirely unusable, we derive the RTTI from the current value passed to checkAndTag instead.
+          const fieldTable: FieldTable = {};
+
+          for (let i = 0; i < v.length; i++) {
+            fieldTable[`${i}`] = getArrayElementRTTIForTuples(v[i]);
+          }
+
+          const sub = subtype(Tuple(fieldTable), to, {});
+          if (sub.fst) {
+            return shallowTag(v, sub.snd);
+          } else {
+            throw new Error(
+              'Value is not compatible with target tuple, because it is not a subtype'
+            );
+          }
+        }
+
+        if (t_v.tt === TT.TUPLE) {
+          const sub = subtype(from, to, {});
+          if (sub.fst) {
+            return shallowTag(v, sub.snd);
+          } else {
+            throw new Error(
+              'Value is not compatible with target tuple, because it is not a subtype'
+            );
+          }
+        }
+
+        throw new Error(
+          'Impossible tuple behavior detected, you have encountered a bug in RT'
+        );
+      }
+
       case TT.JUST_TYPE:
         return checkAndTag(v, from, (<JustType>to).base);
       default:
         throw new Error('Impossible'); // handles Un
+    }
+  }
+
+  function getArrayElementRTTIForTuples(value: unknown): RTTI | undefined {
+    switch (typeof value) {
+      case 'bigint':
+        return RT.Num;
+      case 'boolean':
+        return RT.Bool;
+      case 'function':
+      case 'object':
+        return '__rtti__' in value && value.__rtti__
+          ? (value.__rtti__ as RTTI)
+          : RT.Any;
+      case 'number':
+        return RT.Num;
+      case 'string':
+        return RT.Str;
+      case 'symbol':
+        return RT.Any;
+      case 'undefined':
+        return undefined;
     }
   }
 
@@ -1700,6 +1804,19 @@ export module RT {
         }
         // @ts-ignore RTTI magic
         return (o[fname] = v);
+      case TT.TUPLE: {
+        t1 = t.fieldTable[fname] || from.fieldTable[fname];
+        if (t1 === undefined) {
+          t1 = Any;
+          //no need to checkAndTag here as tv is undotted/not un ...
+        } else if (t1.tt === TT.JUST_TYPE || t1.tt === TT.UN) {
+          throw new Error('writeField from struct writing dot/un type field');
+        } else {
+          v = checkAndTag(v, tv, t1);
+        }
+        // @ts-ignore RTTI magic
+        return (o[fname] = v);
+      }
       case TT.ANY:
         // @ts-ignore RTTI magic
         return (o[fname] = v);

@@ -31,8 +31,7 @@ export class TTuple extends SoundType {
     if (this.isVirtual()) {
       return MkAST.callRT('JustType', [MkAST.stringConst('tuple type')]);
     }
-    var r = MkAST.callExpr(MkAST.fieldOfRT('StructuredType'), [
-      MkAST.mkObjLit([]),
+    var r = MkAST.callExpr(MkAST.fieldOfRT('Tuple'), [
       toFieldTable(this.fields),
     ]);
     return r;

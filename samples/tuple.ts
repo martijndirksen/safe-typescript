@@ -6,7 +6,8 @@
 // var obj: { f0: number; f1: number; f2: number } = { f0: 4, f1: 8, f2: 12 };
 // var tgt: any = 8;
 // obj.f2 = tgt;
-var tuple: [number, number] = [4, 2];
+// TODO: implement compile-time error about width/depth typing mismatch
+var tuple: [number, { val: string }] = [4, { val: '2' }];
 
 function setValue(index: number, val: number) {
   tuple[index] = val;
