@@ -40,11 +40,10 @@
 // setValue(+process.argv[2], +process.argv[3]);
 // console.log(+process.argv[2], +process.argv[3]);
 
-var arr: [number, number, string] = [4, 2, 'Bob'];
+var tuple: [number, number, string] = [4, 2, 'Bob'];
 
-// TODO: Support the length property on a tuple
-for (var i = 0; i < arr.length; i++) {
-  console.log(arr[i], typeof arr[i]);
+for (var i = 0; i < tuple.length; i++) {
+  var el: string = tuple[i];
 }
 
 // var tuple: [number, number] = [4, 2];

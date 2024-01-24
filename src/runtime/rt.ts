@@ -1668,9 +1668,22 @@ export module RT {
         if (fname === 'length') {
           return (<any>o).length;
         }
-        throw new Error(
-          'reading a field other than length from tuple: ' + fname
-        );
+
+        t1 = t.fieldTable[fname];
+        if (t1 === undefined) {
+          if (t.methodTable[fname] || objectMethods[fname]) {
+            throw new Error(
+              'readField reading method (instance and interface)'
+            );
+          }
+          t1 = Any;
+        } else if (t1.tt === TT.JUST_TYPE || t1.tt === TT.UN) {
+          throw new Error(
+            'readField from interface / instance reading dot type/un field'
+          );
+        }
+        // @ts-ignore RTTI magic
+        return shallowTag(o[fname], t1);
       //For arrays and index maps, we only need to consider t (either their tag is Any and static is precise, or tag is precise)
       case TT.ARRAY:
         if (fname === 'length') {

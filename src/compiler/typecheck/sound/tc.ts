@@ -1,6 +1,5 @@
 // Modified by N.Swamy, A.Rastogi (2014)
 
-import { inspect } from 'util';
 import {
   SoundType,
   AST,

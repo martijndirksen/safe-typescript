@@ -5,6 +5,7 @@ import {
   createField,
   toFieldTable,
   TVar,
+  TConstant,
 } from '../typecheck/sound/types';
 
 export class TTuple extends SoundType {
@@ -18,6 +19,10 @@ export class TTuple extends SoundType {
   }
 
   public getField(name: string) {
+    if (name === 'length') {
+      return createField('length', TConstant.Number);
+    }
+
     return this.fields.find((x) => x.name === name);
   }
 
