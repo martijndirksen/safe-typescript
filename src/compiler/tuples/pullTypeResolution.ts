@@ -11,6 +11,7 @@ import { SyntaxKind } from '../syntax/syntaxKind';
 import { PullElementKind } from '../typecheck/pullFlags';
 import {
   PullErrorTypeSymbol,
+  PullPrimitiveTypeSymbol,
   PullSymbol,
   PullTypeSymbol,
 } from '../typecheck/pullSymbols';
@@ -62,6 +63,12 @@ export function getTuplePullTypeSymbolFromAst(
     }
     pullType.addMember(member);
   }
+
+  const lengthSymbol = new PullSymbol('length', PullElementKind.Property);
+  lengthSymbol.type = pullTypeResolver.semanticInfoChain.numberTypeSymbol;
+
+  // Maybe add a 'length' field here
+  pullType.addMember(lengthSymbol);
 
   return pullType;
 }

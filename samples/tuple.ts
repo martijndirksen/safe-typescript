@@ -7,15 +7,15 @@
 // var tgt: any = 8;
 // obj.f2 = tgt;
 // TODO: implement compile-time error about width/depth typing mismatch
-var tuple: [number, { val: string }] = [4, { val: '2' }];
+//var tuple: [number, { val: string }] = [4, { val: '2' }];
 
-function setValue(index: number, val: number) {
-  tuple[index] = val;
-}
+//function setValue(index: number, val: number) {
+//  tuple[index] = val;
+//}
 
-var process = { argv: ['', '', '3', '28'] };
+//var process = { argv: ['', '', '3', '28'] };
 
-setValue(+process.argv[2], +process.argv[3]);
+//setValue(+process.argv[2], +process.argv[3]);
 
 // function setValue(index, val) {
 //   console.log(tuple);
@@ -39,3 +39,14 @@ setValue(+process.argv[2], +process.argv[3]);
 
 // setValue(+process.argv[2], +process.argv[3]);
 // console.log(+process.argv[2], +process.argv[3]);
+
+var arr: [number, number, string] = [4, 2, 'Bob'];
+
+// TODO: Support the length property on a tuple
+for (var i = 0; i < arr.length; i++) {
+  console.log(arr[i], typeof arr[i]);
+}
+
+// var tuple: [number, number] = [4, 2];
+// //error TS2094: The property 'push' does not exist on value of type 'tuple'.
+// tuple.push(4);
