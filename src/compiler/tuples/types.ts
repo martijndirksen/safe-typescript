@@ -5,7 +5,6 @@ import {
   createField,
   toFieldTable,
   TVar,
-  TConstant,
 } from '../typecheck/sound/types';
 
 export class TTuple extends SoundType {
@@ -15,7 +14,6 @@ export class TTuple extends SoundType {
     super(TypeName.Record);
     this.fields = [
       ...elements.map<Field>((type, i) => createField(`${i}`, type)),
-      createField('length', TConstant.Number),
     ];
   }
 

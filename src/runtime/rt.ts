@@ -1664,6 +1664,13 @@ export module RT {
         throw new Error(
           'reading a field other than length from string: ' + fname
         );
+      case TT.TUPLE:
+        if (fname === 'length') {
+          return (<any>o).length;
+        }
+        throw new Error(
+          'reading a field other than length from tuple: ' + fname
+        );
       //For arrays and index maps, we only need to consider t (either their tag is Any and static is precise, or tag is precise)
       case TT.ARRAY:
         if (fname === 'length') {
