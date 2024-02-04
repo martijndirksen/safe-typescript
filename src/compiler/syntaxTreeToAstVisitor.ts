@@ -100,7 +100,6 @@ import {
   DeleteExpression,
   VoidExpression,
   DebuggerStatement,
-  TupleTypeSpreadKind,
   SpreadType,
 } from './ast';
 import { getAstWalkerFactory } from './astWalker';
@@ -1154,7 +1153,7 @@ export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
       otherTypes.separatorCount() + 1
     );
 
-    var result = new TupleType(types, TupleTypeSpreadKind.Left);
+    var result = new TupleType(types, 0);
     this.setSpan(result, start, node);
 
     return result;

@@ -1,4 +1,4 @@
-import { SoundType, TupleTypeSpreadKind, TypeName } from '../ast';
+import { SoundType, TypeName } from '../ast';
 import { MkAST, Pair } from '../typecheck/sound/tcUtil';
 import {
   Field,
@@ -13,7 +13,7 @@ export class TTuple extends SoundType {
 
   constructor(
     elements: SoundType[],
-    private readonly spreadKind?: TupleTypeSpreadKind
+    private readonly spreadIndex?: number
   ) {
     super(TypeName.Record);
     this.fields = [
@@ -49,8 +49,8 @@ export class TTuple extends SoundType {
       MkAST.fieldOfRT('Tuple'),
       [
         toFieldTable(this.fields),
-        this.spreadKind != null
-          ? MkAST.stringConst(TupleTypeSpreadKind[this.spreadKind])
+        this.spreadIndex != null
+          ? MkAST.numberConst(this.spreadIndex)
           : undefined,
       ].filter((x) => x)
     );
