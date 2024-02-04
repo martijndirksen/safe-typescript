@@ -45,4 +45,3 @@ var tuple: [...number[], number, string] = [4, 2, 'Bob'];
 // var tuple: [number, number] = [4, 2];
 // //error TS2094: The property 'push' does not exist on value of type 'tuple'.
 // tuple.push(4);
-type Tupl = [string, string, ...number[], string];

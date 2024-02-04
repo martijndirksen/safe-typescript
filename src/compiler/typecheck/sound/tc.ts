@@ -96,7 +96,11 @@ import { DiagnosticCode } from '../../resources/diagnosticCode.generated';
 import { ImmutableCompilationSettings } from '../../settings';
 import { SyntaxKind } from '../../syntax/syntaxKind';
 import { TextSpan } from '../../text/textSpan';
-import { computeTupleType, tcTupleType } from '../../tuples/tc';
+import {
+  computeTupleElementType,
+  computeTupleType,
+  tcTupleType,
+} from '../../tuples/tc';
 import { getModuleNames } from '../pullDeclCollection';
 import { NormalPullDecl } from '../pullDecls';
 import { hasModifier, PullElementFlags, PullElementKind } from '../pullFlags';
@@ -2884,9 +2888,12 @@ export class SoundTypeChecker {
     return this.pkg(ast, new_obj, result_t);
   }
   public computeType(ast: AST): SoundType {
+    console.log('computeType', SyntaxKind[ast.kind()]);
     switch (ast.kind()) {
       case SyntaxKind.TupleType:
         return computeTupleType(ast, this);
+      case SyntaxKind.TupleElementType:
+        return computeTupleElementType(ast, this);
       case SyntaxKind.AnyKeyword:
         return TConstant.Any;
       case SyntaxKind.BooleanKeyword:

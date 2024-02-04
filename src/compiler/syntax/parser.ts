@@ -3080,6 +3080,7 @@ class ParserImpl {
     const dotDotDotToken = this.tryEatToken(SyntaxKind.DotDotDotToken);
     const typeToken = this.parseType();
 
+    console.log('parseTupleElementType', SyntaxKind[typeToken.kind()]);
     return this.factory.tupleElementType(dotDotDotToken, typeToken);
   }
 
@@ -5960,6 +5961,15 @@ class ParserImpl {
     );
   }
 
+  private isTupleElementType(): boolean {
+    var token = this.currentToken();
+    var tokenKind = token.tokenKind;
+
+    if (tokenKind === SyntaxKind.DotDotDotToken) return true;
+
+    return this.isType();
+  }
+
   private isParameter(): boolean {
     if (
       this.currentNode() !== null &&
@@ -6819,8 +6829,10 @@ class ParserImpl {
         return this.isParameter();
 
       case ListParsingState.TypeArgumentList_Types:
-      case ListParsingState.Tuple_ElementTypes:
         return this.isType();
+
+      case ListParsingState.Tuple_ElementTypes:
+        return this.isTupleElementType();
 
       case ListParsingState.TypeParameterList_TypeParameters:
         return this.isTypeParameter();

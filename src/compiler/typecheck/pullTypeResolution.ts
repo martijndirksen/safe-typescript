@@ -91,6 +91,7 @@ import {
   HeritageClause,
   NumericLiteral,
   ICallExpression,
+  TupleElementType,
 } from '../ast';
 import {
   getEnclosingModuleDeclaration,
@@ -3757,6 +3758,12 @@ export class PullTypeResolver {
       typeDeclSymbol = arraySymbol;
     } else if (term.kind() === SyntaxKind.TupleType) {
       typeDeclSymbol = getTuplePullTypeSymbolFromAst(this, context, term);
+    } else if (term.kind() === SyntaxKind.TupleElementType) {
+      const tupleElementType = term as TupleElementType;
+      typeDeclSymbol = this.resolveTypeReference(
+        tupleElementType.type,
+        context
+      );
     } else {
       throw Errors.invalidOperation('unknown type');
     }

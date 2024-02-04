@@ -83,7 +83,11 @@ export class TTuple extends SoundType {
   }
 
   public toString() {
-    return `[${this.fields.map((x) => x.type.toString()).join(', ')}]`;
+    return `[${this.fields
+      .map((x, i) =>
+        this.spreadIndex === i ? '...' + x.type.toString() : x.type.toString()
+      )
+      .join(', ')}]`;
   }
 
   // @ts-ignore
