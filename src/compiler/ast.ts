@@ -1292,15 +1292,15 @@ export class SpreadType extends AST {
 // This won't work for middle spread, as the position of the spreading element is indeterminate? But we do know the types on the left and right!
 // Idea work from the approach where we utilise the information we DO know, such as the types which are not spreading and how many those are. The others should be of the spreaded type in the correct position.
 export enum TupleTypeSpreadKind {
-  None,
   Left,
   Right,
+  Middle,
 }
 
 export class TupleType extends AST {
   constructor(
     public type: AST,
-    public readonly spreadKind: TupleTypeSpreadKind
+    public readonly spreadKind?: TupleTypeSpreadKind
   ) {
     super();
     type && (type.parent = this);

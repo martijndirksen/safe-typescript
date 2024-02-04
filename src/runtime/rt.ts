@@ -1,6 +1,8 @@
 // Author: Martijn Dirksen, adapted from existing code written by N.Swamy, A.Rastogi (2014)
 // This file can be consumed by emitted code of the Safe TypeScript compiler under --safe operation. It uses more modern export/module syntax than the rest of the compiler.
 
+import { TupleTypeSpreadKind } from '../compiler/ast';
+
 // Changes:
 // - Added CheckedArray interface to RT file, was previously ambient type declaration
 // - Fixed multiple type errors related to the misuse of undefined
@@ -164,6 +166,9 @@ export module RT {
   }
   export interface JustType extends RTTI {
     base: RTTI;
+  }
+  export interface TupleType extends RTTI {
+    spreadKind?: TupleTypeSpreadKind;
   }
   export interface InstanceType extends NamedType {}
   export interface InterfaceType extends NamedType {}
@@ -502,9 +507,12 @@ export module RT {
     (<any>fields).__proto__ = null;
     return { tt: TT.STRUCTURED_TYPE, methodTable: methods, fieldTable: fields };
   }
-  export function Tuple(fields: FieldTable): RTTI {
+  export function Tuple(
+    fields: FieldTable,
+    spreadKind?: TupleTypeSpreadKind
+  ): TupleType {
     (<any>fields).__proto__ = null;
-    return { tt: TT.TUPLE, fieldTable: fields, methodTable: {} };
+    return { tt: TT.TUPLE, fieldTable: fields, methodTable: {}, spreadKind };
   }
   export function JustType(t: RTTI): JustType {
     return {

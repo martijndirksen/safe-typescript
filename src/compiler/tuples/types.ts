@@ -1,4 +1,4 @@
-import { SoundType, TypeName } from '../ast';
+import { SoundType, TupleTypeSpreadKind, TypeName } from '../ast';
 import { MkAST, Pair } from '../typecheck/sound/tcUtil';
 import {
   Field,
@@ -11,7 +11,10 @@ import {
 export class TTuple extends SoundType {
   private readonly fields: Field[];
 
-  constructor(elements: SoundType[]) {
+  constructor(
+    elements: SoundType[],
+    private readonly spreadKind?: TupleTypeSpreadKind
+  ) {
     super(TypeName.Record);
     this.fields = [
       ...elements.map<Field>((type, i) => createField(`${i}`, type)),
@@ -42,9 +45,15 @@ export class TTuple extends SoundType {
     if (this.isVirtual()) {
       return MkAST.callRT('JustType', [MkAST.stringConst('tuple type')]);
     }
-    var r = MkAST.callExpr(MkAST.fieldOfRT('Tuple'), [
-      toFieldTable(this.fields),
-    ]);
+    var r = MkAST.callExpr(
+      MkAST.fieldOfRT('Tuple'),
+      [
+        toFieldTable(this.fields),
+        this.spreadKind != null
+          ? MkAST.stringConst(TupleTypeSpreadKind[this.spreadKind])
+          : undefined,
+      ].filter((x) => x)
+    );
     return r;
   }
 

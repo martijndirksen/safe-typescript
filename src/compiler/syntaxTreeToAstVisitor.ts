@@ -1130,7 +1130,7 @@ export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
     var types = this.visitSeparatedSyntaxList(node.types);
     this.movePast(node.closeBracketToken);
 
-    var result = new TupleType(types, TupleTypeSpreadKind.None);
+    var result = new TupleType(types);
     this.setSpan(result, start, node);
 
     return result;
@@ -1140,7 +1140,9 @@ export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
     const start = this.position;
 
     this.movePast(node.openBracketToken);
-    const spreadLeftType = this.visitType(node.spreadLeft.type);
+    const innerSpreadType = (node.spreadLeft.type as ArrayTypeSyntax).type;
+    const spreadLeftType = this.visitType(innerSpreadType);
+
     this.movePast(node.spreadLeft);
     this.movePast(node.commaToken);
     const otherTypes = this.visitSeparatedSyntaxList(node.types);

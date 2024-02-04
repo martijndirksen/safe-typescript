@@ -15,7 +15,7 @@ export function computeTupleType(ast: AST, tc: SoundTypeChecker): SoundType {
     tc.computeType(element)
   );
 
-  const tuple = new TTuple(soundTypes);
+  const tuple = new TTuple(soundTypes, ast.spreadKind);
 
   console.log(`compute tuple type ${tuple}`);
 
@@ -27,7 +27,7 @@ export function tcTupleType(ast: AST, tc: SoundTypeChecker) {
   const sepList = tc.tc(ast.type) as ISeparatedSyntaxList2;
   var soundTypes = TcUtil.mapSepList2(sepList, (a: AST) => a.soundType);
 
-  const tuple = new TTuple(soundTypes);
+  const tuple = new TTuple(soundTypes, ast.spreadKind);
 
   console.log(`tc tuple type ${tuple}`);
 
