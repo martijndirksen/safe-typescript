@@ -2888,7 +2888,6 @@ export class SoundTypeChecker {
     return this.pkg(ast, new_obj, result_t);
   }
   public computeType(ast: AST): SoundType {
-    console.log('computeType', SyntaxKind[ast.kind()]);
     switch (ast.kind()) {
       case SyntaxKind.TupleType:
         return computeTupleType(ast, this);

@@ -41,6 +41,8 @@
 // console.log(+process.argv[2], +process.argv[3]);
 
 var tuple: [...number[], number, string] = [4, 2, 'Bob'];
+var tuple2: [number, ...number[], string] = [4, 2, 'Bob'];
+var tuple3: [number, string, ...number[]] = [4, '2', 8];
 
 // var tuple: [number, number] = [4, 2];
 // //error TS2094: The property 'push' does not exist on value of type 'tuple'.
