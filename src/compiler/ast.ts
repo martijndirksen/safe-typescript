@@ -1268,28 +1268,8 @@ export class ArrayType extends AST {
   }
 }
 
-export class SpreadType extends AST {
-  constructor(public type: AST) {
-    super();
-    type && (type.parent = this);
-  }
-
-  public kind(): SyntaxKind {
-    return SyntaxKind.SpreadType;
-  }
-
-  public structuralEquals(
-    ast: SpreadType,
-    includingPosition: boolean
-  ): boolean {
-    return (
-      super.structuralEquals(ast, includingPosition) &&
-      structuralEquals(this.type, ast.type, includingPosition)
-    );
-  }
-}
-
 // The spread index determines which element within the tuple type may be repeated 0-n times.
+// We allow spreading once, on any index of the tuple.
 export class TupleType extends AST {
   constructor(
     public type: AST,

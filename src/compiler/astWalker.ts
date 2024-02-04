@@ -67,7 +67,6 @@ import {
   SimpleArrowFunctionExpression,
   SimplePropertyAssignment,
   SourceUnit,
-  SpreadType,
   SwitchStatement,
   ThrowStatement,
   TryStatement,
@@ -553,11 +552,6 @@ function walkArrayTypeChildren(ast: AST, walker: AstWalker): void {
   walker.walk(preAst.type);
 }
 
-function walkSpreadTypeChildren(ast: AST, walker: AstWalker): void {
-  var preAst = <SpreadType>ast;
-  walker.walk(preAst.type);
-}
-
 function walkTupleTypeChildren(ast: AST, walker: AstWalker): void {
   var preAst = <TupleType>ast;
   walker.walk(preAst.type);
@@ -645,9 +639,7 @@ childrenWalkers[SyntaxKind.ArgumentList] = walkArgumentListChildren;
 childrenWalkers[SyntaxKind.ArrayLiteralExpression] =
   walkArrayLiteralExpressionChildren;
 childrenWalkers[SyntaxKind.ArrayType] = walkArrayTypeChildren;
-childrenWalkers[SyntaxKind.SpreadType] = walkSpreadTypeChildren;
 childrenWalkers[SyntaxKind.TupleType] = walkTupleTypeChildren;
-childrenWalkers[SyntaxKind.TupleTypeLeftSpread] = walkTupleTypeChildren; // TODO: MD this might need to be different?
 childrenWalkers[SyntaxKind.SimpleArrowFunctionExpression] =
   walkSimpleArrowFunctionExpressionChildren;
 childrenWalkers[SyntaxKind.ParenthesizedArrowFunctionExpression] =

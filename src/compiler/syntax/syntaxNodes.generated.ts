@@ -3660,86 +3660,6 @@ export class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
   }
 }
 
-export class SpreadTypeSyntax extends SyntaxNode implements ITypeSyntax {
-  constructor(
-    public dotDotDotToken: ISyntaxToken,
-    public type: ITypeSyntax,
-    parsedInStrictMode: boolean
-  ) {
-    super(parsedInStrictMode);
-  }
-
-  public accept(visitor: ISyntaxVisitor): any {
-    return visitor.visitSpreadType(this);
-  }
-
-  public kind(): SyntaxKind {
-    return SyntaxKind.SpreadType;
-  }
-
-  public childCount(): number {
-    return 2;
-  }
-
-  public childAt(slot: number): ISyntaxElement {
-    switch (slot) {
-      case 0:
-        return this.dotDotDotToken;
-      case 1:
-        return this.type;
-      default:
-        throw Errors.invalidOperation();
-    }
-  }
-
-  public isType(): boolean {
-    return true;
-  }
-
-  public update(
-    dotDotDotToken: ISyntaxToken,
-    type: ITypeSyntax
-  ): SpreadTypeSyntax {
-    if (this.dotDotDotToken === dotDotDotToken && this.type === type) {
-      return this;
-    }
-
-    return new SpreadTypeSyntax(
-      dotDotDotToken,
-      type,
-      /*parsedInStrictMode:*/ this.parsedInStrictMode()
-    );
-  }
-
-  public static create1(type: ITypeSyntax): SpreadTypeSyntax {
-    return new SpreadTypeSyntax(
-      token(SyntaxKind.DotDotDotToken),
-      type,
-      /*parsedInStrictMode:*/ false
-    );
-  }
-
-  public withLeadingTrivia(trivia: ISyntaxTriviaList): SpreadTypeSyntax {
-    return <SpreadTypeSyntax>super.withLeadingTrivia(trivia);
-  }
-
-  public withTrailingTrivia(trivia: ISyntaxTriviaList): SpreadTypeSyntax {
-    return <SpreadTypeSyntax>super.withTrailingTrivia(trivia);
-  }
-
-  public withDotDotDotToken(dotDotDotToken: ISyntaxToken): SpreadTypeSyntax {
-    return this.update(dotDotDotToken, this.type);
-  }
-
-  public withType(type: ITypeSyntax): SpreadTypeSyntax {
-    return this.update(this.dotDotDotToken, type);
-  }
-
-  public isTypeScriptSpecific(): boolean {
-    return true;
-  }
-}
-
 export class TupleTypeSyntax extends SyntaxNode implements ITypeSyntax {
   constructor(
     public openBracketToken: ISyntaxToken,
@@ -3825,7 +3745,7 @@ export class TupleTypeSyntax extends SyntaxNode implements ITypeSyntax {
     return this.update(this.openBracketToken, types, this.closeBracketToken);
   }
 
-  public withType(type: ITypeSyntax): TupleTypeSyntax {
+  public withType(type: TupleTypeElementSyntax): TupleTypeSyntax {
     return this.withTypes(separatedList([type]));
   }
 
@@ -3840,45 +3760,33 @@ export class TupleTypeSyntax extends SyntaxNode implements ITypeSyntax {
   }
 }
 
-export class TupleTypeLeftSpreadSyntax
-  extends SyntaxNode
-  implements ITypeSyntax
-{
+export class TupleTypeElementSyntax extends SyntaxNode implements ITypeSyntax {
   constructor(
-    public openBracketToken: ISyntaxToken,
-    public spreadLeft: SpreadTypeSyntax,
-    public commaToken: ISyntaxToken,
-    public types: ISeparatedSyntaxList,
-    public closeBracketToken: ISyntaxToken,
+    public dotDotDotToken: ISyntaxToken,
+    public type: ITypeSyntax,
     parsedInStrictMode: boolean
   ) {
     super(parsedInStrictMode);
   }
 
   public accept(visitor: ISyntaxVisitor): any {
-    return visitor.visitTupleTypeLeftSpread(this);
+    return visitor.visitTupleTypeElement(this);
   }
 
   public kind(): SyntaxKind {
-    return SyntaxKind.TupleTypeLeftSpread;
+    return SyntaxKind.TupleElementType;
   }
 
   public childCount(): number {
-    return 5;
+    return 2;
   }
 
   public childAt(slot: number): ISyntaxElement {
     switch (slot) {
       case 0:
-        return this.openBracketToken;
+        return this.dotDotDotToken;
       case 1:
-        return this.spreadLeft;
-      case 2:
-        return this.commaToken;
-      case 3:
-        return this.types;
-      case 4:
-        return this.closeBracketToken;
+        return this.type;
       default:
         throw Errors.invalidOperation();
     }
@@ -3889,116 +3797,52 @@ export class TupleTypeLeftSpreadSyntax
   }
 
   public update(
-    openBracketToken: ISyntaxToken,
-    spreadLeft: SpreadTypeSyntax,
-    commaToken: ISyntaxToken,
-    types: ISeparatedSyntaxList,
-    closeBracketToken: ISyntaxToken
-  ): TupleTypeLeftSpreadSyntax {
-    if (
-      this.openBracketToken === openBracketToken &&
-      this.spreadLeft === spreadLeft &&
-      this.commaToken === commaToken &&
-      this.types === types &&
-      this.closeBracketToken === closeBracketToken
-    ) {
+    dotDotDotToken: ISyntaxToken,
+    type: ITypeSyntax
+  ): TupleTypeElementSyntax {
+    if (this.dotDotDotToken === dotDotDotToken && this.type === type) {
       return this;
     }
 
-    return new TupleTypeLeftSpreadSyntax(
-      openBracketToken,
-      spreadLeft,
-      commaToken,
-      types,
-      closeBracketToken,
+    return new TupleTypeElementSyntax(
+      dotDotDotToken,
+      type,
       /*parsedInStrictMode:*/ this.parsedInStrictMode()
     );
   }
 
-  public static create1(
-    spreadLeft: SpreadTypeSyntax,
-    types: ISeparatedSyntaxList
-  ): TupleTypeLeftSpreadSyntax {
-    return new TupleTypeLeftSpreadSyntax(
-      token(SyntaxKind.OpenBracketToken),
-      spreadLeft,
-      token(SyntaxKind.CommaToken),
-      types,
-      token(SyntaxKind.CloseBracketToken),
+  public static create(type: ITypeSyntax): TupleTypeElementSyntax {
+    return new TupleTypeElementSyntax(
+      null,
+      type,
       /*parsedInStrictMode:*/ false
     );
   }
 
-  public withLeadingTrivia(
-    trivia: ISyntaxTriviaList
-  ): TupleTypeLeftSpreadSyntax {
-    return <TupleTypeLeftSpreadSyntax>super.withLeadingTrivia(trivia);
-  }
-
-  public withTrailingTrivia(
-    trivia: ISyntaxTriviaList
-  ): TupleTypeLeftSpreadSyntax {
-    return <TupleTypeLeftSpreadSyntax>super.withTrailingTrivia(trivia);
-  }
-
-  public withOpenBracketToken(
-    openBracketToken: ISyntaxToken
-  ): TupleTypeLeftSpreadSyntax {
-    return this.update(
-      openBracketToken,
-      this.spreadLeft,
-      this.commaToken,
-      this.types,
-      this.closeBracketToken
+  public static create1(type: ITypeSyntax): TupleTypeElementSyntax {
+    return new TupleTypeElementSyntax(
+      null,
+      type,
+      /*parsedInStrictMode:*/ false
     );
   }
 
-  public withSpreadLeft(
-    spreadLeft: SpreadTypeSyntax
-  ): TupleTypeLeftSpreadSyntax {
-    return this.update(
-      this.openBracketToken,
-      spreadLeft,
-      this.commaToken,
-      this.types,
-      this.closeBracketToken
-    );
+  public withLeadingTrivia(trivia: ISyntaxTriviaList): TupleTypeElementSyntax {
+    return <TupleTypeElementSyntax>super.withLeadingTrivia(trivia);
   }
 
-  public withCommaToken(commaToken: ISyntaxToken): TupleTypeLeftSpreadSyntax {
-    return this.update(
-      this.openBracketToken,
-      this.spreadLeft,
-      commaToken,
-      this.types,
-      this.closeBracketToken
-    );
+  public withTrailingTrivia(trivia: ISyntaxTriviaList): TupleTypeElementSyntax {
+    return <TupleTypeElementSyntax>super.withTrailingTrivia(trivia);
   }
 
-  public withTypes(types: ISeparatedSyntaxList): TupleTypeLeftSpreadSyntax {
-    return this.update(
-      this.openBracketToken,
-      this.spreadLeft,
-      this.commaToken,
-      types,
-      this.closeBracketToken
-    );
+  public withDotDotDotToken(
+    dotDotDotToken: ISyntaxToken
+  ): TupleTypeElementSyntax {
+    return this.update(dotDotDotToken, this.type);
   }
 
-  public withType(type: ITypeSyntax): TupleTypeLeftSpreadSyntax {
-    return this.withTypes(separatedList([type]));
-  }
-
-  public withCloseBracketToken(
-    closeBracketToken: ISyntaxToken
-  ): TupleTypeLeftSpreadSyntax {
-    return this.update(
-      this.openBracketToken,
-      this.spreadLeft,
-      this.commaToken,
-      this.types,
-      closeBracketToken
-    );
+  public withType(type: ITypeSyntax): TupleTypeElementSyntax {
+    return this.update(this.dotDotDotToken, type);
   }
 
   public isTypeScriptSpecific(): boolean {

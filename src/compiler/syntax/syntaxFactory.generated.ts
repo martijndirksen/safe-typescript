@@ -43,8 +43,7 @@ import {
   FunctionTypeSyntax,
   ArrayTypeSyntax,
   TupleTypeSyntax,
-  SpreadTypeSyntax,
-  TupleTypeLeftSpreadSyntax,
+  TupleElementTypeSyntax,
   GenericTypeSyntax,
   TypeQuerySyntax,
   ParameterSyntax,
@@ -249,19 +248,15 @@ export interface IFactory {
     openBracketToken: ISyntaxToken,
     closeBracketToken: ISyntaxToken
   ): ArrayTypeSyntax;
-  spreadType(dotDotDotToken: ISyntaxToken, type: ITypeSyntax): SpreadTypeSyntax;
   tupleType(
     openBracketToken: ISyntaxToken,
     types: ISeparatedSyntaxList,
     closeBracketToken: ISyntaxToken
   ): TupleTypeSyntax;
-  tupleTypeLeftSpread(
-    openBracketToken: ISyntaxToken,
-    spreadLeft: SpreadTypeSyntax,
-    commaToken: ISyntaxToken,
-    types: ISeparatedSyntaxList,
-    closeBracketToken: ISyntaxToken
-  ): TupleTypeLeftSpreadSyntax;
+  tupleTypeElement(
+    dotDotDotToken: ISyntaxToken,
+    type: ITypeSyntax
+  ): TupleTypeElementSyntax;
   genericType(
     name: INameSyntax,
     typeArgumentList: TypeArgumentListSyntax
@@ -933,16 +928,6 @@ export class NormalModeFactory implements IFactory {
       /*parsedInStrictMode:*/ false
     );
   }
-  spreadType(
-    dotDotDotToken: ISyntaxToken,
-    type: ITypeSyntax
-  ): SpreadTypeSyntax {
-    return new SpreadTypeSyntax(
-      dotDotDotToken,
-      type,
-      /*parsedInStrictMode:*/ false
-    );
-  }
   tupleType(
     openBracketToken: ISyntaxToken,
     types: ISeparatedSyntaxList,
@@ -955,19 +940,13 @@ export class NormalModeFactory implements IFactory {
       /*parsedInStrictMode:*/ false
     );
   }
-  tupleTypeLeftSpread(
-    openBracketToken: ISyntaxToken,
-    spreadLeft: SpreadTypeSyntax,
-    commaToken: ISyntaxToken,
-    types: ISeparatedSyntaxList,
-    closeBracketToken: ISyntaxToken
-  ): TupleTypeLeftSpreadSyntax {
-    return new TupleTypeLeftSpreadSyntax(
-      openBracketToken,
-      spreadLeft,
-      commaToken,
-      types,
-      closeBracketToken,
+  tupleTypeElement(
+    dotDotDotToken: ISyntaxToken,
+    type: ITypeSyntax
+  ): TupleTypeElementSyntax {
+    return new TupleTypeElementSyntax(
+      dotDotDotToken,
+      type,
       /*parsedInStrictMode:*/ false
     );
   }
@@ -2096,16 +2075,6 @@ export class StrictModeFactory implements IFactory {
       /*parsedInStrictMode:*/ true
     );
   }
-  spreadType(
-    dotDotDotToken: ISyntaxToken,
-    type: ITypeSyntax
-  ): SpreadTypeSyntax {
-    return new SpreadTypeSyntax(
-      dotDotDotToken,
-      type,
-      /*parsedInStrictMode:*/ true
-    );
-  }
   tupleType(
     openBracketToken: ISyntaxToken,
     types: ISeparatedSyntaxList,
@@ -2118,19 +2087,13 @@ export class StrictModeFactory implements IFactory {
       /*parsedInStrictMode:*/ true
     );
   }
-  tupleTypeLeftSpread(
-    openBracketToken: ISyntaxToken,
-    spreadLeft: SpreadTypeSyntax,
-    commaToken: ISyntaxToken,
-    types: ISeparatedSyntaxList,
-    closeBracketToken: ISyntaxToken
-  ): TupleTypeLeftSpreadSyntax {
-    return new TupleTypeLeftSpreadSyntax(
-      openBracketToken,
-      spreadLeft,
-      commaToken,
-      types,
-      closeBracketToken,
+  tupleTypeElement(
+    dotDotDotToken: ISyntaxToken,
+    type: ITypeSyntax
+  ): TupleTypeElementSyntax {
+    return new TupleTypeElementSyntax(
+      dotDotDotToken,
+      type,
       /*parsedInStrictMode:*/ true
     );
   }
