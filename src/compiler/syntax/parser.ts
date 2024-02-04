@@ -122,6 +122,7 @@ import {
   ParameterSyntax,
   TupleTypeSyntax,
   SpreadTypeSyntax,
+  TupleTypeLeftSpreadSyntax,
 } from './syntaxNodes.generated';
 import {
   ISyntaxToken,
@@ -3091,15 +3092,15 @@ class ParserImpl {
   // type AtBeginning = [...string[], boolean];
   // type AtEnd = [boolean, ...string[]];
   // type InMiddle = [string, ...boolean[], string];
-  private parseTupleType(): TupleTypeSyntax {
+  private parseTupleType(): TupleTypeSyntax | TupleTypeLeftSpreadSyntax {
     let openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
 
     const isSpreadLeft =
       this.currentToken().kind() === SyntaxKind.DotDotDotToken;
 
     if (isSpreadLeft) {
-      this.parseSpreadType();
-      this.eatToken(SyntaxKind.CommaToken);
+      const spreadType = this.parseSpreadType();
+      const commaToken = this.eatToken(SyntaxKind.CommaToken);
 
       const result = this.parseSeparatedSyntaxList(
         ListParsingState.Tuple_ElementTypes
@@ -3112,8 +3113,10 @@ class ParserImpl {
 
       const closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
-      const tuple = this.factory.tupleType(
+      const tuple = this.factory.tupleTypeLeftSpread(
         openBracketToken,
+        spreadType,
+        commaToken,
         result.list,
         closeBracketToken
       );

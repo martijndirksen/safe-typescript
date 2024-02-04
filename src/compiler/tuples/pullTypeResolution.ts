@@ -38,7 +38,7 @@ export function getTuplePullTypeSymbolFromAst(
   }
 
   const seperatedSyntaxList = term.type as ISeparatedSyntaxList2;
-  const isZeroTuple = seperatedSyntaxList.width() === 0; // []
+  const isZeroTuple = seperatedSyntaxList.members.length === 0; // []
 
   if (isZeroTuple) {
     resolutionContext.postDiagnostic(
