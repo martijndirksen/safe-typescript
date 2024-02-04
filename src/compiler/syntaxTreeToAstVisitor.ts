@@ -100,7 +100,7 @@ import {
   DeleteExpression,
   VoidExpression,
   DebuggerStatement,
-  SpreadType,
+  TupleElementType,
 } from './ast';
 import { getAstWalkerFactory } from './astWalker';
 import { Debug } from './core/debug';
@@ -201,8 +201,7 @@ import {
   VoidExpressionSyntax,
   DebuggerStatementSyntax,
   TupleTypeSyntax,
-  TupleTypeLeftSpreadSyntax,
-  SpreadTypeSyntax,
+  TupleElementTypeSyntax,
 } from './syntax/syntaxNodes.generated';
 import { ISyntaxToken } from './syntax/syntaxToken';
 import { SyntaxTree } from './syntax/syntaxTree';
@@ -1110,18 +1109,6 @@ export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
     return result;
   }
 
-  public visitSpreadType(node: SpreadTypeSyntax): SpreadType {
-    var start = this.position;
-
-    this.movePast(node.dotDotDotToken);
-    const underlying = this.visitType(node.type);
-
-    var result = new SpreadType(underlying);
-    this.setSpan(result, start, node);
-
-    return result;
-  }
-
   public visitTupleType(node: TupleTypeSyntax): TupleType {
     var start = this.position;
 
@@ -1135,25 +1122,16 @@ export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
     return result;
   }
 
-  public visitTupleTypeLeftSpread(node: TupleTypeLeftSpreadSyntax): TupleType {
-    const start = this.position;
+  public visitTupleElementType(node: TupleElementTypeSyntax): TupleElementType {
+    var start = this.position;
 
-    this.movePast(node.openBracketToken);
-    const innerSpreadType = (node.spreadLeft.type as ArrayTypeSyntax).type;
-    const spreadLeftType = this.visitType(innerSpreadType);
+    const isRestElement = node.dotDotDotToken != null;
+    console.log('isRestElement', isRestElement);
 
-    this.movePast(node.spreadLeft);
-    this.movePast(node.commaToken);
-    const otherTypes = this.visitSeparatedSyntaxList(node.types);
-    this.movePast(node.closeBracketToken);
+    this.movePast(node.dotDotDotToken);
+    var elementType = this.visitType(node.type);
 
-    const types = new ISeparatedSyntaxList2(
-      otherTypes.fileName(),
-      [spreadLeftType, ...otherTypes.members],
-      otherTypes.separatorCount() + 1
-    );
-
-    var result = new TupleType(types, 0);
+    var result = new TupleElementType(elementType, isRestElement);
     this.setSpan(result, start, node);
 
     return result;
@@ -2513,6 +2491,16 @@ class SyntaxTreeToIncrementalAstVisitor extends SyntaxTreeToAstVisitor {
     var result: TupleType = this.getAndMovePastAST(node);
     if (!result) {
       result = super.visitTupleType(node);
+      this.setAST(node, result);
+    }
+
+    return result;
+  }
+
+  public visitTupleElementType(node: TupleElementTypeSyntax): TupleElementType {
+    var result: TupleElementType = this.getAndMovePastAST(node);
+    if (!result) {
+      result = super.visitTupleElementType(node);
       this.setAST(node, result);
     }
 

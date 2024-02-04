@@ -465,14 +465,14 @@ var definitions: ITypeDefinition[] = [
         name: 'types',
         isSeparatedList: true,
         requiresAtLeastOneItem: true,
-        elementType: 'TupleTypeElementSyntax',
+        elementType: 'TupleElementTypeSyntax',
       },
       <any>{ name: 'closeBracketToken', isToken: true },
     ],
     isTypeScriptSpecific: true,
   },
   <any>{
-    name: 'TupleTypeElementSyntax',
+    name: 'TupleElementTypeSyntax',
     baseType: 'SyntaxNode',
     interfaces: ['ITypeSyntax'],
     children: [

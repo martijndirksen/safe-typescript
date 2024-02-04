@@ -422,7 +422,7 @@ export class SyntaxRewriter implements ISyntaxVisitor {
     );
   }
 
-  public visitTupleTypeElement(node: TupleTypeElementSyntax): any {
+  public visitTupleElementType(node: TupleElementTypeSyntax): any {
     return node.update(
       node.dotDotDotToken === null
         ? null

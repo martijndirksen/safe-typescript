@@ -121,7 +121,7 @@ import {
   ConstructorTypeSyntax,
   ParameterSyntax,
   TupleTypeSyntax,
-  TupleTypeElementSyntax,
+  TupleElementTypeSyntax,
 } from './syntaxNodes.generated';
 import {
   ISyntaxToken,
@@ -3076,11 +3076,11 @@ class ParserImpl {
     );
   }
 
-  private parseTupleElementType(): TupleTypeElementSyntax {
+  private parseTupleElementType(): TupleElementTypeSyntax {
     const dotDotDotToken = this.tryEatToken(SyntaxKind.DotDotDotToken);
     const typeToken = this.parseType();
 
-    return this.factory.tupleTypeElement(dotDotDotToken, typeToken);
+    return this.factory.tupleElementType(dotDotDotToken, typeToken);
   }
 
   // type AtBeginning = [...string[], boolean];

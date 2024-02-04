@@ -3745,7 +3745,7 @@ export class TupleTypeSyntax extends SyntaxNode implements ITypeSyntax {
     return this.update(this.openBracketToken, types, this.closeBracketToken);
   }
 
-  public withType(type: TupleTypeElementSyntax): TupleTypeSyntax {
+  public withType(type: TupleElementTypeSyntax): TupleTypeSyntax {
     return this.withTypes(separatedList([type]));
   }
 
@@ -3760,7 +3760,7 @@ export class TupleTypeSyntax extends SyntaxNode implements ITypeSyntax {
   }
 }
 
-export class TupleTypeElementSyntax extends SyntaxNode implements ITypeSyntax {
+export class TupleElementTypeSyntax extends SyntaxNode implements ITypeSyntax {
   constructor(
     public dotDotDotToken: ISyntaxToken,
     public type: ITypeSyntax,
@@ -3770,7 +3770,7 @@ export class TupleTypeElementSyntax extends SyntaxNode implements ITypeSyntax {
   }
 
   public accept(visitor: ISyntaxVisitor): any {
-    return visitor.visitTupleTypeElement(this);
+    return visitor.visitTupleElementType(this);
   }
 
   public kind(): SyntaxKind {
@@ -3799,49 +3799,49 @@ export class TupleTypeElementSyntax extends SyntaxNode implements ITypeSyntax {
   public update(
     dotDotDotToken: ISyntaxToken,
     type: ITypeSyntax
-  ): TupleTypeElementSyntax {
+  ): TupleElementTypeSyntax {
     if (this.dotDotDotToken === dotDotDotToken && this.type === type) {
       return this;
     }
 
-    return new TupleTypeElementSyntax(
+    return new TupleElementTypeSyntax(
       dotDotDotToken,
       type,
       /*parsedInStrictMode:*/ this.parsedInStrictMode()
     );
   }
 
-  public static create(type: ITypeSyntax): TupleTypeElementSyntax {
-    return new TupleTypeElementSyntax(
+  public static create(type: ITypeSyntax): TupleElementTypeSyntax {
+    return new TupleElementTypeSyntax(
       null,
       type,
       /*parsedInStrictMode:*/ false
     );
   }
 
-  public static create1(type: ITypeSyntax): TupleTypeElementSyntax {
-    return new TupleTypeElementSyntax(
+  public static create1(type: ITypeSyntax): TupleElementTypeSyntax {
+    return new TupleElementTypeSyntax(
       null,
       type,
       /*parsedInStrictMode:*/ false
     );
   }
 
-  public withLeadingTrivia(trivia: ISyntaxTriviaList): TupleTypeElementSyntax {
-    return <TupleTypeElementSyntax>super.withLeadingTrivia(trivia);
+  public withLeadingTrivia(trivia: ISyntaxTriviaList): TupleElementTypeSyntax {
+    return <TupleElementTypeSyntax>super.withLeadingTrivia(trivia);
   }
 
-  public withTrailingTrivia(trivia: ISyntaxTriviaList): TupleTypeElementSyntax {
-    return <TupleTypeElementSyntax>super.withTrailingTrivia(trivia);
+  public withTrailingTrivia(trivia: ISyntaxTriviaList): TupleElementTypeSyntax {
+    return <TupleElementTypeSyntax>super.withTrailingTrivia(trivia);
   }
 
   public withDotDotDotToken(
     dotDotDotToken: ISyntaxToken
-  ): TupleTypeElementSyntax {
+  ): TupleElementTypeSyntax {
     return this.update(dotDotDotToken, this.type);
   }
 
-  public withType(type: ITypeSyntax): TupleTypeElementSyntax {
+  public withType(type: ITypeSyntax): TupleElementTypeSyntax {
     return this.update(this.dotDotDotToken, type);
   }
 

@@ -70,6 +70,7 @@ import {
   SwitchStatement,
   ThrowStatement,
   TryStatement,
+  TupleElementType,
   TupleType,
   TypeAnnotation,
   TypeArgumentList,
@@ -557,6 +558,11 @@ function walkTupleTypeChildren(ast: AST, walker: AstWalker): void {
   walker.walk(preAst.type);
 }
 
+function walkTupleElementTypeChildren(ast: AST, walker: AstWalker): void {
+  var preAst = <TupleElementType>ast;
+  walker.walk(preAst.type);
+}
+
 function walkModuleDeclarationChildren(ast: AST, walker: AstWalker): void {
   var preAst = <ModuleDeclaration>ast;
   walker.walk(preAst.name);
@@ -640,6 +646,7 @@ childrenWalkers[SyntaxKind.ArrayLiteralExpression] =
   walkArrayLiteralExpressionChildren;
 childrenWalkers[SyntaxKind.ArrayType] = walkArrayTypeChildren;
 childrenWalkers[SyntaxKind.TupleType] = walkTupleTypeChildren;
+childrenWalkers[SyntaxKind.TupleElementType] = walkTupleElementTypeChildren;
 childrenWalkers[SyntaxKind.SimpleArrowFunctionExpression] =
   walkSimpleArrowFunctionExpressionChildren;
 childrenWalkers[SyntaxKind.ParenthesizedArrowFunctionExpression] =

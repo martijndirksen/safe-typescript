@@ -123,7 +123,7 @@ export interface ISyntaxVisitor {
   visitObjectType(node: ObjectTypeSyntax): any;
   visitArrayType(node: ArrayTypeSyntax): any;
   visitTupleType(node: TupleTypeSyntax): any;
-  visitTupleTypeElement(node: TupleTypeElementSyntax): any;
+  visitTupleElementType(node: TupleElementTypeSyntax): any;
   visitGenericType(node: GenericTypeSyntax): any;
   visitTypeQuery(node: TypeQuerySyntax): any;
   visitTypeAnnotation(node: TypeAnnotationSyntax): any;
@@ -312,7 +312,7 @@ export class SyntaxVisitor implements ISyntaxVisitor {
     return this.defaultVisit(node);
   }
 
-  public visitTupleTypeElement(node: TupleTypeElementSyntax): any {
+  public visitTupleElementType(node: TupleElementTypeSyntax): any {
     return this.defaultVisit(node);
   }
 

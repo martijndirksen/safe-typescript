@@ -253,10 +253,10 @@ export interface IFactory {
     types: ISeparatedSyntaxList,
     closeBracketToken: ISyntaxToken
   ): TupleTypeSyntax;
-  tupleTypeElement(
+  tupleElementType(
     dotDotDotToken: ISyntaxToken,
     type: ITypeSyntax
-  ): TupleTypeElementSyntax;
+  ): TupleElementTypeSyntax;
   genericType(
     name: INameSyntax,
     typeArgumentList: TypeArgumentListSyntax
@@ -940,11 +940,11 @@ export class NormalModeFactory implements IFactory {
       /*parsedInStrictMode:*/ false
     );
   }
-  tupleTypeElement(
+  tupleElementType(
     dotDotDotToken: ISyntaxToken,
     type: ITypeSyntax
-  ): TupleTypeElementSyntax {
-    return new TupleTypeElementSyntax(
+  ): TupleElementTypeSyntax {
+    return new TupleElementTypeSyntax(
       dotDotDotToken,
       type,
       /*parsedInStrictMode:*/ false
@@ -2087,11 +2087,11 @@ export class StrictModeFactory implements IFactory {
       /*parsedInStrictMode:*/ true
     );
   }
-  tupleTypeElement(
+  tupleElementType(
     dotDotDotToken: ISyntaxToken,
     type: ITypeSyntax
-  ): TupleTypeElementSyntax {
-    return new TupleTypeElementSyntax(
+  ): TupleElementTypeSyntax {
+    return new TupleElementTypeSyntax(
       dotDotDotToken,
       type,
       /*parsedInStrictMode:*/ true

@@ -1291,6 +1291,30 @@ export class TupleType extends AST {
   }
 }
 
+export class TupleElementType extends AST {
+  constructor(
+    public type: AST,
+    public readonly isRestElement: boolean
+  ) {
+    super();
+    type && (type.parent = this);
+  }
+
+  public kind(): SyntaxKind {
+    return SyntaxKind.TupleElementType;
+  }
+
+  public structuralEquals(
+    ast: TupleElementType,
+    includingPosition: boolean
+  ): boolean {
+    return (
+      super.structuralEquals(ast, includingPosition) &&
+      structuralEquals(this.type, ast.type, includingPosition)
+    );
+  }
+}
+
 export class TypeArgumentList extends AST {
   constructor(public typeArguments: ISeparatedSyntaxList2) {
     super();

@@ -332,7 +332,7 @@ export class SyntaxWalker implements ISyntaxVisitor {
     this.visitToken(node.closeBracketToken);
   }
 
-  public visitTupleTypeElement(node: TupleTypeElementSyntax): void {
+  public visitTupleElementType(node: TupleElementTypeSyntax): void {
     this.visitOptionalToken(node.dotDotDotToken);
     this.visitNodeOrToken(node.type);
   }
