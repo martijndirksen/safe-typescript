@@ -100,6 +100,8 @@ import {
   DeleteExpression,
   VoidExpression,
   DebuggerStatement,
+  TupleTypeSpreadKind,
+  SpreadType,
 } from './ast';
 import { getAstWalkerFactory } from './astWalker';
 import { Debug } from './core/debug';
@@ -200,6 +202,8 @@ import {
   VoidExpressionSyntax,
   DebuggerStatementSyntax,
   TupleTypeSyntax,
+  TupleTypeLeftSpreadSyntax,
+  SpreadTypeSyntax,
 } from './syntax/syntaxNodes.generated';
 import { ISyntaxToken } from './syntax/syntaxToken';
 import { SyntaxTree } from './syntax/syntaxTree';
@@ -1107,6 +1111,18 @@ export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
     return result;
   }
 
+  public visitSpreadType(node: SpreadTypeSyntax): SpreadType {
+    var start = this.position;
+
+    this.movePast(node.dotDotDotToken);
+    const underlying = this.visitType(node.type);
+
+    var result = new SpreadType(underlying);
+    this.setSpan(result, start, node);
+
+    return result;
+  }
+
   public visitTupleType(node: TupleTypeSyntax): TupleType {
     var start = this.position;
 
@@ -1114,7 +1130,29 @@ export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
     var types = this.visitSeparatedSyntaxList(node.types);
     this.movePast(node.closeBracketToken);
 
-    var result = new TupleType(types);
+    var result = new TupleType(types, TupleTypeSpreadKind.None);
+    this.setSpan(result, start, node);
+
+    return result;
+  }
+
+  public visitTupleTypeLeftSpread(node: TupleTypeLeftSpreadSyntax): TupleType {
+    const start = this.position;
+
+    this.movePast(node.openBracketToken);
+    const spreadLeftType = this.visitType(node.spreadLeft.type);
+    this.movePast(node.spreadLeft);
+    this.movePast(node.commaToken);
+    const otherTypes = this.visitSeparatedSyntaxList(node.types);
+    this.movePast(node.closeBracketToken);
+
+    const types = new ISeparatedSyntaxList2(
+      otherTypes.fileName(),
+      [spreadLeftType, ...otherTypes.members],
+      otherTypes.separatorCount() + 1
+    );
+
+    var result = new TupleType(types, TupleTypeSpreadKind.Left);
     this.setSpan(result, start, node);
 
     return result;

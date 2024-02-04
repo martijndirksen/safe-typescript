@@ -27,6 +27,8 @@ import {
   ObjectTypeSyntax,
   ArrayTypeSyntax,
   TupleTypeSyntax,
+  SpreadTypeSyntax,
+  TupleTypeLeftSpreadSyntax,
   GenericTypeSyntax,
   TypeQuerySyntax,
   TypeAnnotationSyntax,
@@ -121,7 +123,9 @@ export interface ISyntaxVisitor {
   visitFunctionType(node: FunctionTypeSyntax): any;
   visitObjectType(node: ObjectTypeSyntax): any;
   visitArrayType(node: ArrayTypeSyntax): any;
+  visitSpreadType(node: SpreadTypeSyntax): any;
   visitTupleType(node: TupleTypeSyntax): any;
+  visitTupleTypeLeftSpread(node: TupleTypeLeftSpreadSyntax): any;
   visitGenericType(node: GenericTypeSyntax): any;
   visitTypeQuery(node: TypeQuerySyntax): any;
   visitTypeAnnotation(node: TypeAnnotationSyntax): any;
@@ -306,7 +310,15 @@ export class SyntaxVisitor implements ISyntaxVisitor {
     return this.defaultVisit(node);
   }
 
+  public visitSpreadType(node: SpreadTypeSyntax): any {
+    return this.defaultVisit(node);
+  }
+
   public visitTupleType(node: TupleTypeSyntax): any {
+    return this.defaultVisit(node);
+  }
+
+  public visitTupleTypeLeftSpread(node: TupleTypeLeftSpreadSyntax): any {
     return this.defaultVisit(node);
   }
 

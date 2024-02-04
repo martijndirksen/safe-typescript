@@ -155,9 +155,11 @@ export enum SyntaxKind {
   FunctionType,
   ArrayType,
   TupleType,
+  TupleTypeLeftSpread,
   ConstructorType,
   GenericType,
   TypeQuery,
+  SpreadType,
 
   // Module elements.
   InterfaceDeclaration,

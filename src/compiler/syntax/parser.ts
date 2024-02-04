@@ -121,6 +121,7 @@ import {
   ConstructorTypeSyntax,
   ParameterSyntax,
   TupleTypeSyntax,
+  SpreadTypeSyntax,
 } from './syntaxNodes.generated';
 import {
   ISyntaxToken,
@@ -3075,27 +3076,71 @@ class ParserImpl {
     );
   }
 
+  private parseSpreadType(): SpreadTypeSyntax {
+    const dotDotDotToken = this.eatToken(SyntaxKind.DotDotDotToken);
+    const typeToken = this.parseType();
+
+    if (typeToken.kind() !== SyntaxKind.ArrayType)
+      throw new Error('Rest element type must be an array type');
+
+    const spreadType = this.factory.spreadType(dotDotDotToken, typeToken);
+
+    return spreadType;
+  }
+
+  // type AtBeginning = [...string[], boolean];
+  // type AtEnd = [boolean, ...string[]];
+  // type InMiddle = [string, ...boolean[], string];
   private parseTupleType(): TupleTypeSyntax {
-    var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
+    let openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
 
-    var result = this.parseSeparatedSyntaxList(
-      ListParsingState.Tuple_ElementTypes
-    );
+    const isSpreadLeft =
+      this.currentToken().kind() === SyntaxKind.DotDotDotToken;
 
-    openBracketToken = this.addSkippedTokensAfterToken(
-      openBracketToken,
-      result.skippedTokens
-    );
+    if (isSpreadLeft) {
+      this.parseSpreadType();
+      this.eatToken(SyntaxKind.CommaToken);
 
-    var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
+      const result = this.parseSeparatedSyntaxList(
+        ListParsingState.Tuple_ElementTypes
+      );
 
-    const tuple = this.factory.tupleType(
-      openBracketToken,
-      result.list,
-      closeBracketToken
-    );
+      openBracketToken = this.addSkippedTokensAfterToken(
+        openBracketToken,
+        result.skippedTokens
+      );
 
-    return tuple;
+      const closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
+
+      const tuple = this.factory.tupleType(
+        openBracketToken,
+        result.list,
+        closeBracketToken
+      );
+
+      return tuple;
+    } else {
+      // We will need to check for spread middle/right here!
+
+      const result = this.parseSeparatedSyntaxList(
+        ListParsingState.Tuple_ElementTypes
+      );
+
+      openBracketToken = this.addSkippedTokensAfterToken(
+        openBracketToken,
+        result.skippedTokens
+      );
+
+      const closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
+
+      const tuple = this.factory.tupleType(
+        openBracketToken,
+        result.list,
+        closeBracketToken
+      );
+
+      return tuple;
+    }
   }
 
   private isTypeMember(inErrorRecovery: boolean): boolean {
@@ -5881,7 +5926,7 @@ class ParserImpl {
 
       // Tuple type
       case SyntaxKind.OpenBracketToken:
-        return this.parseTupleType();
+        return this.parseTupleType(); // TODO: MD this can also be spread tuple type
 
       // Function type:
       case SyntaxKind.OpenParenToken:

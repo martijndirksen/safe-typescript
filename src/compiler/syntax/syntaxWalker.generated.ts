@@ -30,6 +30,8 @@ import {
   ObjectTypeSyntax,
   ArrayTypeSyntax,
   TupleTypeSyntax,
+  SpreadTypeSyntax,
+  TupleTypeLeftSpreadSyntax,
   GenericTypeSyntax,
   TypeQuerySyntax,
   TypeAnnotationSyntax,
@@ -325,8 +327,21 @@ export class SyntaxWalker implements ISyntaxVisitor {
     this.visitToken(node.closeBracketToken);
   }
 
+  public visitSpreadType(node: SpreadTypeSyntax): void {
+    this.visitToken(node.dotDotDotToken);
+    this.visitNodeOrToken(node.type);
+  }
+
   public visitTupleType(node: TupleTypeSyntax): void {
     this.visitToken(node.openBracketToken);
+    this.visitSeparatedList(node.types);
+    this.visitToken(node.closeBracketToken);
+  }
+
+  public visitTupleTypeLeftSpread(node: TupleTypeLeftSpreadSyntax): void {
+    this.visitToken(node.openBracketToken);
+    this.visitNode(node.spreadLeft);
+    this.visitToken(node.commaToken);
     this.visitSeparatedList(node.types);
     this.visitToken(node.closeBracketToken);
   }

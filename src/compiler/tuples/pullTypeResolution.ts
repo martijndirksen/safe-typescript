@@ -11,7 +11,6 @@ import { SyntaxKind } from '../syntax/syntaxKind';
 import { PullElementKind } from '../typecheck/pullFlags';
 import {
   PullErrorTypeSymbol,
-  PullPrimitiveTypeSymbol,
   PullSymbol,
   PullTypeSymbol,
 } from '../typecheck/pullSymbols';

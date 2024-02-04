@@ -44,6 +44,8 @@ import {
   FunctionTypeSyntax,
   ArrayTypeSyntax,
   TupleTypeSyntax,
+  SpreadTypeSyntax,
+  TupleTypeLeftSpreadSyntax,
   GenericTypeSyntax,
   TypeQuerySyntax,
   ParameterSyntax,
@@ -413,9 +415,26 @@ export class SyntaxRewriter implements ISyntaxVisitor {
     );
   }
 
+  public visitSpreadType(node: SpreadTypeSyntax): any {
+    return node.update(
+      this.visitToken(node.dotDotDotToken),
+      <ITypeSyntax>this.visitNodeOrToken(node.type)
+    );
+  }
+
   public visitTupleType(node: TupleTypeSyntax): any {
     return node.update(
       this.visitToken(node.openBracketToken),
+      this.visitSeparatedList(node.types),
+      this.visitToken(node.closeBracketToken)
+    );
+  }
+
+  public visitTupleTypeLeftSpread(node: TupleTypeLeftSpreadSyntax): any {
+    return node.update(
+      this.visitToken(node.openBracketToken),
+      <SpreadTypeSyntax>this.visitNode(node.spreadLeft),
+      this.visitToken(node.commaToken),
       this.visitSeparatedList(node.types),
       this.visitToken(node.closeBracketToken)
     );
