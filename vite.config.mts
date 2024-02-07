@@ -9,6 +9,7 @@ export default defineConfig({
       '**/vitest.config.*/**',
       '**/vite.config.*/**',
       '**/dist/**',
+      '**/samples/**/*.ts',
     ],
   },
 });

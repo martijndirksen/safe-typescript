@@ -138,6 +138,21 @@ async function buildSample(
   return { success, stderr, output };
 }
 
+async function runSample(
+  file: string
+): Promise<{ success: boolean; stdout: string; stderr: string }> {
+  try {
+    const result = await execPromise(`node ${file}`);
+
+    const stderr = stripWarnings(result.stderr);
+    const success = !stderr;
+
+    return { success, stdout: result.stdout, stderr };
+  } catch (err) {
+    return { success: false, stdout: '', stderr: (err as Error).message };
+  }
+}
+
 describe('Safe TypeScript', () => {
   it('add', async () => {
     const { success, output } = await buildSample('samples/add.ts');
@@ -179,10 +194,27 @@ describe('Safe TypeScript', () => {
 var val2 = RT.checkAndTag([4, 8], RT.Any, RT.Tuple({
     "0": RT.Num,
     "1": RT.Num }));
-var val3 = RT.checkAndTag([4, 'str'], RT.Any, RT.Tuple({
+var val3 = RT.checkAndTag([4, 'str', true], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Str,
+    "2": RT.Bool }));
+`
+    );
+  });
+
+  it('tuple-order', async () => {
+    const { success, output } = await buildSample('samples/tuple-order.ts');
+    expect(success).toBeTruthy();
+    expect(output).toBe(
+      `var val = RT.checkAndTag(['str', 4], RT.Any, RT.Tuple({
     "0": RT.Num,
     "1": RT.Str }));
 `
+    );
+    const runtimeOutput = await runSample('samples/tuple-order.js');
+
+    expect(runtimeOutput.stderr).toContain(
+      'Error: Value is not compatible with target tuple, because it is not a subtype'
     );
   });
 });
