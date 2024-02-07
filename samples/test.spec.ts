@@ -123,6 +123,7 @@ async function buildSample(
   const stderr = stripWarnings(result.stderr);
 
   if (process.env.LOG_STDOUT) {
+    console.log(result.stderr);
     console.log(result.stdout);
   }
 
