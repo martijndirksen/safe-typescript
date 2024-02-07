@@ -66,7 +66,6 @@ export function getTuplePullTypeSymbolFromAst(
   const lengthSymbol = new PullSymbol('length', PullElementKind.Property);
   lengthSymbol.type = pullTypeResolver.semanticInfoChain.numberTypeSymbol;
 
-  // Maybe add a 'length' field here
   pullType.addMember(lengthSymbol);
 
   return pullType;
@@ -91,7 +90,10 @@ export function sourceIsRelatableToTargetTuple(
   if (!target.type.hasMembers())
     throw new Error('A tuple must have at lease one element');
 
-  const targetMembers = target.type.getMembers();
+  // Our target excludes the shadow field 'length'
+  const targetMembers = target.type
+    .getMembers()
+    .filter((x) => x.name !== 'length');
 
   if (isArrayLiteralExpression(ast)) {
     // Width subtyping is not allowed

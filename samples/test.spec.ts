@@ -121,6 +121,11 @@ async function buildSample(
   const outputFile = file.replace('.ts', '.js');
 
   const stderr = stripWarnings(result.stderr);
+
+  if (process.env.LOG_STDOUT) {
+    console.log(result.stdout);
+  }
+
   const success = !stderr;
 
   let output: string | undefined = undefined;
@@ -173,9 +178,9 @@ describe('Safe TypeScript', () => {
     );
   });
 
-  it('empty-tuple-type', async () => {
+  it('tuple-empty-type', async () => {
     const { success, stderr } = await buildSample(
-      'samples/empty-tuple-type.ts'
+      'samples/tuple-empty-type.ts'
     );
     expect(success).toBeFalsy();
     expect(stderr).toContain(
@@ -231,9 +236,42 @@ var val3 = RT.checkAndTag([4, 'str', true], RT.Any, RT.Tuple({
     );
     const runtimeOutput = await runSample('samples/tuple-width-mismatch.js');
 
-    console.log(runtimeOutput.stderr);
     expect(runtimeOutput.stderr).toContain(
       'Error: Tuple length mismatch detected, source has 1 and target expects 2'
     );
+  });
+
+  it('tuple-depth-subtyping', async () => {
+    const { success, output, stderr } = await buildSample(
+      'samples/tuple-depth-subtyping.ts'
+    );
+    console.log(stderr);
+    expect(success).toBeTruthy();
+    expect(output).toBe(
+      `RT.registerType(RT.InterfaceRepr("B", {
+    "foo": RT.ArrowType([], RT.Void, undefined) }, {
+    "bar": RT.Str }, [], false));
+RT.registerType(RT.InterfaceRepr("A", {
+    "baz": RT.ArrowType([], RT.Void, undefined),
+    "foo": RT.ArrowType([], RT.Void, undefined) }, {
+    "bar": RT.Str }, ["B"], false));
+
+var a = { foo: function () {
+    }, bar: 'success', baz: function () {
+    } };
+
+function parse(entities) {
+    return RT.checkAndTag(RT.readField(RT.readField(entities, RT.InstanceType("tuple"), 0), RT.Any, "bar"), RT.Any, RT.Str);
+}
+
+console.log(parse(RT.checkAndTag([
+    RT.shallowTag(a, RT.InterfaceType("A"))
+], RT.Any, RT.InstanceType("tuple"))));
+`
+    );
+    const runtimeOutput = await runSample('samples/tuple-depth-subtyping.js');
+
+    console.log(runtimeOutput.stderr);
+    expect(runtimeOutput.stdout).toContain('success');
   });
 });
