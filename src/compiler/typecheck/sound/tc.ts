@@ -449,7 +449,6 @@ export class SoundTypeChecker {
       case SyntaxKind.StringKeyword:
       case SyntaxKind.VoidKeyword:
       case SyntaxKind.ArrayType:
-      case SyntaxKind.TupleType:
       case SyntaxKind.GenericType:
       case SyntaxKind.ObjectType:
       case SyntaxKind.TypeQuery:
@@ -1595,6 +1594,7 @@ export class SoundTypeChecker {
       case TypeName.Interface:
       case TypeName.Record:
       case TypeName.Just:
+      case TypeName.Tuple:
         var st = <StructuredType>t;
         var fld = st.getField(name, overload);
         if (!fld && methodsOk) {

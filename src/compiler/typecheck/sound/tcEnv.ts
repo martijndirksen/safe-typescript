@@ -525,6 +525,7 @@ export class TcEnv implements RT.Virtual {
           return (<TPoly>t).body;
         case TypeName.Object:
         case TypeName.Interface:
+        case TypeName.Tuple:
           return t;
         default:
           throw new Error(

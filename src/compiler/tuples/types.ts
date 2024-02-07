@@ -15,7 +15,7 @@ export class TTuple extends SoundType {
     elements: SoundType[],
     private readonly spreadIndex?: number
   ) {
-    super(TypeName.Record);
+    super(TypeName.Tuple);
     this.fields = [
       ...elements.map<Field>((type, i) => createField(`${i}`, type)),
     ];
@@ -69,7 +69,7 @@ export class TTuple extends SoundType {
       });
     };
     switch (t.typeName) {
-      case TypeName.Record:
+      case TypeName.Tuple:
         var tt = t as unknown as TTuple;
         var myFields = this.fields;
         var ttFields = tt.getFields();

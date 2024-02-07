@@ -8,9 +8,10 @@ interface A extends B {
 }
 
 var a: A = { foo() {}, bar: 'success', baz() {} };
+var a2: [A] = [a];
 
 function parse(entities: [B]): string {
   return entities[0].bar;
 }
 
-console.log(parse([a]));
+console.log(parse(a2));

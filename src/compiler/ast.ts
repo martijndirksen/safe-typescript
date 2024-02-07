@@ -31,6 +31,7 @@ export enum TypeName {
   Just,
   Null,
   UVar,
+  Tuple,
 }
 
 export enum NewLineMode {

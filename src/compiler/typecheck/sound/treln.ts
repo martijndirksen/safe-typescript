@@ -452,6 +452,7 @@ export module TypeRelations {
             return fail;
         }
 
+      case TypeName.Tuple: // MD: Subtyping for tuples
       case TypeName.Record:
         switch (t2.typeName) {
           case TypeName.Any: //S-Any
@@ -607,6 +608,7 @@ export module TypeRelations {
                 return success(zero);
               }
               return fail;
+            case TypeName.Tuple:
             case TypeName.Record: //S-CStruct
               if (
                 isSubtype((<NamedType>t1).toRecord(), t2, fc, cycles, debug)
@@ -664,6 +666,7 @@ export module TypeRelations {
                 debug
               );
 
+            case TypeName.Tuple:
             case TypeName.Record:
               return subtype((<TClass>t1).toRecord(), t2, fc, cycles, debug);
 

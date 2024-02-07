@@ -1,6 +1,7 @@
 // Modified by N.Swamy, A.Rastogi (2014)
 
 import { SoundType, TypeName } from '../../ast';
+import { TTuple } from '../../tuples/types';
 import { PullElementKind } from '../pullFlags';
 import {
   PullSymbol,
@@ -125,6 +126,18 @@ export module TranslateTypes {
       var ft = new TRecord([]);
       addMembersAndMethods(t, ft, tcenv, debug);
       return ft;
+    } else if (t.kind === PullElementKind.Tuple) {
+      const tuple = new TTuple([]);
+      // We exclude the length field here to prevent issues
+      // regarding subtyping and assignability
+      t.getMembers()
+        .filter((x) => x.name !== 'length')
+        .forEach((x) =>
+          tuple.addField(
+            createField(x.name, translateTypeInternal(x.type, tcenv, debug))
+          )
+        );
+      return tuple;
     } else if (TcUtil.isClassType(t)) {
       var tc = new TClass(TcUtil.getClassName(t));
       addMembersAndMethods(t, tc, tcenv, debug);
