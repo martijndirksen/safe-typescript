@@ -217,4 +217,23 @@ var val3 = RT.checkAndTag([4, 'str', true], RT.Any, RT.Tuple({
       'Error: Value is not compatible with target tuple, because it is not a subtype'
     );
   });
+
+  it('tuple-width-mismatch', async () => {
+    const { success, output } = await buildSample(
+      'samples/tuple-width-mismatch.ts'
+    );
+    expect(success).toBeTruthy();
+    expect(output).toBe(
+      `var val = RT.checkAndTag([4], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Str }));
+`
+    );
+    const runtimeOutput = await runSample('samples/tuple-width-mismatch.js');
+
+    console.log(runtimeOutput.stderr);
+    expect(runtimeOutput.stderr).toContain(
+      'Error: Tuple length mismatch detected, source has 1 and target expects 2'
+    );
+  });
 });
