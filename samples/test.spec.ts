@@ -3,6 +3,7 @@ import { promisify } from 'node:util';
 import { EOL } from 'node:os';
 import childProcess from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
+import { stderr } from 'node:process';
 
 const execPromise = promisify(childProcess.exec);
 
@@ -84,25 +85,32 @@ RT.registerType(RT.InterfaceRepr("RegExp", {
     "multiline": RT.Bool,
     "lastIndex": RT.Num }, []));`;
 
-const ignoredLineCount = ignoredOutput.split(EOL).length;
+const ignoredLineCount = ignoredOutput.split('\n').length;
 
-const ignoredStderrLines = [
-  `(node:8704) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.`,
+const ignoredStdErrPatterns = [
+  'DeprecationWarning: Buffer() is deprecated',
+  ': warning ',
   `(Use \`node --trace-deprecation ...\` to show where the warning was created)`,
 ];
 
+const eol = '\n';
+
+function normalizeLineEndings(input: string): string {
+  return input.replace(/\r\n/g, eol);
+}
+
 function stripWarnings(stderr: string): string {
-  const lines = stderr.split(EOL);
+  const lines = normalizeLineEndings(stderr).split(eol);
   return lines
-    .filter(
-      (x) =>
-        !ignoredStderrLines.find((y) => y === x) && !x.includes(': warning ')
-    )
-    .join(EOL);
+    .filter((x) => !ignoredStdErrPatterns.find((y) => x.includes(y)))
+    .join(eol);
 }
 
 function stripOutput(rawOutput: string) {
-  return rawOutput.slice(ignoredLineCount);
+  return normalizeLineEndings(rawOutput)
+    .split(eol)
+    .slice(ignoredLineCount - 1)
+    .join(eol);
 }
 
 async function buildSample(
@@ -114,7 +122,7 @@ async function buildSample(
   const outputFile = file.replace('.ts', '.js');
 
   const stderr = stripWarnings(result.stderr);
-  const success = !!stderr;
+  const success = !stderr;
 
   let output: string | undefined = undefined;
 
@@ -133,18 +141,19 @@ async function buildSample(
 
 describe('Safe TypeScript', () => {
   it('add', async () => {
-    const { success, output } = await buildSample('samples-new/add.ts');
+    const { success, output } = await buildSample('samples/add.ts');
     expect(success).toBeTruthy();
     expect(output).toBe(
       `function add(a, b) {
-  return a + b;
-}`
+    return a + b;
+}
+`
     );
   });
 
   it('add-err', async () => {
-    const { success, stderr } = await buildSample('samples-new/add.ts');
-    expect(success).toBeFalsy();
+    const { success, stderr } = await buildSample('samples/add-err.ts');
+    expect(success, stderr).toBeFalsy();
     expect(stderr).toContain(
       `error TS2011: Cannot convert 'number' to 'string'.`
     );

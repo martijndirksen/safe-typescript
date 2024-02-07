@@ -1,7 +1,7 @@
 import { promisify } from 'node:util';
 import childProcess from 'node:child_process';
 import { Glob } from 'glob';
-import { prependFileWithContent } from '../util/file.mjs';
+import { prependFileWithContent } from './util/file.mjs';
 import { rimraf } from 'rimraf';
 
 const samplesGlob = `samples/**/*.ts`;
