@@ -152,9 +152,37 @@ describe('Safe TypeScript', () => {
 
   it('add-err', async () => {
     const { success, stderr } = await buildSample('samples/add-err.ts');
-    expect(success, stderr).toBeFalsy();
+    expect(success).toBeFalsy();
     expect(stderr).toContain(
       `error TS2011: Cannot convert 'number' to 'string'.`
+    );
+  });
+
+  it('empty-tuple-type', async () => {
+    const { success, stderr } = await buildSample(
+      'samples/empty-tuple-type.ts'
+    );
+    expect(success).toBeFalsy();
+    expect(stderr).toContain(
+      `error TS7090: Tuple type must have at least one type element.`
+    );
+  });
+
+  it('tuple-multiplicity', async () => {
+    const { success, output } = await buildSample(
+      'samples/tuple-multiplicity.ts'
+    );
+    expect(success).toBeTruthy();
+    expect(output).toBe(
+      `var val = RT.checkAndTag([4], RT.Any, RT.Tuple({
+    "0": RT.Num }));
+var val2 = RT.checkAndTag([4, 8], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Num }));
+var val3 = RT.checkAndTag([4, 'str'], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Str }));
+`
     );
   });
 });
