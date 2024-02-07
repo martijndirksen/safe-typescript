@@ -3,7 +3,6 @@ import { promisify } from 'node:util';
 import { EOL } from 'node:os';
 import childProcess from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
-import { stderr } from 'node:process';
 
 const execPromise = promisify(childProcess.exec);
 

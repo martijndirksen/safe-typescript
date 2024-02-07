@@ -28,13 +28,11 @@
     "watch:tsc": "tsc --noEmit src/compiler/tsc.ts && esbuild src/compiler/tsc.ts --bundle --platform=node --outfile=dist/tsc.js --watch",
     "watch:rt": "tsc --noEmit src/runtime/rt.ts && esbuild src/runtime/rt.ts --bundle --platform=node --outfile=dist/lib/rt.js --watch",
     "watch:typings": "nodemon -w src/typings -e ts --exec \"npm run build:typings\"",
-    "watch:test-samples": "nodemon -w samples/**/*.ts -w dist/**/*.js -e js,ts --exec \"npm run build:test-samples\"",
     "watch": "npm-run-all --parallel watch:*",
     "build": "npm-run-all --parallel build:*",
     "build:typings": "node --loader ts-node/esm scripts/copy-typings.mts",
     "build:tsc": "tsc --noEmit src/compiler/tsc.ts && esbuild src/compiler/tsc.ts --bundle --platform=node --outfile=dist/tsc.js",
     "build:rt": "tsc --noEmit src/runtime/rt.ts && esbuild src/runtime/rt.ts --bundle --platform=node --outfile=dist/lib/rt.js",
-    "build:test-samples": "node --loader ts-node/esm scripts/build-samples.mts",
     "test:run": "vitest run",
     "test": "vitest",
     "generate": "ts-node src/compiler/syntax/syntaxGenerator.ts && prettier --write src/compiler/syntax/*.generated.ts"

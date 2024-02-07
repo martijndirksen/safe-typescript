@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["./**/*.ts"],
+  "include": ["./**/*.ts", "vite.config.mts"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "lib": ["es2021"],
