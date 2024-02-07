@@ -102,4 +102,10 @@ export class TTuple extends SoundType {
 
     return tuple;
   }
+
+  public static createFromFields(fields: Field[]) {
+    const tuple = new TTuple([]);
+    fields.forEach((x, i) => tuple.addField({ ...x, name: `${i}` }));
+    return tuple;
+  }
 }

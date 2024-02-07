@@ -260,14 +260,17 @@ RT.registerType(RT.InterfaceRepr("A", {
 var a = { foo: function () {
     }, bar: 'success', baz: function () {
     } };
+var a2 = RT.checkAndTag([
+    RT.shallowTag(a, RT.InterfaceType("A"))
+], RT.Any, RT.Tuple({
+    "0": RT.InterfaceType("A") }));
 
 function parse(entities) {
-    return RT.checkAndTag(RT.readField(RT.readField(entities, RT.InstanceType("tuple"), 0), RT.Any, "bar"), RT.Any, RT.Str);
+    return RT.checkAndTag(RT.readField(RT.readField(entities, RT.Tuple({
+        "0": RT.InterfaceType("B") }), 0), RT.Any, "bar"), RT.Any, RT.Str);
 }
 
-console.log(parse(RT.checkAndTag([
-    RT.shallowTag(a, RT.InterfaceType("A"))
-], RT.Any, RT.InstanceType("tuple"))));
+console.log(parse(a2));
 `
     );
     const runtimeOutput = await runSample('samples/tuple-depth-subtyping.js');

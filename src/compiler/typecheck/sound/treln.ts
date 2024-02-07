@@ -1,6 +1,8 @@
 // Modified by N.Swamy, A.Rastogi (2014)
 
 import { SoundType, TypeName, AST } from '../../ast';
+import { tupleSubtyping } from '../../tuples/subtyping';
+import { TTuple } from '../../tuples/types';
 import { SoundTypeChecker } from './tc';
 import { TcUtil, Pair, pair, MkAST } from './tcUtil';
 import {
@@ -57,7 +59,7 @@ export module TypeRelations {
       t1.equals(t2)
     );
   }
-  function typeEquality(
+  export function typeEquality(
     t1: SoundType,
     t2: SoundType,
     cycles: Cycles,
@@ -453,6 +455,23 @@ export module TypeRelations {
         }
 
       case TypeName.Tuple: // MD: Subtyping for tuples
+        switch (t2.typeName) {
+          case TypeName.Any: //S-Any
+            if (t1.unFree()) {
+              if (SoundTypeChecker.compilationSettings.tsstarTagging()) {
+                return success(zero);
+              } else {
+                return success(t1);
+              }
+            }
+            return fail;
+          case TypeName.Tuple:
+            return tupleSubtyping(t1 as TTuple, t2 as TTuple, fc, cycles);
+
+          default:
+            return fail;
+        }
+
       case TypeName.Record:
         switch (t2.typeName) {
           case TypeName.Any: //S-Any

@@ -127,17 +127,15 @@ export module TranslateTypes {
       addMembersAndMethods(t, ft, tcenv, debug);
       return ft;
     } else if (t.kind === PullElementKind.Tuple) {
-      const tuple = new TTuple([]);
       // We exclude the length field here to prevent issues
       // regarding subtyping and assignability
-      t.getMembers()
+      const fields = t
+        .getMembers()
         .filter((x) => x.name !== 'length')
-        .forEach((x) =>
-          tuple.addField(
-            createField(x.name, translateTypeInternal(x.type, tcenv, debug))
-          )
+        .map((x) =>
+          createField(x.name, translateTypeInternal(x.type, tcenv, debug))
         );
-      return tuple;
+      return TTuple.createFromFields(fields);
     } else if (TcUtil.isClassType(t)) {
       var tc = new TClass(TcUtil.getClassName(t));
       addMembersAndMethods(t, tc, tcenv, debug);
