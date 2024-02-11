@@ -871,4 +871,7 @@ export var DiagnosticCode = {
   TUPLE_zero_tuple_type: 'Tuple type must have at least one type element.',
   TUPLE_width_subtyping_not_allowed:
     'Expected a tuple of {0} elements, while a tuple of {1} elements was given',
+  TUPLE_rest_element_not_an_array: 'Rest elements must be an array type',
+  TUPLE_multiple_spread_not_allowed:
+    'A rest element cannot follow another rest element.',
 };

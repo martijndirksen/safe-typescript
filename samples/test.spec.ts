@@ -278,4 +278,22 @@ console.log(parse(a2));
     console.log(runtimeOutput.stderr);
     expect(runtimeOutput.stdout).toContain('success');
   });
+
+  it('tuple-rest-element-non-array-err', async () => {
+    const { success, stderr } = await buildSample(
+      'samples/tuple-rest-element-non-array-err.ts'
+    );
+    expect(success).toBeFalsy();
+    expect(stderr).toContain(`Rest elements must be an array type`);
+  });
+
+  it('tuple-rest-element-multiple-rest-err', async () => {
+    const { success, stderr } = await buildSample(
+      'samples/tuple-rest-element-multiple-rest-err.ts'
+    );
+    expect(success).toBeFalsy();
+    expect(stderr).toContain(
+      `A rest element cannot follow another rest element`
+    );
+  });
 });

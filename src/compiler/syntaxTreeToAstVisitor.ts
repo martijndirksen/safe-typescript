@@ -1116,20 +1116,7 @@ export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
     var types = this.visitSeparatedSyntaxList(node.types);
     this.movePast(node.closeBracketToken);
 
-    let spreadIndex: number | undefined = undefined;
-
-    for (const [member, i] of types.members.map(
-      (x, i): [TupleElementType, number] => [x as TupleElementType, i]
-    )) {
-      if (member.isRestElement) {
-        if (spreadIndex != null)
-          throw new Error('Cannot have multiple rest elements in a tuple');
-
-        spreadIndex = i;
-      }
-    }
-
-    var result = new TupleType(types, spreadIndex);
+    var result = new TupleType(types);
     this.setSpan(result, start, node);
 
     return result;

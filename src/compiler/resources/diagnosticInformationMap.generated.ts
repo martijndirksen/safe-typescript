@@ -2125,4 +2125,12 @@ export var diagnosticInformationMap: DiagnosticInformationMap = {
     code: 7091,
     category: DiagnosticCategory.Error,
   },
+  'Rest elements must be an array type': {
+    code: 7092,
+    category: DiagnosticCategory.Error,
+  },
+  'A rest element cannot follow another rest element.': {
+    code: 7093,
+    category: DiagnosticCategory.Error,
+  },
 };

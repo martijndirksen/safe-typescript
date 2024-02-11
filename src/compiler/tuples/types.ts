@@ -8,6 +8,8 @@ import {
   TConstant,
 } from '../typecheck/sound/types';
 
+// The spread index determines which element within the tuple type may be repeated 0-n times.
+// We allow spreading once, on any index of the tuple.
 export class TTuple extends SoundType {
   private readonly fields: Field[];
 

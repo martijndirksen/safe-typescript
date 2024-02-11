@@ -1269,13 +1269,8 @@ export class ArrayType extends AST {
   }
 }
 
-// The spread index determines which element within the tuple type may be repeated 0-n times.
-// We allow spreading once, on any index of the tuple.
 export class TupleType extends AST {
-  constructor(
-    public type: AST,
-    public readonly spreadIndex?: number
-  ) {
+  constructor(public type: AST) {
     super();
     type && (type.parent = this);
   }
