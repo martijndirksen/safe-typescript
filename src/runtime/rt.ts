@@ -868,34 +868,76 @@ export module RT {
         }
       case TT.TUPLE: {
         // MD: Subtyping for tuples in RT
-        if (t1.tt === TT.TUPLE) {
-          for (const field in t2.fieldTable) {
-            if (!t1.fieldTable[field]) {
-              return { fst: false, snd: zero };
-            }
-            if (!equalTypes(t1.fieldTable[field], t2.fieldTable[field], cxt)) {
-              return { fst: false, snd: zero };
+        const isTuple = (t: RTTI): t is TupleType => t.tt === TT.TUPLE;
+        if (!isTuple(t2)) throw new Error('Impossible');
+        if (!isTuple(t1)) return { fst: false, snd: zero };
+
+        const isValidField = (from: RTTI | undefined, to: RTTI) =>
+          from && equalTypes(from, to, cxt);
+
+        if (t2.spreadIndex != null) {
+          // Parse tuple by processing the required elements first
+          const targetLength = Object.keys(t2.fieldTable).length;
+          const isParseRightToLeft = t2.spreadIndex < targetLength - 1;
+          const isParseLeftToRight = t2.spreadIndex > 0;
+
+          if (isParseLeftToRight) {
+            for (let i = 0; i < t2.spreadIndex; i++) {
+              if (!isValidField(t1.fieldTable[i], t2.fieldTable[i])) {
+                return { fst: false, snd: zero };
+              }
             }
           }
 
-          const missingFieldTable: FieldTable = {};
+          let maxSpreadIndex = Object.keys(t1.fieldTable).length;
 
-          for (const field in t1.fieldTable) {
-            if (!t2.fieldTable[field]) {
-              missingFieldTable[field] = t1.fieldTable[field];
+          if (isParseRightToLeft) {
+            for (let i = targetLength - 1; i > t2.spreadIndex; i--) {
+              if (!isValidField(t1.fieldTable[i], t2.fieldTable[i])) {
+                return { fst: false, snd: zero };
+              }
+              maxSpreadIndex--;
+            }
+          }
+
+          // Process remaining elements
+          const spreadField = t2.fieldTable[t2.spreadIndex];
+          for (let i = t2.spreadIndex; i < maxSpreadIndex; i++) {
+            if (!t1.fieldTable[i]) {
+              return { fst: false, snd: zero };
+            }
+            if (!equalTypes(t1.fieldTable[i], spreadField, cxt)) {
+              return { fst: false, snd: zero };
             }
           }
 
           return {
             fst: true,
-            snd:
-              Object.keys(missingFieldTable).length > 0
-                ? Tuple(missingFieldTable)
-                : zero,
+            snd: zero,
           };
         }
 
-        return { fst: false, snd: zero };
+        for (const field in t2.fieldTable) {
+          if (!isValidField(t1.fieldTable[field], t2.fieldTable[field])) {
+            return { fst: false, snd: zero };
+          }
+        }
+
+        const missingFieldTable: FieldTable = {};
+
+        for (const field in t1.fieldTable) {
+          if (!t2.fieldTable[field]) {
+            missingFieldTable[field] = t1.fieldTable[field];
+          }
+        }
+
+        return {
+          fst: true,
+          snd:
+            Object.keys(missingFieldTable).length > 0
+              ? Tuple(missingFieldTable)
+              : zero,
+        };
       }
       case TT.JUST_TYPE:
         return {
@@ -1513,14 +1555,17 @@ export module RT {
         }
         return v;
       case TT.TUPLE: {
+        const isTupleType = (t: RTTI): t is TupleType => t.tt === TT.TUPLE;
+        if (!isTupleType(to)) throw new Error('Impossible');
+
         // MD: In the initial assignment of a tuple from an array literal, the source type is TT.ANY.
         // Check and tag for tuples
         if (!Array.isArray(v))
           throw new Error('Cannot assign non-array value to tuple');
 
-        // We disallow width subtyping
+        // We disallow width subtyping, unless it is a rest element
         const targetLength = Object.entries(to.fieldTable).length;
-        if (v.length !== targetLength)
+        if (to.spreadIndex == null && v.length !== targetLength)
           throw new Error(
             `Tuple length mismatch detected, source has ${v.length} and target expects ${targetLength}`
           );

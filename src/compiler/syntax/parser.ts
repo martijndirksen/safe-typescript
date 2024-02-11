@@ -3080,7 +3080,6 @@ class ParserImpl {
     const dotDotDotToken = this.tryEatToken(SyntaxKind.DotDotDotToken);
     const typeToken = this.parseType();
 
-    console.log('parseTupleElementType', SyntaxKind[typeToken.kind()]);
     return this.factory.tupleElementType(dotDotDotToken, typeToken);
   }
 

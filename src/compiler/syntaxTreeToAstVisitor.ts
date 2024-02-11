@@ -1126,7 +1126,6 @@ export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
     var start = this.position;
 
     const isRestElement = node.dotDotDotToken != null;
-    console.log('isRestElement', isRestElement);
 
     this.movePast(node.dotDotDotToken);
     var elementType = this.visitType(node.type);

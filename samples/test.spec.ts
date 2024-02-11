@@ -296,4 +296,29 @@ console.log(parse(a2));
       `A rest element cannot follow another rest element`
     );
   });
+
+  it.only('tuple-rest-element', async () => {
+    const { success, output } = await buildSample(
+      'samples/tuple-rest-element.ts'
+    );
+    expect(success).toBeTruthy();
+    expect(output).toBe(
+      `var val = RT.checkAndTag(['test', 4], RT.Any, RT.Tuple({
+    "0": RT.Str,
+    "1": RT.Num }, 0));
+var val2 = RT.checkAndTag(['a', 'b', 4], RT.Any, RT.Tuple({
+    "0": RT.Str,
+    "1": RT.Num }, 0));
+var val2 = RT.checkAndTag(['a', 'b', 'c', 4], RT.Any, RT.Tuple({
+    "0": RT.Str,
+    "1": RT.Num }, 0));
+`
+    );
+
+    const runtimeOutput = await runSample('samples/tuple-rest-element.js');
+
+    console.log(runtimeOutput.stdout);
+    console.log(runtimeOutput.stderr);
+    expect(runtimeOutput.stdout).toContain('success');
+  });
 });
