@@ -297,28 +297,80 @@ console.log(parse(a2));
     );
   });
 
-  it.only('tuple-rest-element', async () => {
+  it('tuple-rest-element', async () => {
     const { success, output } = await buildSample(
       'samples/tuple-rest-element.ts'
     );
     expect(success).toBeTruthy();
     expect(output).toBe(
-      `var val = RT.checkAndTag(['test', 4], RT.Any, RT.Tuple({
+      `var val = RT.checkAndTag([4, false, 'a', false], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Bool,
+    "2": RT.Str,
+    "3": RT.Bool }, 2));
+var val2 = RT.checkAndTag([4], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Str }, 1));
+var val3 = RT.checkAndTag([4, 'a', 'b'], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Str }, 1));
+var val4 = RT.checkAndTag([4, 'a', 'b', 'c'], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Str }, 1));
+var val5 = RT.checkAndTag([4, 'a', 'b', 'c'], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Str,
+    "2": RT.Str }, 2));
+var val6 = RT.checkAndTag(['a', 'b', 'c', 4], RT.Any, RT.Tuple({
     "0": RT.Str,
     "1": RT.Num }, 0));
-var val2 = RT.checkAndTag(['a', 'b', 4], RT.Any, RT.Tuple({
+var val7 = RT.checkAndTag(['a', 'b', 'c', 4, 'y'], RT.Any, RT.Tuple({
     "0": RT.Str,
-    "1": RT.Num }, 0));
-var val2 = RT.checkAndTag(['a', 'b', 'c', 4], RT.Any, RT.Tuple({
+    "1": RT.Num,
+    "2": RT.Str }, 0));
+var val8 = RT.checkAndTag([4, 'y'], RT.Any, RT.Tuple({
     "0": RT.Str,
-    "1": RT.Num }, 0));
+    "1": RT.Num,
+    "2": RT.Str }, 0));
+var val9 = RT.checkAndTag([4, 4, 'y'], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Str,
+    "2": RT.Num,
+    "3": RT.Str }, 1));
+var val10 = RT.checkAndTag([4, 4, 'y'], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Str,
+    "2": RT.Num,
+    "3": RT.Str }, 1));
+var val11 = RT.checkAndTag([4, 'a', 'b', 'c', 4, 'y'], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Str,
+    "2": RT.Num,
+    "3": RT.Str }, 1));
 `
     );
 
     const runtimeOutput = await runSample('samples/tuple-rest-element.js');
 
-    console.log(runtimeOutput.stdout);
-    console.log(runtimeOutput.stderr);
-    expect(runtimeOutput.stdout).toContain('success');
+    expect(runtimeOutput.success).toBeTruthy();
+  });
+
+  it('tuple-rest-element-subtyping-err', async () => {
+    const { success, output } = await buildSample(
+      'samples/tuple-rest-element-subtyping-err.ts'
+    );
+    expect(success).toBeTruthy();
+    expect(output).toBe(`var val = RT.checkAndTag([4], RT.Any, RT.Tuple({
+    "0": RT.Num,
+    "1": RT.Str,
+    "2": RT.Bool }, 1));
+`);
+
+    const runtimeOutput = await runSample(
+      'samples/tuple-rest-element-subtyping-err.js'
+    );
+
+    expect(runtimeOutput.success).toBeFalsy();
+    expect(runtimeOutput.stdout).toContain('');
   });
 });

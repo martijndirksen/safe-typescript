@@ -877,6 +877,7 @@ export module RT {
 
         if (t2.spreadIndex != null) {
           // Parse tuple by processing the required elements first
+          const sourceLength = Object.keys(t1.fieldTable).length;
           const targetLength = Object.keys(t2.fieldTable).length;
           const isParseRightToLeft = t2.spreadIndex < targetLength - 1;
           const isParseLeftToRight = t2.spreadIndex > 0;
@@ -889,11 +890,22 @@ export module RT {
             }
           }
 
-          let maxSpreadIndex = Object.keys(t1.fieldTable).length;
+          let maxSpreadIndex = sourceLength;
+          const differenceInLength = sourceLength - targetLength;
 
           if (isParseRightToLeft) {
-            for (let i = targetLength - 1; i > t2.spreadIndex; i--) {
-              if (!isValidField(t1.fieldTable[i], t2.fieldTable[i])) {
+            for (
+              let i = sourceLength - 1;
+              i > t2.spreadIndex + differenceInLength;
+              i--
+            ) {
+              console.log(i);
+              if (
+                !isValidField(
+                  t1.fieldTable[i],
+                  t2.fieldTable[i - differenceInLength]
+                )
+              ) {
                 return { fst: false, snd: zero };
               }
               maxSpreadIndex--;
