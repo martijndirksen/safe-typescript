@@ -1,5 +1,6 @@
 import {
   AST,
+  ArrayLiteralExpression,
   ArrayType,
   ISeparatedSyntaxList2,
   SoundType,
@@ -23,6 +24,12 @@ function isTupleType(ast: AST): ast is TupleType {
 
 function isArrayType(ast: AST): ast is ArrayType {
   return ast.kind() === SyntaxKind.ArrayType;
+}
+
+export function isArrayLiteralExpression(
+  ast: AST
+): ast is ArrayLiteralExpression {
+  return ast.kind() === SyntaxKind.ArrayLiteralExpression;
 }
 
 export function computeTupleElementType(
@@ -94,4 +101,16 @@ export function tcTupleType(ast: AST, tc: SoundTypeChecker) {
   console.log(`tc tuple type ${tuple}`);
 
   return tc.pkg(ast, ast, tuple);
+}
+
+export function tcArrayLiteralExpressionForTuple(
+  ast: AST,
+  tc: SoundTypeChecker
+) {
+  if (!isArrayLiteralExpression(ast))
+    throw new Error('Unexpected AST for array literal');
+
+  const soundTypes = ast.expressions.members.map((x) => tc.computeType(x));
+
+  return new TTuple(soundTypes);
 }

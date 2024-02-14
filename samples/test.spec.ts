@@ -195,50 +195,28 @@ describe('Safe TypeScript', () => {
     );
     expect(success).toBeTruthy();
     expect(output).toBe(
-      `var val = RT.checkAndTag([4], RT.Any, RT.Tuple({
-    "0": RT.Num }));
-var val2 = RT.checkAndTag([4, 8], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Num }));
-var val3 = RT.checkAndTag([4, 'str', true], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Str,
-    "2": RT.Bool }));
+      `var val = [4];
+var val2 = [4, 8];
+var val3 = [4, 'str', true];
 `
     );
   });
 
   it('tuple-order', async () => {
-    const { success, output } = await buildSample('samples/tuple-order.ts');
-    expect(success).toBeTruthy();
-    expect(output).toBe(
-      `var val = RT.checkAndTag(['str', 4], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Str }));
-`
-    );
-    const runtimeOutput = await runSample('samples/tuple-order.js');
-
-    expect(runtimeOutput.stderr).toContain(
-      'Error: Value is not compatible with target tuple, because it is not a subtype'
+    const { success, stderr } = await buildSample('samples/tuple-order.ts');
+    expect(success).toBeFalsy();
+    expect(stderr).toContain(
+      `error TS7034: Safe TS: Variable 'val' of type '[number, string]' cannot be assigned a value of type '[string, number]'`
     );
   });
 
   it('tuple-width-mismatch', async () => {
-    const { success, output } = await buildSample(
+    const { success, stderr } = await buildSample(
       'samples/tuple-width-mismatch.ts'
     );
-    expect(success).toBeTruthy();
-    expect(output).toBe(
-      `var val = RT.checkAndTag([4], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Str }));
-`
-    );
-    const runtimeOutput = await runSample('samples/tuple-width-mismatch.js');
-
-    expect(runtimeOutput.stderr).toContain(
-      'Error: Tuple length mismatch detected, source has 1 and target expects 2'
+    expect(success).toBeFalsy();
+    expect(stderr).toContain(
+      `error TS7034: Safe TS: Variable 'val' of type '[number, string]' cannot be assigned a value of type '[number]'`
     );
   });
 

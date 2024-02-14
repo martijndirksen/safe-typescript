@@ -99,8 +99,11 @@ import { TextSpan } from '../../text/textSpan';
 import {
   computeTupleElementType,
   computeTupleType,
+  isArrayLiteralExpression,
+  tcArrayLiteralExpressionForTuple,
   tcTupleType,
 } from '../../tuples/tc';
+import { TTuple } from '../../tuples/types';
 import { getModuleNames } from '../pullDeclCollection';
 import { NormalPullDecl } from '../pullDecls';
 import { hasModifier, PullElementFlags, PullElementKind } from '../pullFlags';
@@ -1287,12 +1290,24 @@ export class SoundTypeChecker {
           )(() => <EqualsValueClause>this.tc(ast.equalsValueClause))
         : <EqualsValueClause>this.tc(ast.equalsValueClause)
       : null;
+
     var sym = this.symbol(ast);
     var computedType = vdinit
       ? vdinit.soundType
       : sym
       ? TranslateTypes.translateType(sym.type, this.tcenv)
       : TranslateTypes.translateTypeOrSig(ast.inferredType, this.tcenv);
+
+    const assignee = vdinit?.value;
+    if (
+      assignee &&
+      isArrayLiteralExpression(assignee) &&
+      texpected instanceof TTuple
+    ) {
+      const newSoundType = tcArrayLiteralExpressionForTuple(assignee, this);
+      vdinit.soundType = computedType = newSoundType;
+    }
+
     var ambient = sym && sym.anyDeclHasFlag(PullElementFlags.Ambient);
     if (
       !ambient &&
@@ -2895,6 +2910,8 @@ export class SoundTypeChecker {
         return computeTupleElementType(ast, this);
       case SyntaxKind.AnyKeyword:
         return TConstant.Any;
+      case SyntaxKind.TrueKeyword:
+      case SyntaxKind.FalseKeyword:
       case SyntaxKind.BooleanKeyword:
         return TConstant.Bool;
       case SyntaxKind.NumericLiteral:
