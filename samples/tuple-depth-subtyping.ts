@@ -18,8 +18,10 @@ var a2: [A] = [a];
 
 console.log(a2);
 
-// function parse(entities: [B]): string {
-//   return entities[0].bar;
-// }
+// TODO: This should not result in any RTTI, because it is inherently sound
+function parse(entities: [B]): string {
+  entities[0].foo();
+  return entities[0].bar;
+}
 
-// console.log(parse(a2));
+console.log(parse(a2));

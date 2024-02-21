@@ -235,13 +235,31 @@ RT.registerType(RT.InterfaceRepr("A", {
     "foo": RT.ArrowType([], RT.Void, undefined) }, {
     "bar": RT.Str }, ["B"], false));
 
-var a = { foo: function () {
-    }, bar: 'success', baz: function () {
-    } };
-var a2 = RT.checkAndTag([
+var AImpl = (function () {
+    function AImpl() {
+        this.bar = 'success';
+    }
+    AImpl.prototype.foo = function () {
+    };
+    AImpl.prototype.baz = function () {
+    };
+    AImpl.__rtti__ = RT.registerClass("AImpl", {
+        "foo": RT.ArrowType([], RT.Void, undefined),
+        "baz": RT.ArrowType([], RT.Void, undefined) }, {
+        "bar": RT.Str }, undefined, ["A"], {
+        "<new>": RT.ArrowType([], RT.InstanceType("AImpl"), undefined) }, {
+        "prototype": RT.InstanceType("AImpl") }, RT.ArrowType([], RT.InstanceType("AImpl"), undefined), AImpl);
+    return AImpl;
+})();
+AImpl.prototype.__rtti__ = RT.InstanceType("AImpl");
+
+var a = new AImpl();
+var a2 = [
     RT.shallowTag(a, RT.InterfaceType("A"))
-], RT.Any, RT.Tuple({
-    "0": RT.InterfaceType("A") }));
+];
+
+console.log(RT.shallowTag(a2, RT.Tuple({
+    "0": RT.InterfaceType("A") })));
 
 function parse(entities) {
     return RT.checkAndTag(RT.readField(RT.readField(entities, RT.Tuple({
