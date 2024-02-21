@@ -874,4 +874,5 @@ export var DiagnosticCode = {
   TUPLE_rest_element_not_an_array: 'Rest elements must be an array type',
   TUPLE_multiple_spread_not_allowed:
     'A rest element cannot follow another rest element.',
+  TUPLE_index_out_of_range: "Tuple element index was out of range: '{1}'",
 };

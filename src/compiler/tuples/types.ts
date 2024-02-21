@@ -6,6 +6,7 @@ import {
   toFieldTable,
   TVar,
   TConstant,
+  TIndexMap,
 } from '../typecheck/sound/types';
 
 // The spread index determines which element within the tuple type may be repeated 0-n times.

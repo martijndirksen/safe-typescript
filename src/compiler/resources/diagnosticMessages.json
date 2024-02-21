@@ -1694,5 +1694,13 @@
   "Rest elements must be an array type": {
     "category": "Error",
     "code": 7019
+  },
+  "A rest element cannot follow another rest element.": {
+    "category": "Error",
+    "code": 7020
+  },
+  "Tuple element index was out of range: '{1}'": {
+    "category": "Error",
+    "code": 7021
   }
 }

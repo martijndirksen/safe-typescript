@@ -220,7 +220,7 @@ var val3 = [4, 'str', true];
     );
   });
 
-  it.only('tuple-depth-subtyping', async () => {
+  it('tuple-depth-subtyping', async () => {
     const { success, output, stderr } = await buildSample(
       'samples/tuple-depth-subtyping.ts'
     );
@@ -262,8 +262,8 @@ console.log(RT.shallowTag(a2, RT.Tuple({
     "0": RT.InterfaceType("A") })));
 
 function parse(entities) {
-    return RT.checkAndTag(RT.readField(RT.readField(entities, RT.Tuple({
-        "0": RT.InterfaceType("B") }), 0), RT.Any, "bar"), RT.Any, RT.Str);
+    entities[0].foo();
+    return entities[0].bar;
 }
 
 console.log(parse(a2));

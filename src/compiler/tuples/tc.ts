@@ -6,6 +6,7 @@ import {
   SoundType,
   TupleElementType,
   TupleType,
+  TypeName,
 } from '../ast';
 import { DiagnosticCode } from '../resources/diagnosticCode.generated';
 import { SyntaxKind } from '../syntax/syntaxKind';
@@ -53,6 +54,10 @@ export function computeTupleElementType(
   }
 
   return (ast.soundType = tc.computeType(ast.type));
+}
+
+export function isTTuple(soundType: SoundType): soundType is TTuple {
+  return soundType.typeName === TypeName.Tuple;
 }
 
 function createTTuple(ast: AST, soundTypes: SoundType[]): TTuple {

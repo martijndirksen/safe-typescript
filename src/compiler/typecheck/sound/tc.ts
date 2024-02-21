@@ -89,6 +89,7 @@ import {
   ArrayType,
   GenericType,
   IASTToken,
+  NumericLiteral,
 } from '../../ast';
 import { Diagnostic } from '../../core/diagnosticCore';
 import { Document } from '../../document';
@@ -97,9 +98,14 @@ import { ImmutableCompilationSettings } from '../../settings';
 import { SyntaxKind } from '../../syntax/syntaxKind';
 import { TextSpan } from '../../text/textSpan';
 import {
+  isNumericLiteral,
+  isStringLiteral,
+} from '../../tuples/pullTypeResolution';
+import {
   computeTupleElementType,
   computeTupleType,
   isArrayLiteralExpression,
+  isTTuple,
   tcArrayLiteralExpressionForTuple,
   tcTupleType,
 } from '../../tuples/tc';
@@ -3802,6 +3808,37 @@ export class SoundTypeChecker {
             );
           }
         } else {
+          if (
+            t_o.typeName === TypeName.Tuple &&
+            o.soundType &&
+            isTTuple(o.soundType) &&
+            (isNumericLiteral(key) || isStringLiteral(key))
+          ) {
+            const field = o.soundType.getField(key.valueText())?.type;
+
+            if (!field) {
+              TcUtil.Logger.error(
+                DiagnosticCode.TUPLE_index_out_of_range,
+                [o.soundType.toString(), key.valueText()],
+                ast
+              );
+              return this.pkg(
+                ast,
+                MkAST.callRT('readField', [o, o.soundType.toRTTI(), key]),
+                TConstant.Any
+              );
+            }
+
+            return this.pkg(
+              ast,
+              new ElementAccessExpression(
+                o,
+                TcUtil.force(TConstant.Number, key)
+              ),
+              field
+            );
+          }
+
           switch (t_o.typeName) {
             case TypeName.String:
               return this.pkg(

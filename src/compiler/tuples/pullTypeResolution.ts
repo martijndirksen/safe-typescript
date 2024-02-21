@@ -2,6 +2,8 @@ import {
   AST,
   ArrayLiteralExpression,
   ISeparatedSyntaxList2,
+  NumericLiteral,
+  StringLiteral,
   TupleType,
 } from '../ast';
 import { IBitMatrix } from '../core/bitMatrix';
@@ -19,6 +21,14 @@ import {
   TypeComparisonInfo,
 } from '../typecheck/pullTypeResolution';
 import { PullTypeResolutionContext } from '../typecheck/pullTypeResolutionContext';
+
+export function isNumericLiteral(term: AST): term is NumericLiteral {
+  return term.kind() === SyntaxKind.NumericLiteral;
+}
+
+export function isStringLiteral(term: AST): term is StringLiteral {
+  return term.kind() === SyntaxKind.StringLiteral;
+}
 
 function isTupleType(term: AST): term is TupleType {
   return term.kind() === SyntaxKind.TupleType;

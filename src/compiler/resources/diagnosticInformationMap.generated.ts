@@ -2133,4 +2133,8 @@ export var diagnosticInformationMap: DiagnosticInformationMap = {
     code: 7093,
     category: DiagnosticCategory.Error,
   },
+  "Tuple element index was out of range: '{1}'": {
+    code: 7094,
+    category: DiagnosticCategory.Error,
+  },
 };
