@@ -49,10 +49,10 @@ export function computeTupleElementType(
       );
       return TConstant.Any;
     }
-    return tc.computeType(ast.type.type);
+    return (ast.soundType = tc.computeType(ast.type.type));
   }
 
-  return tc.computeType(ast.type);
+  return (ast.soundType = tc.computeType(ast.type));
 }
 
 function createTTuple(ast: AST, soundTypes: SoundType[]): TTuple {
@@ -88,7 +88,7 @@ export function computeTupleType(ast: AST, tc: SoundTypeChecker): SoundType {
     tc.computeType(element)
   );
 
-  return createTTuple(ast, soundTypes);
+  return (ast.soundType = createTTuple(ast, soundTypes));
 }
 
 export function tcTupleType(ast: AST, tc: SoundTypeChecker) {
@@ -97,6 +97,7 @@ export function tcTupleType(ast: AST, tc: SoundTypeChecker) {
   var soundTypes = TcUtil.mapSepList2(sepList, (a: AST) => a.soundType);
 
   const tuple = createTTuple(ast, soundTypes);
+  ast.soundType = tuple;
 
   console.log(`tc tuple type ${tuple}`);
 

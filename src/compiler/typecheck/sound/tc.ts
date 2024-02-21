@@ -1281,7 +1281,20 @@ export class SoundTypeChecker {
       ? TranslateTypes.translateTypeOrSig(ast.inferredType, this.tcenv)
       : TConstant.Any;
 
-    var vdinit: EqualsValueClause = ast.equalsValueClause
+    var vdinit: EqualsValueClause | undefined = ast.equalsValueClause;
+    const assignee = vdinit?.value;
+
+    if (
+      assignee &&
+      isArrayLiteralExpression(assignee) &&
+      texpected instanceof TTuple
+    ) {
+      const newSoundType = tcArrayLiteralExpressionForTuple(assignee, this);
+      assignee.soundType = computedType = newSoundType;
+    }
+
+    // Some weird stuff happens here with vdinit, so we compute our own sound type before
+    vdinit = ast.equalsValueClause
       ? TcUtil.varInScopeForInitializer(ast.equalsValueClause)
         ? this.tcenv.withVariable<EqualsValueClause>(
             ast,
@@ -1292,21 +1305,13 @@ export class SoundTypeChecker {
       : null;
 
     var sym = this.symbol(ast);
-    var computedType = vdinit
-      ? vdinit.soundType
-      : sym
-      ? TranslateTypes.translateType(sym.type, this.tcenv)
-      : TranslateTypes.translateTypeOrSig(ast.inferredType, this.tcenv);
-
-    const assignee = vdinit?.value;
-    if (
-      assignee &&
-      isArrayLiteralExpression(assignee) &&
-      texpected instanceof TTuple
-    ) {
-      const newSoundType = tcArrayLiteralExpressionForTuple(assignee, this);
-      vdinit.soundType = computedType = newSoundType;
-    }
+    var computedType =
+      assignee?.soundType ?? // Use our assignee soundtype if available
+      (vdinit
+        ? vdinit.soundType
+        : sym
+        ? TranslateTypes.translateType(sym.type, this.tcenv)
+        : TranslateTypes.translateTypeOrSig(ast.inferredType, this.tcenv));
 
     var ambient = sym && sym.anyDeclHasFlag(PullElementFlags.Ambient);
     if (
@@ -2955,11 +2960,11 @@ export class SoundTypeChecker {
           );
           return TConstant.Any;
         }
-      default:
-        return TranslateTypes.translateType(
-          <PullTypeSymbol>this.symbol(ast),
-          this.tcenv
-        );
+      default: {
+        const symbol = this.symbol(ast);
+        //const symbolType = t instanceof PullSymbol ? t = t.type : t;
+        return TranslateTypes.translateType(symbol.type, this.tcenv);
+      }
     }
   }
   private tcCastExpression(ast: CastExpression) {

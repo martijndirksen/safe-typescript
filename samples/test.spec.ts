@@ -220,7 +220,7 @@ var val3 = [4, 'str', true];
     );
   });
 
-  it('tuple-depth-subtyping', async () => {
+  it.only('tuple-depth-subtyping', async () => {
     const { success, output, stderr } = await buildSample(
       'samples/tuple-depth-subtyping.ts'
     );

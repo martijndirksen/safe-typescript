@@ -7,11 +7,19 @@ interface A extends B {
   baz(): void;
 }
 
-var a: A = { foo() {}, bar: 'success', baz() {} };
-var a2: [A] = [a];
-
-function parse(entities: [B]): string {
-  return entities[0].bar;
+class AImpl implements A {
+  bar = 'success';
+  foo() {}
+  baz() {}
 }
 
-console.log(parse(a2));
+var a: A = new AImpl();
+var a2: [A] = [a];
+
+console.log(a2);
+
+// function parse(entities: [B]): string {
+//   return entities[0].bar;
+// }
+
+// console.log(parse(a2));

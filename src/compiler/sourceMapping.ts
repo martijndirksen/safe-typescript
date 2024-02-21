@@ -213,7 +213,9 @@ export class SourceMapper {
           .join(', ')
     );
     // Output map file name into the js file
-    this.jsFile.WriteLine('//# sourceMappingURL=' + this.sourceMapPath);
+    this.jsFile.WriteLine(
+      '//' + '#' + 'sourceMappingURL=' + this.sourceMapPath
+    );
 
     // Now output map file
     var mappingsString = '';
