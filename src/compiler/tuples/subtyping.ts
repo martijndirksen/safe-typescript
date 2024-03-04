@@ -11,6 +11,7 @@ const fail: Pair<boolean, TcUtil.Delta> = {
   snd: undefined,
 };
 
+// This function does not support spread types, but is a bit simpler. We don't actively use this.
 export function tupleSubtyping(
   t1: TTuple,
   t2: TTuple,
