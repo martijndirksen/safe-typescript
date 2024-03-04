@@ -899,7 +899,6 @@ export module RT {
               i > t2.spreadIndex + differenceInLength;
               i--
             ) {
-              console.log(i);
               if (
                 !isValidField(
                   t1.fieldTable[i],

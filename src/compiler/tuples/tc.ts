@@ -93,7 +93,11 @@ export function computeTupleType(ast: AST, tc: SoundTypeChecker): SoundType {
     tc.computeType(element)
   );
 
-  return (ast.soundType = createTTuple(ast, soundTypes));
+  const soundType = createTTuple(ast, soundTypes);
+
+  ast.soundType = soundType;
+
+  return soundType;
 }
 
 export function tcTupleType(ast: AST, tc: SoundTypeChecker) {

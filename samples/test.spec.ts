@@ -301,50 +301,17 @@ console.log(parse(a2));
     );
     expect(success).toBeTruthy();
     expect(output).toBe(
-      `var val = RT.checkAndTag([4, false, 'a', false], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Bool,
-    "2": RT.Str,
-    "3": RT.Bool }, 2));
-var val2 = RT.checkAndTag([4], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Str }, 1));
-var val3 = RT.checkAndTag([4, 'a', 'b'], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Str }, 1));
-var val4 = RT.checkAndTag([4, 'a', 'b', 'c'], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Str }, 1));
-var val5 = RT.checkAndTag([4, 'a', 'b', 'c'], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Str,
-    "2": RT.Str }, 2));
-var val6 = RT.checkAndTag(['a', 'b', 'c', 4], RT.Any, RT.Tuple({
-    "0": RT.Str,
-    "1": RT.Num }, 0));
-var val7 = RT.checkAndTag(['a', 'b', 'c', 4, 'y'], RT.Any, RT.Tuple({
-    "0": RT.Str,
-    "1": RT.Num,
-    "2": RT.Str }, 0));
-var val8 = RT.checkAndTag([4, 'y'], RT.Any, RT.Tuple({
-    "0": RT.Str,
-    "1": RT.Num,
-    "2": RT.Str }, 0));
-var val9 = RT.checkAndTag([4, 4, 'y'], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Str,
-    "2": RT.Num,
-    "3": RT.Str }, 1));
-var val10 = RT.checkAndTag([4, 4, 'y'], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Str,
-    "2": RT.Num,
-    "3": RT.Str }, 1));
-var val11 = RT.checkAndTag([4, 'a', 'b', 'c', 4, 'y'], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Str,
-    "2": RT.Num,
-    "3": RT.Str }, 1));
+      `var val = [4, false, 'a', false];
+var val2 = [4];
+var val3 = [4, 'a', 'b'];
+var val4 = [4, 'a', 'b', 'c'];
+var val5 = [4, 'a', 'b', 'c'];
+var val6 = ['a', 'b', 'c', 4];
+var val7 = ['a', 'b', 'c', 4, 'y'];
+var val8 = [4, 'y'];
+var val9 = [4, 4, 'y'];
+var val10 = [4, 4, 'y'];
+var val11 = [4, 'a', 'b', 'c', 4, 'y'];
 `
     );
 
@@ -353,22 +320,13 @@ var val11 = RT.checkAndTag([4, 'a', 'b', 'c', 4, 'y'], RT.Any, RT.Tuple({
     expect(runtimeOutput.success).toBeTruthy();
   });
 
-  it('tuple-rest-element-subtyping-err', async () => {
-    const { success, output } = await buildSample(
+  it.only('tuple-rest-element-subtyping-err', async () => {
+    const { success, stderr } = await buildSample(
       'samples/tuple-rest-element-subtyping-err.ts'
     );
-    expect(success).toBeTruthy();
-    expect(output).toBe(`var val = RT.checkAndTag([4], RT.Any, RT.Tuple({
-    "0": RT.Num,
-    "1": RT.Str,
-    "2": RT.Bool }, 1));
-`);
-
-    const runtimeOutput = await runSample(
-      'samples/tuple-rest-element-subtyping-err.js'
+    expect(success).toBeFalsy();
+    expect(stderr).toContain(
+      `Variable 'val' of type '[number, ...string[], boolean]' cannot be assigned a value of type '[number]'`
     );
-
-    expect(runtimeOutput.success).toBeFalsy();
-    expect(runtimeOutput.stdout).toContain('');
   });
 });

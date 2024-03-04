@@ -16,11 +16,13 @@ export class TTuple extends SoundType {
 
   constructor(
     elements: SoundType[],
-    private readonly spreadIndex?: number
+    readonly spreadIndex?: number
   ) {
     super(TypeName.Tuple);
     this.fields = [
-      ...elements.map<Field>((type, i) => createField(`${i}`, type)),
+      ...elements.map<Field>((type, i) =>
+        createField(`${i}`, type, i === spreadIndex)
+      ),
     ];
   }
 
@@ -88,7 +90,7 @@ export class TTuple extends SoundType {
   public toString() {
     return `[${this.fields
       .map((x, i) =>
-        this.spreadIndex === i ? '...' + x.type.toString() : x.type.toString()
+        this.spreadIndex === i ? `...${x.type.toString()}[]` : x.type.toString()
       )
       .join(', ')}]`;
   }

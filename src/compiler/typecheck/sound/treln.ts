@@ -1,7 +1,7 @@
 // Modified by N.Swamy, A.Rastogi (2014)
 
 import { SoundType, TypeName, AST } from '../../ast';
-import { tupleSubtyping } from '../../tuples/subtyping';
+import { tupleSubtypingWithRestElements } from '../../tuples/subtyping';
 import { TTuple } from '../../tuples/types';
 import { SoundTypeChecker } from './tc';
 import { TcUtil, Pair, pair, MkAST } from './tcUtil';
@@ -466,7 +466,12 @@ export module TypeRelations {
             }
             return fail;
           case TypeName.Tuple:
-            return tupleSubtyping(t1 as TTuple, t2 as TTuple, fc, cycles);
+            return tupleSubtypingWithRestElements(
+              t1 as TTuple,
+              t2 as TTuple,
+              fc,
+              cycles
+            );
 
           default:
             return fail;
