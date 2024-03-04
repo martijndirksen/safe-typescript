@@ -1358,7 +1358,7 @@ export class SoundTypeChecker {
             [
               ast.propertyName.text(),
               texpected.toString(),
-              vdinit.soundType.toString(),
+              computedType.toString(),
             ],
             ast.equalsValueClause
           );

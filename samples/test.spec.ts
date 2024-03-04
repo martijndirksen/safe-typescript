@@ -205,6 +205,8 @@ var val3 = [4, 'str', true];
   it('tuple-order', async () => {
     const { success, stderr } = await buildSample('samples/tuple-order.ts');
     expect(success).toBeFalsy();
+    console.log(stderr);
+
     expect(stderr).toContain(
       `error TS7034: Safe TS: Variable 'val' of type '[number, string]' cannot be assigned a value of type '[string, number]'`
     );
