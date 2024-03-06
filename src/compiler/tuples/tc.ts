@@ -10,8 +10,8 @@ import {
 } from '../ast';
 import { DiagnosticCode } from '../resources/diagnosticCode.generated';
 import { SyntaxKind } from '../syntax/syntaxKind';
-import { PullElementKind } from '../typecheck/pullFlags';
 import { SoundTypeChecker } from '../typecheck/sound/tc';
+import { TcEnv } from '../typecheck/sound/tcEnv';
 import { TcUtil } from '../typecheck/sound/tcUtil';
 import { TConstant } from '../typecheck/sound/types';
 import { TTuple } from './types';
@@ -128,16 +128,19 @@ export function tcArrayLiteralExpressionForTuple(
 
 export function tcArrayLiteralExpressionForArray(
   ast: AST,
-  tc: SoundTypeChecker
+  tc: SoundTypeChecker,
+  tcenv: TcEnv
 ) {
   if (!isArrayLiteralExpression(ast))
     throw new Error('Unexpected AST for array literal');
 
-  const inferredTypeKind = PullElementKind[ast.inferredType.kind];
-  let commonType: SoundType | undefined = undefined;
-  //const arrayAst = ast as ArrayType;
+  // MD: Ideally we would use the inferred type to easily determine the common type,
+  // but this proved difficult. Instead we just take the first element type.
+  if (ast.expressions.members.length > 0) {
+    const elementType = tc.computeType(ast.expressions.members[0]);
 
-  const soundTypes = ast.expressions.members.map((x) => tc.computeType(x));
+    return TcUtil.mkArrayType(tcenv, elementType);
+  }
 
-  return commonType;
+  return undefined;
 }

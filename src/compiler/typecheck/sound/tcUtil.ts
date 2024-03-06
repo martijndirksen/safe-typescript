@@ -254,7 +254,10 @@ export module TcUtil {
       return new TInst(<TPoly>a, [elt]);
     }
     if (a && isTInterface(a)) {
-      return a;
+      const poly = new TPoly([new TVar('T', 'T')], a);
+      const inst = new TInst(poly, [elt]);
+      return inst;
+      //      return a;
     }
     TcUtil.Logger.warn('Type Array not found');
     return TConstant.Any;

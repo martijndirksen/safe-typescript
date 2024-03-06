@@ -1,2 +1,3 @@
 - [ ] Fix bug where array index-based access gets typed as any
 - [ ] Create tests for for-loop
+- [ ] Array index writing does not use gradual typing, what is the index-based access type?

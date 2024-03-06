@@ -1303,8 +1303,11 @@ export class SoundTypeChecker {
       if (isEmptyLiteral && ast.typeAnnotation?.type) {
         assignee.soundType = this.computeType(ast.typeAnnotation.type);
       } else {
-        console.log('hello');
-        const newSoundType = tcArrayLiteralExpressionForArray(assignee, this);
+        assignee.soundType = tcArrayLiteralExpressionForArray(
+          assignee,
+          this,
+          this.tcenv
+        );
       }
     }
 
