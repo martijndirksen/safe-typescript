@@ -211,6 +211,11 @@ export class TIndexMap extends SoundType {
   }
   // @ts-expect-error subtyping problem
   public subst(s: Pair<TVar, SoundType>[], descend: boolean) {
+    // MD: Hack to fix index map element type
+    if (s[0] && s[0].fst.name === 'T') {
+      return new TIndexMap(this.indexType.subst(s, descend), s[0].snd);
+    }
+
     return new TIndexMap(
       this.indexType.subst(s, descend),
       this.elt.subst(s, descend)

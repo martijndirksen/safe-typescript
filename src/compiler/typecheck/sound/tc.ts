@@ -3321,8 +3321,8 @@ export class SoundTypeChecker {
       return res;
     };
     var t_o = o.soundType.unfold();
-    if (t_o.indexSignature()) {
-      var index = t_o.indexSignature();
+    const index = t_o.indexSignature();
+    if (index) {
       var eltSub = TypeRelations.subtype(
         rhs.soundType,
         index.elt,
