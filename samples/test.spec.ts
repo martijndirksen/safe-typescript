@@ -320,7 +320,7 @@ var val11 = [4, 'a', 'b', 'c', 4, 'y'];
     expect(runtimeOutput.success).toBeTruthy();
   });
 
-  it.only('tuple-rest-element-subtyping-err', async () => {
+  it('tuple-rest-element-subtyping-err', async () => {
     const { success, stderr } = await buildSample(
       'samples/tuple-rest-element-subtyping-err.ts'
     );
