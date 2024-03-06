@@ -1,0 +1,1 @@
+- [ ] Fix bug where array index-based access gets typed as any
