@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { promisify } from 'node:util';
 import { EOL } from 'node:os';
 import childProcess from 'node:child_process';
@@ -14,7 +13,7 @@ async function prependFileWithContent(filePath: string, content: string) {
 
 // code output by Safe TypeScript always includes the lines below; we don't need to test for that
 const ignoredOutput = `
-var RT = require('../dist/lib/rt.js').RT;
+var RT = require('../../dist/lib/rt.js').RT;
 RT.registerType(RT.InterfaceRepr("Object", {
     "toString": RT.ArrowType([], RT.Str, undefined),
     "toLocaleString": RT.ArrowType([], RT.Str, undefined),
@@ -112,7 +111,7 @@ function stripOutput(rawOutput: string) {
     .join(eol);
 }
 
-async function buildSample(
+export async function buildSample(
   file: string
 ): Promise<{ success: boolean; stderr: string; output: string }> {
   const result = await execPromise(
@@ -134,7 +133,7 @@ async function buildSample(
   if (success) {
     await prependFileWithContent(
       outputFile,
-      `var RT = require('../dist/lib/rt.js').RT;`
+      `var RT = require('../../dist/lib/rt.js').RT;`
     );
 
     const rawOutput = await readFile(outputFile, { encoding: 'utf-8' });
@@ -144,7 +143,7 @@ async function buildSample(
   return { success, stderr, output };
 }
 
-async function runSample(
+export async function runSample(
   file: string
 ): Promise<{ success: boolean; stdout: string; stderr: string }> {
   try {
@@ -158,175 +157,3 @@ async function runSample(
     return { success: false, stdout: '', stderr: (err as Error).message };
   }
 }
-
-describe('Safe TypeScript', () => {
-  it('add', async () => {
-    const { success, output } = await buildSample('samples/add.ts');
-    expect(success).toBeTruthy();
-    expect(output).toBe(
-      `function add(a, b) {
-    return a + b;
-}
-`
-    );
-  });
-
-  it('add-err', async () => {
-    const { success, stderr } = await buildSample('samples/add-err.ts');
-    expect(success).toBeFalsy();
-    expect(stderr).toContain(
-      `error TS2011: Cannot convert 'number' to 'string'.`
-    );
-  });
-
-  it('tuple-empty-type', async () => {
-    const { success, stderr } = await buildSample(
-      'samples/tuple-empty-type.ts'
-    );
-    expect(success).toBeFalsy();
-    expect(stderr).toContain(
-      `error TS7090: Tuple type must have at least one type element.`
-    );
-  });
-
-  it('tuple-multiplicity', async () => {
-    const { success, output } = await buildSample(
-      'samples/tuple-multiplicity.ts'
-    );
-    expect(success).toBeTruthy();
-    expect(output).toBe(
-      `var val = [4];
-var val2 = [4, 8];
-var val3 = [4, 'str', true];
-`
-    );
-  });
-
-  it('tuple-order', async () => {
-    const { success, stderr } = await buildSample('samples/tuple-order.ts');
-    expect(success).toBeFalsy();
-    console.log(stderr);
-
-    expect(stderr).toContain(
-      `error TS7034: Safe TS: Variable 'val' of type '[number, string]' cannot be assigned a value of type '[string, number]'`
-    );
-  });
-
-  it('tuple-width-mismatch', async () => {
-    const { success, stderr } = await buildSample(
-      'samples/tuple-width-mismatch.ts'
-    );
-    expect(success).toBeFalsy();
-    expect(stderr).toContain(
-      `error TS7034: Safe TS: Variable 'val' of type '[number, string]' cannot be assigned a value of type '[number]'`
-    );
-  });
-
-  it('tuple-depth-subtyping', async () => {
-    const { success, output, stderr } = await buildSample(
-      'samples/tuple-depth-subtyping.ts'
-    );
-    console.log(stderr);
-    expect(success).toBeTruthy();
-    expect(output).toBe(
-      `RT.registerType(RT.InterfaceRepr("B", {
-    "foo": RT.ArrowType([], RT.Void, undefined) }, {
-    "bar": RT.Str }, [], false));
-RT.registerType(RT.InterfaceRepr("A", {
-    "baz": RT.ArrowType([], RT.Void, undefined),
-    "foo": RT.ArrowType([], RT.Void, undefined) }, {
-    "bar": RT.Str }, ["B"], false));
-
-var AImpl = (function () {
-    function AImpl() {
-        this.bar = 'success';
-    }
-    AImpl.prototype.foo = function () {
-    };
-    AImpl.prototype.baz = function () {
-    };
-    AImpl.__rtti__ = RT.registerClass("AImpl", {
-        "foo": RT.ArrowType([], RT.Void, undefined),
-        "baz": RT.ArrowType([], RT.Void, undefined) }, {
-        "bar": RT.Str }, undefined, ["A"], {
-        "<new>": RT.ArrowType([], RT.InstanceType("AImpl"), undefined) }, {
-        "prototype": RT.InstanceType("AImpl") }, RT.ArrowType([], RT.InstanceType("AImpl"), undefined), AImpl);
-    return AImpl;
-})();
-AImpl.prototype.__rtti__ = RT.InstanceType("AImpl");
-
-var a = new AImpl();
-var a2 = [
-    RT.shallowTag(a, RT.InterfaceType("A"))
-];
-
-console.log(RT.shallowTag(a2, RT.Tuple({
-    "0": RT.InterfaceType("A") })));
-
-function parse(entities) {
-    entities[0].foo();
-    return entities[0].bar;
-}
-
-console.log(parse(a2));
-`
-    );
-    const runtimeOutput = await runSample('samples/tuple-depth-subtyping.js');
-
-    console.log(runtimeOutput.stderr);
-    expect(runtimeOutput.stdout).toContain('success');
-  });
-
-  it('tuple-rest-element-non-array-err', async () => {
-    const { success, stderr } = await buildSample(
-      'samples/tuple-rest-element-non-array-err.ts'
-    );
-    expect(success).toBeFalsy();
-    expect(stderr).toContain(`Rest elements must be an array type`);
-  });
-
-  it('tuple-rest-element-multiple-rest-err', async () => {
-    const { success, stderr } = await buildSample(
-      'samples/tuple-rest-element-multiple-rest-err.ts'
-    );
-    expect(success).toBeFalsy();
-    expect(stderr).toContain(
-      `A rest element cannot follow another rest element`
-    );
-  });
-
-  it('tuple-rest-element', async () => {
-    const { success, output } = await buildSample(
-      'samples/tuple-rest-element.ts'
-    );
-    expect(success).toBeTruthy();
-    expect(output).toBe(
-      `var val = [4, false, 'a', false];
-var val2 = [4];
-var val3 = [4, 'a', 'b'];
-var val4 = [4, 'a', 'b', 'c'];
-var val5 = [4, 'a', 'b', 'c'];
-var val6 = ['a', 'b', 'c', 4];
-var val7 = ['a', 'b', 'c', 4, 'y'];
-var val8 = [4, 'y'];
-var val9 = [4, 4, 'y'];
-var val10 = [4, 4, 'y'];
-var val11 = [4, 'a', 'b', 'c', 4, 'y'];
-`
-    );
-
-    const runtimeOutput = await runSample('samples/tuple-rest-element.js');
-
-    expect(runtimeOutput.success).toBeTruthy();
-  });
-
-  it('tuple-rest-element-subtyping-err', async () => {
-    const { success, stderr } = await buildSample(
-      'samples/tuple-rest-element-subtyping-err.ts'
-    );
-    expect(success).toBeFalsy();
-    expect(stderr).toContain(
-      `Variable 'val' of type '[number, ...string[], boolean]' cannot be assigned a value of type '[number]'`
-    );
-  });
-});
