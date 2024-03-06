@@ -10,6 +10,7 @@ import {
 } from '../ast';
 import { DiagnosticCode } from '../resources/diagnosticCode.generated';
 import { SyntaxKind } from '../syntax/syntaxKind';
+import { PullElementKind } from '../typecheck/pullFlags';
 import { SoundTypeChecker } from '../typecheck/sound/tc';
 import { TcUtil } from '../typecheck/sound/tcUtil';
 import { TConstant } from '../typecheck/sound/types';
@@ -123,4 +124,20 @@ export function tcArrayLiteralExpressionForTuple(
   const soundTypes = ast.expressions.members.map((x) => tc.computeType(x));
 
   return new TTuple(soundTypes);
+}
+
+export function tcArrayLiteralExpressionForArray(
+  ast: AST,
+  tc: SoundTypeChecker
+) {
+  if (!isArrayLiteralExpression(ast))
+    throw new Error('Unexpected AST for array literal');
+
+  const inferredTypeKind = PullElementKind[ast.inferredType.kind];
+  let commonType: SoundType | undefined = undefined;
+  //const arrayAst = ast as ArrayType;
+
+  const soundTypes = ast.expressions.members.map((x) => tc.computeType(x));
+
+  return commonType;
 }

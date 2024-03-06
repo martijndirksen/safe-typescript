@@ -245,10 +245,16 @@ export module TcUtil {
   export function mkTypeParamName(ns: string[], id: string) {
     return ns.join('.') + ".'" + id;
   }
+  function isTInterface(soundType: SoundType): soundType is TInterface {
+    return soundType.typeName === TypeName.Interface;
+  }
   export function mkArrayType(tcenv: TcEnv, elt: SoundType): SoundType {
     var a = tcenv.lookupType({ dottedName: 'Array' });
     if (a && a.typeName === TypeName.Poly) {
       return new TInst(<TPoly>a, [elt]);
+    }
+    if (a && isTInterface(a)) {
+      return a;
     }
     TcUtil.Logger.warn('Type Array not found');
     return TConstant.Any;

@@ -106,6 +106,7 @@ import {
   computeTupleType,
   isArrayLiteralExpression,
   isTTuple,
+  tcArrayLiteralExpressionForArray,
   tcArrayLiteralExpressionForTuple,
   tcTupleType,
 } from '../../tuples/tc';
@@ -1297,6 +1298,14 @@ export class SoundTypeChecker {
     ) {
       const newSoundType = tcArrayLiteralExpressionForTuple(assignee, this);
       assignee.soundType = computedType = newSoundType;
+    } else if (assignee && isArrayLiteralExpression(assignee)) {
+      const isEmptyLiteral = assignee.expressions.members.length === 0;
+      if (isEmptyLiteral && ast.typeAnnotation?.type) {
+        assignee.soundType = this.computeType(ast.typeAnnotation.type);
+      } else {
+        console.log('hello');
+        const newSoundType = tcArrayLiteralExpressionForArray(assignee, this);
+      }
     }
 
     // Some weird stuff happens here with vdinit, so we compute our own sound type before

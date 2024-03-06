@@ -31,12 +31,12 @@
     "watch": "npm-run-all --parallel watch:*",
     "build": "npm-run-all --parallel build:*",
     "build:typings": "node --loader ts-node/esm scripts/copy-typings.mts",
-    "build:tsc": "tsc --noEmit src/compiler/tsc.ts && esbuild src/compiler/tsc.ts --bundle --platform=node --outfile=dist/tsc.js",
-    "build:rt": "tsc --noEmit src/runtime/rt.ts && esbuild src/runtime/rt.ts --bundle --platform=node --outfile=dist/lib/rt.js",
+    "build:tsc": "tsc --noEmit src/compiler/tsc.ts && esbuild src/compiler/tsc.ts --bundle --sourcemap --platform=node --outfile=dist/tsc.js",
+    "build:rt": "tsc --noEmit src/runtime/rt.ts && esbuild src/runtime/rt.ts --bundle --sourcemap --platform=node --outfile=dist/lib/rt.js",
     "test:run": "vitest run",
     "test": "vitest",
     "generate": "ts-node src/compiler/syntax/syntaxGenerator.ts && prettier --write src/compiler/syntax/*.generated.ts",
-    "debug": "node --inspect ./dist/tsc.js --safe samples/tuple-rest-element.ts --module commonjs"
+    "debug": "node --inspect ./dist/tsc.js --safe samples/6-array/array.ts --module commonjs"
   },
   "preferGlobal": true,
   "main": "./dist/typescript.js",

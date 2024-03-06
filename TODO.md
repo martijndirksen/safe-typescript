@@ -1,1 +1,2 @@
 - [ ] Fix bug where array index-based access gets typed as any
+- [ ] Create tests for for-loop
