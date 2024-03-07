@@ -1886,7 +1886,7 @@ export module RT {
       case TT.TUPLE: {
         t1 = t.fieldTable[fname] || from.fieldTable[fname];
         if (t1 === undefined) {
-          t1 = Any;
+          throw new Error('writeField writing to unknown tuple field');
           //no need to checkAndTag here as tv is undotted/not un ...
         } else if (t1.tt === TT.JUST_TYPE || t1.tt === TT.UN) {
           throw new Error('writeField from struct writing dot/un type field');

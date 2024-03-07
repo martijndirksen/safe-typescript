@@ -3321,6 +3321,85 @@ export class SoundTypeChecker {
       return res;
     };
     var t_o = o.soundType.unfold();
+
+    // MD: Assignment of tuple element
+    const writeTupleUnsafe = (rhs: AST) =>
+      this.pkg(
+        ast,
+        MkAST.callRT('writeField', [
+          o,
+          o.soundType.toRTTI(),
+          key,
+          rhs,
+          (rhs.soundType ?? TConstant.Any).toRTTI(),
+        ]),
+        TConstant.Any
+      );
+
+    if (
+      isTTuple(o.soundType) &&
+      (isNumericLiteral(key) || isStringLiteral(key))
+    ) {
+      const field = o.soundType.getField(key.valueText())?.type;
+
+      if (!field) {
+        TcUtil.Logger.error(
+          DiagnosticCode.TUPLE_index_out_of_range,
+          [o.soundType.toString(), key.valueText()],
+          ast
+        );
+        return writeTupleUnsafe(rhs);
+      }
+
+      if (!rhs.soundType) {
+        return writeTupleUnsafe(rhs);
+      }
+
+      const subtype = TypeRelations.subtype(
+        rhs.soundType,
+        field,
+        TcUtil.allowDeepSubtyping(ast.right)
+      );
+
+      if (!subtype.fst) {
+        if (TypeRelations.assignable(field, rhs.soundType)) {
+          TcUtil.Logger.error(DiagnosticCode.SEC_Implicit_coercion, [
+            rhs.soundType.toString(),
+            field.toString(),
+          ]);
+          rhs = MkAST.callRT('checkAndTag', [
+            rhs,
+            rhs.soundType.toRTTI(),
+            field.toRTTI(),
+          ]);
+        } else {
+          TcUtil.Logger.error(
+            DiagnosticCode.TUPLE_assignment_not_a_subtype,
+            [field.toString(), rhs.soundType.toString()],
+            ast
+          );
+          rhs = MkAST.unsafe(rhs);
+        }
+
+        return writeTupleUnsafe(rhs);
+      } else {
+        rhs = TcUtil.shallowTag(subtype, rhs, field);
+      }
+
+      return this.pkg(
+        ast,
+        new BinaryExpression(
+          ast.kind(),
+          new ElementAccessExpression(o, TcUtil.force(TConstant.Number, key)),
+          rhs
+        ),
+        field
+      );
+    } else if (isTTuple(o.soundType)) {
+      // Key is not statically known
+      return writeTupleUnsafe(rhs);
+    }
+
     const index = t_o.indexSignature();
     if (index) {
       var eltSub = TypeRelations.subtype(

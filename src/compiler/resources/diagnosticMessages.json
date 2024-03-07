@@ -1702,5 +1702,9 @@
   "Tuple element index was out of range: '{1}'": {
     "category": "Error",
     "code": 7021
+  },
+  "Tuple element assignment expected a type of '{0}'; got '{1}'": {
+    "category": "Error",
+    "code": 7022
   }
 }

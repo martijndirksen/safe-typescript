@@ -2137,4 +2137,8 @@ export var diagnosticInformationMap: DiagnosticInformationMap = {
     code: 7094,
     category: DiagnosticCategory.Error,
   },
+  "Tuple element assignment expected a type of '{0}'; got '{1}'": {
+    code: 7095,
+    category: DiagnosticCategory.Error,
+  },
 };

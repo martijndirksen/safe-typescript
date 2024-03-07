@@ -111,9 +111,12 @@ function stripOutput(rawOutput: string) {
     .join(eol);
 }
 
-export async function buildSample(
-  file: string
-): Promise<{ success: boolean; stderr: string; output: string }> {
+export async function buildSample(file: string): Promise<{
+  success: boolean;
+  stderr: string;
+  rawStderr: string;
+  output: string;
+}> {
   const result = await execPromise(
     `node ./dist/tsc.js --safe ${file} --module commonjs`
   );
@@ -140,7 +143,7 @@ export async function buildSample(
     output = stripOutput(rawOutput);
   }
 
-  return { success, stderr, output };
+  return { success, stderr, rawStderr: result.stderr, output };
 }
 
 export async function runSample(

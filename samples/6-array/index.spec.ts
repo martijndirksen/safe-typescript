@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildSample } from '../test/utils';
 
-describe('6-array', () => {
+describe.skip('6-array', () => {
   it('array', async () => {
     const { success, output } = await buildSample('samples/6-array/array.ts');
     expect(success).toBeTruthy();

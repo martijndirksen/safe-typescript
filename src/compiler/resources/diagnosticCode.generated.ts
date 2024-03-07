@@ -875,4 +875,6 @@ export var DiagnosticCode = {
   TUPLE_multiple_spread_not_allowed:
     'A rest element cannot follow another rest element.',
   TUPLE_index_out_of_range: "Tuple element index was out of range: '{1}'",
+  TUPLE_assignment_not_a_subtype:
+    "Tuple element assignment expected a type of '{0}'; got '{1}'",
 };
