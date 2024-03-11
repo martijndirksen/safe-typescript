@@ -35,8 +35,7 @@ var b = tuple[1];
       'samples/7-tuple-read/tuple-read-bounds-dynamic.js'
     );
     expect(runtimeSuccess).toBeFalsy();
-    console.log(runtimeStderr);
-    //expect(runtimeStderr)
+    expect(runtimeStderr).toContain('Error: readField unknown field: 3');
   });
 
   it('tuple-read-dynamic-index', async () => {

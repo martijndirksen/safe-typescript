@@ -1730,12 +1730,7 @@ export module RT {
 
         t1 = t.fieldTable[fname];
         if (t1 === undefined) {
-          if (t.methodTable[fname] || objectMethods[fname]) {
-            throw new Error(
-              'readField reading method (instance and interface)'
-            );
-          }
-          t1 = Any;
+          throw new Error('readField unknown field: ' + fname);
         } else if (t1.tt === TT.JUST_TYPE || t1.tt === TT.UN) {
           throw new Error(
             'readField from interface / instance reading dot type/un field'

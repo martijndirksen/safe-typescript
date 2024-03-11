@@ -36,7 +36,8 @@
     "test:run": "vitest run",
     "test": "vitest",
     "generate": "ts-node src/compiler/syntax/syntaxGenerator.ts && prettier --write src/compiler/syntax/*.generated.ts",
-    "debug": "node --inspect ./dist/tsc.js --safe samples/7-tuple-write/tuple-write-gradual.ts --module commonjs"
+    "debug": "node --inspect ./dist/tsc.js --safe samples/7-tuple-write/tuple-write-gradual.ts --module commonjs",
+    "debug:rt": "node --inspect ./samples/7-tuple-read/tuple-read-bounds-dynamic.js"
   },
   "preferGlobal": true,
   "main": "./dist/typescript.js",
