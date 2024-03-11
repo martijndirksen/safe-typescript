@@ -15,6 +15,30 @@ var b = tuple[1];
     );
   });
 
+  it('tuple-read-bounds', async () => {
+    const { success, stderr } = await buildSample(
+      'samples/7-tuple-read/tuple-read-bounds.ts'
+    );
+    expect(success).toBeFalsy();
+    expect(stderr).toContain(
+      `error TS7094: Tuple element index was out of range: '3'`
+    );
+  });
+
+  it('tuple-read-bounds-dynamic', async () => {
+    const { success } = await buildSample(
+      'samples/7-tuple-read/tuple-read-bounds-dynamic.ts'
+    );
+    expect(success).toBeTruthy();
+
+    const { stderr: runtimeStderr, success: runtimeSuccess } = await runSample(
+      'samples/7-tuple-read/tuple-read-bounds-dynamic.js'
+    );
+    expect(runtimeSuccess).toBeFalsy();
+    console.log(runtimeStderr);
+    //expect(runtimeStderr)
+  });
+
   it('tuple-read-dynamic-index', async () => {
     const { success, output, stderr } = await buildSample(
       'samples/7-tuple-read/tuple-read-dynamic-index.ts'

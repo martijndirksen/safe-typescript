@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   test: {
     env: {
-      LOG_STDOUT: '1',
+      // LOG_STDOUT: '1',
     },
     watchExclude: ['**/node_modules/**', '**/src/**'],
     forceRerunTriggers: [
