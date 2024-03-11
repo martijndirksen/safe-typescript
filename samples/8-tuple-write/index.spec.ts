@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildSample, runSample } from '../test/utils';
 
-describe('7-tuple-write', () => {
+describe('8-tuple-write', () => {
   it('tuple-write', async () => {
     const { success, output } = await buildSample(
-      'samples/7-tuple-write/tuple-write.ts'
+      'samples/8-tuple-write/tuple-write.ts'
     );
     expect(success).toBeTruthy();
     expect(output).toBe(
@@ -16,7 +16,7 @@ console.log(tuple[0], tuple[1]);
     );
 
     const { stdout, success: runtimeSuccess } = await runSample(
-      'samples/7-tuple-write/tuple-write.js'
+      'samples/8-tuple-write/tuple-write.js'
     );
     expect(runtimeSuccess).toBeTruthy();
     expect(stdout).toBe('mod 26\n');
@@ -24,7 +24,7 @@ console.log(tuple[0], tuple[1]);
 
   it('tuple-write-err', async () => {
     const { success, stderr } = await buildSample(
-      'samples/7-tuple-write/tuple-write-err.ts'
+      'samples/8-tuple-write/tuple-write-err.ts'
     );
     expect(success).toBeFalsy();
     expect(stderr).toContain(
@@ -34,7 +34,7 @@ console.log(tuple[0], tuple[1]);
 
   it('tuple-write-gradual', async () => {
     const { success, output, rawStderr } = await buildSample(
-      'samples/7-tuple-write/tuple-write-gradual.ts'
+      'samples/8-tuple-write/tuple-write-gradual.ts'
     );
     expect(success).toBeTruthy();
     expect(rawStderr).toContain(
@@ -51,7 +51,7 @@ console.log(tuple[0], tuple[1]);
     );
 
     const { stdout: runtimeStdout, success: runtimeSuccess } = await runSample(
-      'samples/7-tuple-write/tuple-write-gradual.js'
+      'samples/8-tuple-write/tuple-write-gradual.js'
     );
     expect(runtimeSuccess).toBeTruthy();
     expect(runtimeStdout).toBe('str 44\n');
@@ -59,7 +59,7 @@ console.log(tuple[0], tuple[1]);
 
   it('tuple-write-dynamic-index', async () => {
     const { success, output } = await buildSample(
-      'samples/7-tuple-write/tuple-write-dynamic-index.ts'
+      'samples/8-tuple-write/tuple-write-dynamic-index.ts'
     );
     expect(success).toBeTruthy();
     expect(output).toBe(
@@ -72,7 +72,7 @@ RT.writeField(tuple, RT.Tuple({
     );
 
     const { stderr: runtimeStderr, success: runtimeSuccess } = await runSample(
-      'samples/7-tuple-write/tuple-write-dynamic-index.js'
+      'samples/8-tuple-write/tuple-write-dynamic-index.js'
     );
     expect(runtimeSuccess).toBeFalsy();
     expect(runtimeStderr).toContain(

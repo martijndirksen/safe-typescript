@@ -16,11 +16,23 @@ var val3 = [4, 'str', true];
   });
 
   it('tuple-order', async () => {
-    const { success, stderr } = await buildSample(
+    const { success, output, stderr } = await buildSample(
       'samples/3-tuple-width/tuple-order.ts'
     );
-    expect(success).toBeFalsy();
+    expect(success).toBeTruthy();
     console.log(stderr);
+
+    expect(output).toBe(
+      `var val = ['str', 4];
+`
+    );
+  });
+
+  it('tuple-order-mismatch', async () => {
+    const { success, stderr } = await buildSample(
+      'samples/3-tuple-width/tuple-order-mismatch.ts'
+    );
+    expect(success).toBeFalsy();
 
     expect(stderr).toContain(
       `error TS7034: Safe TS: Variable 'val' of type '[number, string]' cannot be assigned a value of type '[string, number]'`
